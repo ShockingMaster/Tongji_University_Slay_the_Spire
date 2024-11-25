@@ -21,6 +21,30 @@
     <ClCompile Include="..\Classes\HelloWorldScene.cpp">
       <Filter>src</Filter>
     </ClCompile>
+    <ClCompile Include="StartScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="InitialScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="HoverButton.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="SelectionScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="MenuScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="MapScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="MapNode.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
+    <ClCompile Include="SettingsScene.cpp">
+      <Filter>src</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="main.h">
@@ -30,6 +54,39 @@
       <Filter>src</Filter>
     </ClInclude>
     <ClInclude Include="..\Classes\HelloWorldScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="StartScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="AudioPlayer.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="const.h">
+      <Filter>win32</Filter>
+    </ClInclude>
+    <ClInclude Include="InitialScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="HoverButton.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="SelectionScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="MenuScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="MapScene.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="MapNode.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="NodeConnection.h">
+      <Filter>src</Filter>
+    </ClInclude>
+    <ClInclude Include="SettingsScene.h">
       <Filter>src</Filter>
     </ClInclude>
   </ItemGroup>
