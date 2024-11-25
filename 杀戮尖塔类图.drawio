@@ -1,0 +1,246 @@
+<mxfile host="Electron" agent="Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) draw.io/24.7.17 Chrome/128.0.6613.36 Electron/32.0.1 Safari/537.36" version="24.7.17">
+  <diagram id="C5RBs43oDa-KdzZeNtuy" name="Page-1">
+    <mxGraphModel dx="2184" dy="2083" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
+      <root>
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="WIyWlLk6GJQsqaUBKTNV-1" parent="WIyWlLk6GJQsqaUBKTNV-0" />
+        <mxCell id="NpeCRfPMrX2DQWa0Srbt-0" value="主角状态(包括手牌，生命值，&#xa;临时buff，金币，道具等)" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=40;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="80" y="320" width="290" height="370" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NpeCRfPMrX2DQWa0Srbt-1" value="+ 卡牌类列表&#xa;+ 生命值&#xa;+ 格挡数&#xa;+ 金币&#xa;+ 道具类列表&#xa;+ 药水类列表&#xa;+ 临时buff类列表(可具体讨论是否不用vector，而是&#xa;直接细化，因为buff种类有限，可以单独列属性)&#xa;+ 临时buff持续时间(在更改buff时候会重置时间)&#xa;+ 能量(只有当战斗开始时才会赋值，结束归零)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="NpeCRfPMrX2DQWa0Srbt-0" vertex="1">
+          <mxGeometry y="40" width="290" height="150" as="geometry" />
+        </mxCell>
+        <mxCell id="NpeCRfPMrX2DQWa0Srbt-2" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="NpeCRfPMrX2DQWa0Srbt-0" vertex="1">
+          <mxGeometry y="190" width="290" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="NpeCRfPMrX2DQWa0Srbt-3" value="+ 增加减少手牌操作&#xa;+ 更改生命值操作&#xa;+ 更改格挡数操作&#xa;+ 更改金币操作&#xa;+ 更改道具操作&#xa;+ 更改药水操作&#xa;+ 添加减少buff操作&#xa;+ 更改buff时间操作&#xa;+ 更改能量(由战斗系统中打出手牌操作，使用道具操&#xa;作引起能量更改)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="NpeCRfPMrX2DQWa0Srbt-0" vertex="1">
+          <mxGeometry y="198" width="290" height="172" as="geometry" />
+        </mxCell>
+        <mxCell id="NpeCRfPMrX2DQWa0Srbt-4" value="战斗系统(调用主角状态，怪物状态)" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" parent="WIyWlLk6GJQsqaUBKTNV-1" vertex="1">
+          <mxGeometry x="530" y="-10" width="340" height="400" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="NpeCRfPMrX2DQWa0Srbt-5" value="+ 主角卡牌手牌槽&#xa;+ 主角卡牌墓地槽&#xa;+ 主角卡牌抽取槽&#xa;+ 主角卡牌弃牌槽&#xa;+ 怪物下一个行为&#xa;+ 怪物id" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="NpeCRfPMrX2DQWa0Srbt-4" vertex="1">
+          <mxGeometry y="26" width="340" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="NpeCRfPMrX2DQWa0Srbt-6" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" parent="NpeCRfPMrX2DQWa0Srbt-4" vertex="1">
+          <mxGeometry y="120" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="NpeCRfPMrX2DQWa0Srbt-7" value="+ 赋予主角能量&#xa;+ 读取道具发动条件&#xa;+ 调用道具效果更改主角状态&#xa;+ 使用药水操作&#xa;+ 随机初始化分配主角卡槽卡牌(包括抽取槽，手牌槽)&#xa;+ 手牌卡牌进出操作(include读取使用卡牌效果，可能包括&#xa;调用更改能量，调用更改生命值，调用更改buff等等操作)&#xa;+ 墓地卡牌进出操作&#xa;+ 抽取卡牌进出操作&#xa;+ 弃牌卡牌进出操作&#xa;+ 手牌归零重置操作&#xa;+ 主角出牌，调用怪物行为操作(即战斗流程推进操作)&#xa;+ 每回合结束后更新状态(例如buff，格挡数等)&#xa;+ 判断战斗结束操作&#xa;+ 战斗结束后更改主角状态操作(包括金币道具药水生命值buff，&#xa;重置临时卡牌，格挡数等。)&#xa;+ 战斗获胜奖励操作(更改主角状态，在怪物类调用操作)&#xa;+ 结束后，在主角位置节点状态中调用下一节点选择操作" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" parent="NpeCRfPMrX2DQWa0Srbt-4" vertex="1">
+          <mxGeometry y="128" width="340" height="272" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-0" value="卡牌类" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="80" y="870" width="290" height="230" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-1" value="+ 卡牌名称&#xa;+ 卡牌图标&#xa;+ 卡牌类型&#xa;+ 卡牌等级&#xa;+ 商店花费&#xa;+ 卡牌需要能量点&#xa;+ 卡牌效果(包括更改生命值，更改格挡，更改buff，&#xa;更改卡牌等等)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-0">
+          <mxGeometry y="30" width="290" height="120" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-2" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-0">
+          <mxGeometry y="150" width="290" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-3" value="+ 打出卡牌后，产生效果操作(包括更改能量点，按照&#xa;卡牌效果更改。在打出卡牌后被调用)&#xa;+ 提升卡牌等级(改变卡牌的效果数值)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-0">
+          <mxGeometry y="158" width="290" height="72" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-4" value="道具类" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="-310" y="870" width="290" height="180" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-5" value="+ 道具名称&#xa;+ 道具图标&#xa;+ 商店花费&#xa;+ 道具效果(包括更改生命值，更改格挡，更改buff，&#xa;更改卡牌等等)&#xa;+道具效果发生条件及频率" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-4">
+          <mxGeometry y="30" width="290" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-6" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-4">
+          <mxGeometry y="130" width="290" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-7" value="+ 根据道具效果产生更改操作(按照道具效果更改。&#xa;在战斗过程中被调用)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-4">
+          <mxGeometry y="138" width="290" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-9" value="药水类" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="490" y="870" width="290" height="160" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-10" value="+ 药水名称&#xa;+ 药水图标&#xa;+ 商店花费&#xa;+ 药水效果(包括更改生命值，更改格挡，更改buff，&#xa;更改卡牌等等)&#xa;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-9">
+          <mxGeometry y="30" width="290" height="80" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-11" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-9">
+          <mxGeometry y="110" width="290" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-12" value="+ 根据药水效果产生更改操作(按照药水效果更改。&#xa;在战斗过程中被调用)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-9">
+          <mxGeometry y="118" width="290" height="42" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-13" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=0.988;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-4" target="NpeCRfPMrX2DQWa0Srbt-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="570" as="sourcePoint" />
+            <mxPoint x="450" y="520" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-18" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.494;entryY=1;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-0" target="NpeCRfPMrX2DQWa0Srbt-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="400" y="710" as="sourcePoint" />
+            <mxPoint x="450" y="660" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-19" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.501;entryY=1.012;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-9" target="NpeCRfPMrX2DQWa0Srbt-3">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="760" as="sourcePoint" />
+            <mxPoint x="320" y="710" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-20" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="NpeCRfPMrX2DQWa0Srbt-1" target="NpeCRfPMrX2DQWa0Srbt-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="610" y="510" as="sourcePoint" />
+            <mxPoint x="660" y="460" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-21" value="怪物状态" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=30;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="850" y="540" width="290" height="260" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-22" value="+ 生命值&#xa;+ 格挡数&#xa;+ 含有的药水，道具，金币，卡牌(死亡后给予主角)&#xa;+ 临时buff类列表(可具体讨论是否不用vector，而是&#xa;直接细化，因为buff种类有限，可以单独列属性)&#xa;+ 临时buff持续时间(在更改buff时候会重置时间)&#xa;+ 怪物的行为流(在战斗中被读取，可循环操作)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-21">
+          <mxGeometry y="30" width="290" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-23" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-21">
+          <mxGeometry y="140" width="290" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-24" value="+ 更改生命值操作&#xa;+ 更改格挡数操作&#xa;+ 死亡后将自身奖励基于主角操作(在战斗中主角获胜&#xa;被调用)&#xa;+ 添加减少buff操作&#xa;+ 更改buff时间操作" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-21">
+          <mxGeometry y="148" width="290" height="102" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-25" value="" style="endArrow=classic;html=1;rounded=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-21" target="NpeCRfPMrX2DQWa0Srbt-7">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="560" y="590" as="sourcePoint" />
+            <mxPoint x="610" y="540" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-26" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-9" target="B86x3m-6Bs3EjRQDjJpk-22">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="410" y="680" as="sourcePoint" />
+            <mxPoint x="460" y="630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-27" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-0" target="B86x3m-6Bs3EjRQDjJpk-22">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="410" y="680" as="sourcePoint" />
+            <mxPoint x="460" y="630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-28" value="" style="endArrow=classic;html=1;rounded=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-4" target="B86x3m-6Bs3EjRQDjJpk-22">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="410" y="680" as="sourcePoint" />
+            <mxPoint x="460" y="630" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-29" value="主角位置节点状态(地图节点)" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="55" y="-300" width="340" height="240" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-30" value="+ 节点类型(例如战斗，商店，休息等）&#xa;+ 当前层数&#xa;+ 当前节点在地图状态中的指针" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-29">
+          <mxGeometry y="26" width="340" height="94" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-31" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-29">
+          <mxGeometry y="120" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-34" value="+ 如果为战斗，在地图中读取怪物id，并调用战斗系统&lt;div&gt;+ 如果为商店，调用商店系统&lt;/div&gt;&lt;div&gt;+ 如果为休息，调用休息系统&lt;/div&gt;&lt;div&gt;+ 在地图状态中读取下一节点&lt;/div&gt;&lt;div&gt;+ 更改节点指针到下一节点指针&lt;/div&gt;&lt;div&gt;+ 更改节点类型&lt;/div&gt;&lt;div&gt;+ 更改层数&lt;/div&gt;" style="text;html=1;align=left;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-29">
+          <mxGeometry y="128" width="340" height="110" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-33" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="NpeCRfPMrX2DQWa0Srbt-7" target="B86x3m-6Bs3EjRQDjJpk-29">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="270" y="90" as="sourcePoint" />
+            <mxPoint x="320" y="40" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-35" value="地图状态" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="-480" y="-240" width="340" height="90" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-36" value="+ 多条链表(模拟爬塔路径)&#xa;+ 链表节点包含：节点类型，怪物id(可选择)" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-35">
+          <mxGeometry y="26" width="340" height="54" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-37" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-35">
+          <mxGeometry y="80" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-39" value="休息系统" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="55" y="100" width="340" height="110" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-41" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-39">
+          <mxGeometry y="26" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-42" value="+ 如果选择休息，调用主角状态中更改生命值&#xa;+ 如果选择锻造，调用卡牌类升级，选择主角卡牌类列表中一&#xa;卡牌进行升级" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-39">
+          <mxGeometry y="34" width="340" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-43" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-36" target="B86x3m-6Bs3EjRQDjJpk-29">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="260" y="70" as="sourcePoint" />
+            <mxPoint x="10" y="-110" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-45" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-39" target="B86x3m-6Bs3EjRQDjJpk-29">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="260" y="330" as="sourcePoint" />
+            <mxPoint x="310" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-46" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=0.5;entryY=1;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="NpeCRfPMrX2DQWa0Srbt-0" target="B86x3m-6Bs3EjRQDjJpk-39">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="260" y="330" as="sourcePoint" />
+            <mxPoint x="310" y="280" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-47" value="商店系统" style="swimlane;fontStyle=2;align=center;verticalAlign=top;childLayout=stackLayout;horizontal=1;startSize=26;horizontalStack=0;resizeParent=1;resizeLast=0;collapsible=1;marginBottom=0;rounded=0;shadow=0;strokeWidth=1;" vertex="1" parent="WIyWlLk6GJQsqaUBKTNV-1">
+          <mxGeometry x="-560" y="470" width="340" height="200" as="geometry">
+            <mxRectangle x="230" y="140" width="160" height="26" as="alternateBounds" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-48" value="+ 商店卡牌&#xa;+ 商店道具&#xa;+ 商店药水" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-47">
+          <mxGeometry y="26" width="340" height="64" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-49" value="" style="line;html=1;strokeWidth=1;align=left;verticalAlign=middle;spacingTop=-1;spacingLeft=3;spacingRight=3;rotatable=0;labelPosition=right;points=[];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-47">
+          <mxGeometry y="90" width="340" height="8" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-50" value="+ 随机初始化商店卡牌，道具，药水操作&#xa;+ 调用主角状态中更改卡牌，道具，药水操作(相当于购买)&#xa;+ 调用主角状态中更改卡牌操作(相当于弃牌)&#xa;+ 调用主角状态中更改金币操作(相当于花钱)&#xa;+ 判断某物品钱数量是否高于主角金币数&#xa;" style="text;align=left;verticalAlign=top;spacingLeft=4;spacingRight=4;overflow=hidden;rotatable=0;points=[[0,0.5],[1,0.5]];portConstraint=eastwest;" vertex="1" parent="B86x3m-6Bs3EjRQDjJpk-47">
+          <mxGeometry y="98" width="340" height="102" as="geometry" />
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-51" value="" style="endArrow=classic;html=1;rounded=0;exitX=1;exitY=0.75;exitDx=0;exitDy=0;entryX=-0.001;entryY=0.492;entryDx=0;entryDy=0;entryPerimeter=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-47" target="B86x3m-6Bs3EjRQDjJpk-34">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="60" y="340" as="sourcePoint" />
+            <mxPoint x="110" y="290" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-52" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-9" target="B86x3m-6Bs3EjRQDjJpk-47">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="80" y="560" as="sourcePoint" />
+            <mxPoint x="-220" y="670" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-53" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-0" target="B86x3m-6Bs3EjRQDjJpk-47">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="80" y="560" as="sourcePoint" />
+            <mxPoint x="130" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-54" value="" style="endArrow=classic;html=1;rounded=0;exitX=0.5;exitY=0;exitDx=0;exitDy=0;entryX=1;entryY=0.75;entryDx=0;entryDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="B86x3m-6Bs3EjRQDjJpk-4" target="B86x3m-6Bs3EjRQDjJpk-47">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="80" y="560" as="sourcePoint" />
+            <mxPoint x="130" y="510" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B86x3m-6Bs3EjRQDjJpk-55" value="" style="endArrow=classic;html=1;rounded=0;exitX=0;exitY=0.5;exitDx=0;exitDy=0;" edge="1" parent="WIyWlLk6GJQsqaUBKTNV-1" source="NpeCRfPMrX2DQWa0Srbt-1">
+          <mxGeometry width="50" height="50" relative="1" as="geometry">
+            <mxPoint x="230" y="550" as="sourcePoint" />
+            <mxPoint x="-220" y="620" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
