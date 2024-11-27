@@ -29,7 +29,7 @@ public:
     {
         target->health_ += numeric_value_;
         numeric_value_--;
-        target->updateHealth();//Õâ¸ö
+        target->updateHealth();
         target->updateBuff();
     }
 };

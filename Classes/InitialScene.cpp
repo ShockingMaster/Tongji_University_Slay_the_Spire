@@ -2,8 +2,8 @@
 #include <codecvt>
 #include "InitialScene.h"
 #include "HoverButton.h"
-#include "proj.win32/const.h"
-#include "proj.win32/AudioPlayer.h"
+#include "const.h"
+#include "AudioPlayer.h"
 #include "HelloWorldScene.h"
 #include "MenuScene.h"
 

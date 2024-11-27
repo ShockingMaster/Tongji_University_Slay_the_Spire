@@ -2,7 +2,7 @@
 #include "HoverButton.h"
 #include "MenuScene.h"
 #include "AudioEngine.h"
-#include "proj.win32/const.h"
+#include "const.h"
 #include "AudioPlayer.h"
 
 // 命名空间
@@ -104,6 +104,7 @@ bool SettingsScene::init()
             soundEffectVolumn = percent / 100.0f;
             cocos2d::experimental::AudioEngine::setVolume(soundEffectId, soundEffectVolumn);
         }
+
         });
 
     // 将滑动条添加至场景

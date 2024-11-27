@@ -5,8 +5,8 @@
 #include "MenuScene.h"
 #include "SelectionScene.h"
 #include "HoverButton.h"
-#include "proj.win32/const.h"
-#include "proj.win32/AudioPlayer.h"
+#include "const.h"
+#include "AudioPlayer.h"
 #include "NodeConnection.h"
 
 using namespace std;
@@ -15,8 +15,9 @@ using namespace cocos2d;
 // 全局变量，用于保存玩家名称
 extern string PlayerName;
 
-// 当前关卡索引，初始为 1
-static int currentLevel = 1;
+
+// 当前走过的结点路径，用于记录玩家或角色在地图上走过的节点，通常会用于路径回溯或显示。
+vector<MapNode*> visitPath;
 
 /**
  * 创建 MapScene 场景
@@ -28,6 +29,8 @@ Scene* MapScene::createScene() {
     scene->addChild(layer);
     return scene;
 }
+// 当前关卡索引，初始为 1
+int currentLevel;
 
 /**
  * 初始化 MapScene
@@ -38,7 +41,8 @@ bool MapScene::init() {
     if (!Scene::init()) {
         return false;
     }
-
+    currentLevel = 1;
+    visitPath.clear();
     // 播放背景音乐
     audioPlayer("start.ogg", true);
     const auto screenSize = Director::getInstance()->getVisibleSize();
@@ -49,10 +53,10 @@ bool MapScene::init() {
     this->addChild(mapContainer);
 
     // 加载四张地图
-    auto map1 = Sprite::create("map4.png");
-    auto map2 = Sprite::create("map3.png");
-    auto map3 = Sprite::create("map2.png");
-    auto map4 = Sprite::create("map1.png");
+    auto map1 = Sprite::create("map1.png");
+    auto map2 = Sprite::create("map2.png");
+    auto map3 = Sprite::create("map3.png");
+    auto map4 = Sprite::create("map4.png");
 
     // 设置地图的锚点和初始位置，地图依次堆叠
     map1->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
@@ -349,6 +353,11 @@ bool MapScene::init() {
 
     // 遍历每一层节点，确保所有节点都至少有一个有效连接
     for (int level = 0; level < MapNodes.size() - 1; level++) { // 遍历从第0层到倒数第二层
+        // 按照节点的水平位置进行排序，以减少交叉
+        std::sort(MapNodes[level].begin(), MapNodes[level].end(), [](MapNode* a, MapNode* b) {
+            return a->position.x < b->position.x; // 假设节点有position.x字段表示水平位置
+            });
+
         for (MapNode* current : MapNodes[level]) { // 遍历当前层的每个节点
             bool connectedToNext = false; // 标记当前节点是否已经连接到下一层节点
 
@@ -360,12 +369,24 @@ bool MapScene::init() {
                 }
             }
 
-            // 如果当前节点没有连接到下一层，则随机创建一个连接
+            // 如果当前节点没有连接到下一层，则寻找一个合适的连接点
             if (!connectedToNext && !MapNodes[level + 1].empty()) { // 确保下一层非空
-                MapNode* next = MapNodes[level + 1][rand() % MapNodes[level + 1].size()]; // 随机选择下一层的一个节点
-                if (uniqueConnections.insert({ current, next }).second) { // 插入成功说明是新连接
-                    current->connectedNodes.push_back(next); // 添加到当前节点的连接列表
-                    connections.push_back(new NodeConnection(current, next)); // 存储连接到 connections 容器
+                // 在下一层中选择最接近当前节点水平位置的节点
+                MapNode* next = nullptr;
+                int minDistance = std::numeric_limits<int>::max();
+
+                for (MapNode* candidate : MapNodes[level + 1]) {
+                    int distance = std::abs(candidate->position.x - current->position.x);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        next = candidate;
+                    }
+                }
+
+                // 如果选中的下一层节点与当前节点之间没有重复连接，则建立连接
+                if (next && uniqueConnections.insert({ current, next }).second) {
+                    current->connectedNodes.push_back(next);
+                    connections.push_back(new NodeConnection(current, next));
                 }
             }
         }
@@ -384,14 +405,27 @@ bool MapScene::init() {
 
             // 如果当前节点没有任何连接，则强制创建一个从上层到它的连接
             if (!hasIncomingConnection && !MapNodes[level].empty()) { // 确保上一层非空
-                MapNode* current = MapNodes[level][rand() % MapNodes[level].size()]; // 随机选择上一层的一个节点
-                if (uniqueConnections.insert({ current, next }).second) { // 插入成功说明是新连接
-                    current->connectedNodes.push_back(next); // 添加到当前节点的连接列表
-                    connections.push_back(new NodeConnection(current, next)); // 存储连接到 connections 容器
+                // 在上一层中选择最接近当前节点水平位置的节点
+                MapNode* current = nullptr;
+                int minDistance = std::numeric_limits<int>::max();
+
+                for (MapNode* candidate : MapNodes[level]) {
+                    int distance = std::abs(candidate->position.x - next->position.x);
+                    if (distance < minDistance) {
+                        minDistance = distance;
+                        current = candidate;
+                    }
+                }
+
+                // 如果选中的上一层节点与当前节点之间没有重复连接，则建立连接
+                if (current && uniqueConnections.insert({ current, next }).second) {
+                    current->connectedNodes.push_back(next);
+                    connections.push_back(new NodeConnection(current, next));
                 }
             }
         }
     }
+
 
     // 绘制路径并实现渐变色效果
     for (auto con : connections) {

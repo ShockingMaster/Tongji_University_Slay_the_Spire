@@ -15,7 +15,6 @@ using namespace cocos2d;       // 使用Cocos2d命名空间
  */
 class MapScene : public cocos2d::Scene {
 public:
-    vector<MapNode*> visitPath;           // 当前走过的结点路径，用于记录玩家或角色在地图上走过的节点，通常会用于路径回溯或显示。
 
     vector<vector<MapNode*>> MapNodes;    // 存储随机生成的地图结点，一个二维vector，每一层包含该层的所有MapNode节点。
 

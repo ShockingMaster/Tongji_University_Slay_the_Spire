@@ -2,8 +2,8 @@
 #include "MenuScene.h"
 #include "HoverButton.h"
 #include "MapScene.h"
-#include "proj.win32/const.h"
-#include "proj.win32/AudioPlayer.h"
+#include "const.h"
+#include "AudioPlayer.h"
 #include <locale>
 #include <codecvt>
 

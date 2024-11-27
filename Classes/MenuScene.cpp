@@ -4,8 +4,8 @@
 #include "SettingsScene.h"               // 引入设置场景
 #include "SelectionScene.h"              // 引入选择场景
 #include "HoverButton.h"                 // 引入HoverButton类，用于按钮的悬停效果
-#include "proj.win32/const.h"            // 引入常量定义
-#include "proj.win32/AudioPlayer.h"      // 引入音频播放器功能
+#include "const.h"
+#include "AudioPlayer.h"
 
 using namespace std;                    // 使用标准命名空间
 using namespace cocos2d;                // 使用Cocos2d命名空间

@@ -129,6 +129,13 @@ void MapNode::setSpriteByType(int type) {
     }
 
     sprite->setScale(1.5f); // 设置精灵的缩放比例
+    if (isVisited) {
+        auto visitedSprite = Sprite::create("circle4.png");  // "visited.png" 是标识已访问的精灵图像
+        if (visitedSprite) {
+            visitedSprite->setPosition(position);  // 设置相同的位置
+            this->addChild(visitedSprite);
+        } // 添加到节点
+    }
     sprite->setPosition(position); // 设置精灵的位置
     this->addChild(sprite); // 添加精灵到节点
 }
@@ -147,13 +154,49 @@ void MapNode::onRestore() {
     }
 }
 
+extern int currentLevel;
+extern vector<MapNode*> visitPath;
 // 鼠标点击时的事件处理
 void MapNode::onClick() {
-    if (clickImage != "" && sprite) {
-        sprite->setTexture(clickImage); // 切换到点击图像
+
+    if (currentLevel == 1&&this->level==1) {
+        currentLevel++; // 更新当前层级
+        this->setVisited(true); // 标记当前节点已访问
+        visitPath.push_back(this);
+        sprite->setColor(Color3B(165, 42, 42));  // 将精灵颜色设置为绿色
+        return;
+    }
+  
+    // 判断当前节点的 level 是否等于 currentLevel，如果不等，返回
+    if (this->level != currentLevel) {
+        return;
+    }
+    
+
+    // 如果有路径（pathVector）并且路径中最后一个节点的 isConnected 包含当前节点
+    if (!visitPath.empty()) {
+        
+        // 获取路径中最后一个节点
+        MapNode* lastNode = visitPath.back();
+
+        // 检查该节点的 isConnected 中是否包含当前节点
+        bool isConnected = false;
+        for (auto& connectedNode : lastNode->connectedNodes){
+            if (connectedNode == this) {
+                isConnected = true;
+                break;
+            }
+        }
+
+        if (isConnected) {
+            currentLevel++; // 更新当前层级
+            this->setVisited(true); // 标记当前节点已访问
+            visitPath.push_back(this);
+            sprite->setColor(Color3B(165,42,42));  
+        }
     }
     CCLOG("Node clicked! Type: %d", type); // 输出节点点击的日志信息
-    isVisited = true; // 标记节点为已访问
+    
 }
 
 // 获取节点位置

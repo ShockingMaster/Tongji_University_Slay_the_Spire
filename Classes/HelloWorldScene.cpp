@@ -24,7 +24,7 @@
 
 #include "HelloWorldScene.h"
 #include "SimpleAudioEngine.h"
-#include "MapNode.h"
+
 USING_NS_CC;
 
 Scene* HelloWorld::createScene()
@@ -58,8 +58,8 @@ bool HelloWorld::init()
 
     // add a "close" icon to exit the progress. it's an autorelease object
     auto closeItem = MenuItemImage::create(
-                                            "HelloWorld.png",
-                                            "HelloWorld.png",
+                                           "CloseNormal.png",
+                                           "CloseSelected.png",
                                            CC_CALLBACK_1(HelloWorld::menuCloseCallback, this));
 
     if (closeItem == nullptr ||
@@ -86,10 +86,10 @@ bool HelloWorld::init()
     // add a label shows "Hello World"
     // create and initialize a label
 
-    auto label = Label::createWithTTF("Hello World", "fonts/Kreon-Regular.ttf", 24);
+    auto label = Label::createWithTTF("Hello World", "fonts/Marker Felt.ttf", 24);
     if (label == nullptr)
     {
-        problemLoading("'fonts/Kreon-Regular.ttf'");
+        problemLoading("'fonts/Marker Felt.ttf'");
     }
     else
     {
@@ -115,8 +115,6 @@ bool HelloWorld::init()
         // add the sprite as a child to this layer
         this->addChild(sprite, 0);
     }
-    MapNode* one = MapNode::create(Vec2(400, 400), 4);
-    this->addChild(one);
     return true;
 }
 

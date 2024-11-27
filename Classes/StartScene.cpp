@@ -1,6 +1,6 @@
 #include "ui/CocosGUI.h"
-#include "proj.win32/const.h"
-#include "proj.win32/AudioPlayer.h"
+#include "const.h"
+#include "AudioPlayer.h"
 #include "StartScene.h"
 #include "InitialScene.h"
 #include "HelloWorldScene.h"
@@ -9,9 +9,9 @@ using namespace std;
 using namespace cocos2d;
 
 // 全局变量定义
-int backgroundMusicId = 1;         ///< 背景音乐 ID
+int backgroundMusicId = -1;         ///< 背景音乐 ID
 float backgroundVolumn = 0.5;      ///< 背景音乐音量
-int soundEffectId = 1;             ///< 音效 ID
+int soundEffectId =-1;             ///< 音效 ID
 float soundEffectVolumn = 0.5;     ///< 音效音量
 
 /**
@@ -91,6 +91,8 @@ bool StartScene::init() {
             float xPosition = progressBar->getPosition().x - progressBar->getContentSize().width / 2
                 + progressBar->getContentSize().width * percentage - 30;
             progressLabel->setPosition(Vec2(xPosition, progressBar->getPosition().y));
+
+        
             }, interval * i, "UpdateStartupLoadingBar" + std::to_string(i));
     }
 
