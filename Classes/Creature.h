@@ -9,6 +9,7 @@ public:
     string name_;
     string description_;
     int health_;
+    int fullhealth_;
     int block_;
     int can_end_turn_;
     vector<Buff*> buffs_;
@@ -21,7 +22,7 @@ public:
     //void buffSettle(Creature* target, int TriggerType, int& numeric_value);//如果说需要对数值进行修改
     void modifyValue(Creature* target, int TriggerType, int& numeric_value);
     void buffSettle(Creature* target, int TriggerType);//如果不需要对数值进行修改
-    void show_info();
+    void show_info();  //这里是另外设计一个头栏类还是直接show？是个问题 赫赫
     void take_damage(int damage);
     virtual void start_turn() = 0;
     virtual void end_turn() = 0;

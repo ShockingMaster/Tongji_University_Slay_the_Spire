@@ -19,6 +19,9 @@ extern string PlayerName;
 // 当前走过的结点路径，用于记录玩家或角色在地图上走过的节点，通常会用于路径回溯或显示。
 vector<MapNode*> visitPath;
 
+//当前走过关卡
+int currentLevel;
+
 /**
  * 创建 MapScene 场景
  * @return 场景实例
@@ -29,8 +32,6 @@ Scene* MapScene::createScene() {
     scene->addChild(layer);
     return scene;
 }
-// 当前关卡索引，初始为 1
-int currentLevel;
 
 /**
  * 初始化 MapScene
@@ -105,19 +106,27 @@ bool MapScene::init() {
     backButton->setTitleFontSize(50);
     backButton->addClickEventListener([=](Ref* sender) {
         // 点击返回按钮时，切换到菜单场景
-        Director::getInstance()->replaceScene(MenuScene::createScene());
+        Director::getInstance()->pushScene(MenuScene::createScene());
         });
 
     this->addChild(backButton);
     //接下来绘制地图，基本就是不同层数依次绘制，懒得优化了
     srand(static_cast<unsigned>(time(nullptr)));
     for (int i = 1; i < 9; i++) {  // 8层节点
+        int ran;
+        while (1) {
+            ran = rand();
+            if (ran < 100 && ran>-100) {
+                break;
+            }
+        }
         vector<MapNode*> levelNodes;  // 当前层的节点
         if (i == 1) {
-            Vec2 one = Vec2(500, 410);
-            Vec2 two = Vec2(900, 300);
-            Vec2 three = Vec2(1300, 460);
-            Vec2 four = Vec2(1500, 320);
+            
+            Vec2 one = Vec2(500+ran, 410);
+            Vec2 two = Vec2(900, 300-ran);
+            Vec2 three = Vec2(1300+ran, 460);
+            Vec2 four = Vec2(1500, 320-ran);
             int ran1 = rand() % 6 + 1;
             int ran2 = rand() % 6 + 1;
             int ran3 = rand() % 6 + 1;
@@ -140,10 +149,10 @@ bool MapScene::init() {
             mapContainer->addChild(Node4);
         }
         if (i == 2) {
-            Vec2 one = Vec2(600, 600);
-            Vec2 two = Vec2(840, 560);
-            Vec2 three = Vec2(1200, 680);
-            Vec2 four = Vec2(1510, 590);
+            Vec2 one = Vec2(600 + ran, 600);
+            Vec2 two = Vec2(840, 560-ran);
+            Vec2 three = Vec2(1200+ran, 680);
+            Vec2 four = Vec2(1510, 590 + ran);
             int ran1 = rand() % 6 + 1;
             int ran2 = rand() % 6 + 1;
             int ran3 = rand() % 6 + 1;
@@ -167,9 +176,9 @@ bool MapScene::init() {
         }
         if (i == 3) {
             Vec2 one = Vec2(560, 910);
-            Vec2 two = Vec2(910, 990);
-            Vec2 three = Vec2(1100, 880);
-            Vec2 four = Vec2(1450, 840);
+            Vec2 two = Vec2(910, 990 + ran);
+            Vec2 three = Vec2(1100 + ran, 880);
+            Vec2 four = Vec2(1450 + ran, 840);
             int ran1 = rand() % 6 + 1;
             int ran2 = rand() % 6 + 1;
             int ran3 = rand() % 6 + 1;
@@ -192,10 +201,10 @@ bool MapScene::init() {
             mapContainer->addChild(Node4);
         }
         if (i == 4) {
-            Vec2 one = Vec2(500, 230);
-            Vec2 two = Vec2(900, 200);
+            Vec2 one = Vec2(500 + ran, 230);
+            Vec2 two = Vec2(900, 200 + ran);
             Vec2 three = Vec2(1300, 140);
-            Vec2 four = Vec2(1500, 280);
+            Vec2 four = Vec2(1500, ran+ 280);
             int ran1 = rand() % 6 + 1;
             int ran2 = rand() % 6 + 1;
             int ran3 = rand() % 6 + 1;
@@ -218,10 +227,10 @@ bool MapScene::init() {
             mapContainer->addChild(Node4);
         }
         if (i == 5) {
-            Vec2 one = Vec2(540, 440);
-            Vec2 two = Vec2(800, 510);
-            Vec2 three = Vec2(1000, 550);
-            Vec2 four = Vec2(1450, 400);
+            Vec2 one = Vec2(540 + ran, 440);
+            Vec2 two = Vec2(800 + ran, 510);
+            Vec2 three = Vec2(1000, 550 + ran);
+            Vec2 four = Vec2(1450, 400 + ran);
             int ran1 = rand() % 6 + 1;
             int ran2 = rand() % 6 + 1;
             int ran3 = rand() % 6 + 1;
@@ -244,9 +253,9 @@ bool MapScene::init() {
             mapContainer->addChild(Node4);
         }
         if (i == 6) {
-            Vec2 one = Vec2(500, 840);
+            Vec2 one = Vec2(500 + ran, 840);
             Vec2 two = Vec2(800, 720);
-            Vec2 three = Vec2(1230, 800);
+            Vec2 three = Vec2(1230 + ran, 800);
             Vec2 four = Vec2(1390, 820);
             int ran1 = rand() % 6 + 1;
             int ran2 = rand() % 6 + 1;
@@ -270,9 +279,9 @@ bool MapScene::init() {
             mapContainer->addChild(Node4);
         }
         if (i == 7) {
-            Vec2 one = Vec2(600, 320);
-            Vec2 two = Vec2(750, 210);
-            Vec2 three = Vec2(1000, 290);
+            Vec2 one = Vec2(600+ran, 320);
+            Vec2 two = Vec2(750, 210 + ran);
+            Vec2 three = Vec2(1000 + ran, 290);
             Vec2 four = Vec2(1300, 350);
             int ran1 = rand() % 6 + 1;
             int ran2 = rand() % 6 + 1;
@@ -298,7 +307,7 @@ bool MapScene::init() {
         if (i == 8) {
             Vec2 one = Vec2(570, 610);
             Vec2 two = Vec2(810, 520);
-            Vec2 three = Vec2(1100, 630);
+            Vec2 three = Vec2(1100 + ran, 630);
             Vec2 four = Vec2(1280, 500);
             int ran1 = rand() % 6 + 1;
             int ran2 = rand() % 6 + 1;

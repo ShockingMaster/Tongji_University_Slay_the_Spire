@@ -9,13 +9,14 @@
 using namespace std;           // 使用标准库命名空间
 using namespace cocos2d;       // 使用Cocos2d命名空间
 
+
 /**
  * MapScene 类：继承自cocos2d::Scene，用于管理地图场景和节点。
  * 负责创建地图、处理节点连接及记录角色的走过路径等功能。
  */
 class MapScene : public cocos2d::Scene {
 public:
-
+    
     vector<vector<MapNode*>> MapNodes;    // 存储随机生成的地图结点，一个二维vector，每一层包含该层的所有MapNode节点。
 
     vector<NodeConnection*> connections;  // 存储地图中结点之间的连接关系，记录节点间的路径连接（NodeConnection），帮助构建地图的连通性。

@@ -154,8 +154,8 @@ void MapNode::onRestore() {
     }
 }
 
-extern int currentLevel;
 extern vector<MapNode*> visitPath;
+extern int currentLevel;
 // 鼠标点击时的事件处理
 void MapNode::onClick() {
 
