@@ -11,7 +11,7 @@ using namespace cocos2d;
 
 
 
-class HearderBar : public Node {
+class HeaderBar : public Node {
 private:
     string name;              // 玩家名称
     string character;         // 玩家角色
@@ -32,8 +32,11 @@ private:
 
 public:
     // 构造函数和析构函数
-    HearderBar();
-    ~HearderBar();
+    
+    
+    
+    HeaderBar();
+    ~HeaderBar();
 
     // 初始化头栏
     bool init(Player* player);
@@ -42,7 +45,7 @@ public:
     void updateHeader(Player* player);
 
     // 静态创建函数（Cocos2d约定）
-    static HearderBar* create(Player* player);
+    static HeaderBar* create(Player* player);
 
     // 设置和获取函数
     void setPlayerInfo(const string& name, const string& character, int fullHealth, int coins);
@@ -73,7 +76,7 @@ public:
         }
     }
 
-    void addHeaderBar(HearderBar* headerBar) {
+    void addHeaderBar(HeaderBar* headerBar) {
         this->addChild(headerBar);
     }
 

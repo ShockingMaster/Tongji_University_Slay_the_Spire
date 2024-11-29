@@ -7,16 +7,16 @@ using namespace cocos2d;
 
 int currentlevel = 1;//测试用
 // 构造函数
-HearderBar::HearderBar() 
+HeaderBar::HeaderBar() 
     : name(""), character(""), health(0), fullHealth(0), coins(0), level(0),
     nameLabel(nullptr), healthLabel(nullptr), coinsLabel(nullptr), levelLabel(nullptr),
     potionIcons(nullptr), healthIcon(nullptr), coinsIcon(nullptr), potionIcon(nullptr) {}
 
 // 析构函数
-HearderBar::~HearderBar() {}
+HeaderBar::~HeaderBar() {}
 
 // 初始化头栏
-bool HearderBar::init(Player* player) {
+bool HeaderBar::init(Player* player) {
     if (!Node::init()) {
         return false;
     }
@@ -78,7 +78,7 @@ bool HearderBar::init(Player* player) {
 
 
 // 更新头栏信息
-void HearderBar::updateHeader(Player* player) {
+void HeaderBar::updateHeader(Player* player) {
     // 更新玩家状态
     setPlayerInfo(player);
 
@@ -97,8 +97,13 @@ void HearderBar::updateHeader(Player* player) {
 }
 
 // 静态创建函数
-HearderBar* HearderBar::create(Player* player) {
-    HearderBar* headerBar = new (std::nothrow) HearderBar();
+
+
+
+
+
+HeaderBar* HeaderBar::create(Player* player) {
+    HeaderBar* headerBar = new (std::nothrow) HeaderBar();
     if (headerBar && headerBar->init(player)) {
         headerBar->autorelease();
         return headerBar;
@@ -108,14 +113,14 @@ HearderBar* HearderBar::create(Player* player) {
 }
 
 // 设置玩家信息
-void HearderBar::setPlayerInfo(const string& name, const string& character, int fullHealth, int coins) {
+void HeaderBar::setPlayerInfo(const string& name, const string& character, int fullHealth, int coins) {
     this->name = name;
     this->character = character;
     this->fullHealth = fullHealth;
     this->coins = coins;
 }
 
-void HearderBar::setPlayerInfo(Player* player) {
+void HeaderBar::setPlayerInfo(Player* player) {
     this->name = player->name_;
     this->character = player->character_;
     this->health = player->health_;
@@ -126,25 +131,25 @@ void HearderBar::setPlayerInfo(Player* player) {
 }
 
 // 设置生命值
-void HearderBar::setHealth(int health) {
+void HeaderBar::setHealth(int health) {
     this->health = health;
     healthLabel->setString("Health: " + to_string(health) + "/" + to_string(fullHealth));
 }
 
 // 设置金币
-void HearderBar::setCoins(int coins) {
+void HeaderBar::setCoins(int coins) {
     this->coins = coins;
     coinsLabel->setString("Coins: " + to_string(coins));
 }
 
 // 设置药水
-void HearderBar::setPotions(const vector<Potion*>& potions) {
+void HeaderBar::setPotions(const vector<Potion*>& potions) {
     this->potions = potions;
     updateHeader(nullptr); // 更新药水图标
 }
 
 // 设置关卡
-void HearderBar::setLevel(int level) {
+void HeaderBar::setLevel(int level) {
     this->level = level;
     levelLabel->setString("Level: " + to_string(level));
 }

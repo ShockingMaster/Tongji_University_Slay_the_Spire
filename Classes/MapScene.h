@@ -16,7 +16,8 @@ using namespace cocos2d;       // 使用Cocos2d命名空间
  */
 class MapScene : public cocos2d::Scene {
 public:
-    
+    void onEnter();
+
     vector<vector<MapNode*>> MapNodes;    // 存储随机生成的地图结点，一个二维vector，每一层包含该层的所有MapNode节点。
 
     vector<NodeConnection*> connections;  // 存储地图中结点之间的连接关系，记录节点间的路径连接（NodeConnection），帮助构建地图的连通性。
@@ -36,6 +37,7 @@ public:
      * @return 返回初始化是否成功。
      */
     virtual bool init();
+
 
     /**
      * CREATE_FUNC(MapScene): 宏，自动生成一个静态创建函数。

@@ -23,7 +23,7 @@
  ****************************************************************************/
 
 #include "HelloWorldScene.h"
-#include "StartScene.h"
+#include "MapScene.h"
 #include "SimpleAudioEngine.h"
 #include "Player.h"
 #include "cocos2d.h"
@@ -61,6 +61,8 @@ bool HelloWorld::init()
     player->health_ = 50;
     player->fullhealth_ = 100;
     player->potions_ = {};
+
+
     return true;
 }
 
