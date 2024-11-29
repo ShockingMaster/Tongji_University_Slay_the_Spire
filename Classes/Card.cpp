@@ -12,10 +12,39 @@ class Attack : public Card
     }
 };
 
-void Card::take_effect(Creature* target)
-{
+
+
+Card::Card(string name, string description, int energyCost, int moneyCost, int rarity, bool isEnabled, int type, int triggerTimes)
+    : name_(name), description_(description), energyCost_(energyCost), moneyCost_(moneyCost), rarity_(rarity),
+    isEnabled_(isEnabled), type_(type), triggerTimes_(triggerTimes), targetNum(false) {
+    // 如果卡牌有多个目标，可以根据需要设置 targetNum
 }
 
-void Card::take_effect(vector<Creature*> target)
-{
+/**
+ * @brief 施加卡牌效果到单个目标
+ * @param target 施加效果的目标
+ */
+void Card::takeEffect(Creature* target) {
+
+    // 根据卡牌类型施加不同的效果
+    
+
+   
+}
+
+/**
+ * @brief 施加卡牌效果到多个目标
+ * @param targets 施加效果的多个目标
+ */
+void Card::takeEffect(vector<Creature*> targets) {
+
+    for (auto& target : targets) {
+        if (target != nullptr) {
+            takeEffect(target);  // 针对每个目标施加效果
+        }
+    }
+}
+
+void Card::update() {
+
 }

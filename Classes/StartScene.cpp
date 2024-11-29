@@ -8,11 +8,6 @@
 using namespace std;
 using namespace cocos2d;
 
-// 全局变量定义
-int backgroundMusicId = -1;         ///< 背景音乐 ID
-float backgroundVolumn = 0.5;      ///< 背景音乐音量
-int soundEffectId =-1;             ///< 音效 ID
-float soundEffectVolumn = 0.5;     ///< 音效音量
 
 /**
  * @brief 创建 StartScene 场景。

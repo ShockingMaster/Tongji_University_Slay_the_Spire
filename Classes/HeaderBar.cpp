@@ -5,7 +5,7 @@
 using namespace std;
 using namespace cocos2d;
 
-int currentlevel = 1;//测试用，先别管
+int currentlevel = 1;//测试用
 // 构造函数
 HearderBar::HearderBar() 
     : name(""), character(""), health(0), fullHealth(0), coins(0), level(0),

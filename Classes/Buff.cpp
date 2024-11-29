@@ -1,34 +1,49 @@
 #include "IncludeAll.h"
 #include "Enum.h"
-Buff::Buff(string name, string description, int trigger_type, int duration, int priotity)
-{
-}
-void Buff::take_effect(Creature* target)
-{
+#include "Buff.h"
+#include "Creature.h"  
+
+// 构造函数
+Buff::Buff(string name, string description, TriggerType triggerType, int duration, int priority, bool isStackable, int numericValue)
+    : name(name), description(description), triggerType(triggerType), duration(duration), priority(priority),
+    isStackable(isStackable), numericValue(numericValue), isActive(true) {}
+
+// 生效方法，对对象生效
+void Buff::takeEffect(Creature* target) {
+    if (target) {
+        cout << "Buff " << name << " applied to creature." << endl;
+    }
 }
 
-void Buff::take_effect(int& numeric_value)
-{
+// 生效方法：对数值生效
+void Buff::takeEffect(int& numericValue) {
+    numericValue += this->numericValue;  // 将 Buff 的数值加到目标的属性上
+    cout << "Buff " << name << " increased value by " << numericValue << "." << endl;
 }
 
-Buff::~Buff()
-{
+// 更新持续时间
+void Buff::updateDuration() {
+    if (isActive && duration > 0) {
+        --duration;  // 每次调用时减去 1
+        if (duration == 0) {
+            isActive = false;  // 持续时间结束，Buff失效
+            cout << "Buff " << name << " has expired." << endl;
+        }
+    }
 }
 
-bool Buff::operator<(const Buff& other) const
-{
-    return false;
+// 比较两个buff的优先级
+bool Buff::operator<(const Buff& other) const {
+    return priority < other.priority;
 }
+
 
 class HealingBuff : public Buff
 {
 public:
-    HealingBuff(int healing_value)
-        : Buff("Healing", "Heals the player", ON_TURN_END, 1, 1) {}
+    HealingBuff(int healing_value);
     void take_effect(Creature* target)
     {
-        target->health_ += numeric_value_;
-        numeric_value_--;
         target->updateHealth();
         target->updateBuff();
     }

@@ -8,10 +8,11 @@
 // 命名空间
 using namespace cocos2d;
 
-extern int backgroundMusicId;
-extern float backgroundVolumn;
-extern int soundEffectId;
-extern float soundEffectVolumn;
+int backgroundMusicId = 0;         ///< 背景音乐 ID
+float backgroundVolumn = 0.3f;      ///< 背景音乐音量
+int soundEffectId = 0;             ///< 音效 ID
+float soundEffectVolumn = 0.3f;     ///< 音效音量
+
 
 // 创建场景
 Scene* SettingsScene::createScene()
@@ -20,6 +21,21 @@ Scene* SettingsScene::createScene()
     auto layer = SettingsScene::create();
     scene->addChild(layer);
     return scene;
+}
+
+void audioPlayer(const std::string& audioPath, bool isLoop)
+{
+    if (isLoop) {
+        if (backgroundMusicId != 0) {
+            cocos2d::experimental::AudioEngine::stop(backgroundMusicId);
+        }
+        backgroundMusicId = cocos2d::experimental::AudioEngine::play2d(audioPath, isLoop, backgroundVolumn);
+        cocos2d::experimental::AudioEngine::setVolume(backgroundMusicId, backgroundVolumn);
+    }
+    else {
+        soundEffectId = cocos2d::experimental::AudioEngine::play2d(audioPath, isLoop, soundEffectVolumn);
+        cocos2d::experimental::AudioEngine::setVolume(soundEffectId, soundEffectVolumn);
+    }
 }
 
 // 初始化场景
@@ -72,6 +88,7 @@ bool SettingsScene::init()
     backgroundMusicVolumnSlider->loadProgressBarTexture("SliderBar.png");
     backgroundMusicVolumnSlider->setPosition(cocos2d::Vec2(400, 700));
     backgroundMusicVolumnSlider->setPercent(backgroundVolumn * 100);
+
     auto effectVolumnslider = cocos2d::ui::Slider::create();
     effectVolumnslider->loadBarTexture("SliderBackground.png");
     effectVolumnslider->loadSlidBallTextures("SliderNodeNormal.png", "SliderNodePress.png", "SliderNodeDisable.png");
@@ -86,10 +103,12 @@ bool SettingsScene::init()
             audioPlayer("ClickSoundEffect.mp3", false);
         }
         if (type == cocos2d::ui::Slider::EventType::ON_PERCENTAGE_CHANGED) {
-            const cocos2d::ui::Slider* backgroundMusicVolumnSlider = dynamic_cast<cocos2d::ui::Slider*>(sender);
-            const float percent = backgroundMusicVolumnSlider->getPercent();
+            const cocos2d::ui::Slider* slider = dynamic_cast<cocos2d::ui::Slider*>(sender);
+            const float percent = slider->getPercent();
             backgroundVolumn = percent / 100.0f;
+            // 设置背景音乐音量
             cocos2d::experimental::AudioEngine::setVolume(backgroundMusicId, backgroundVolumn);
+            audioPlayer("start.ogg", true);
         }
         });
 
@@ -99,17 +118,18 @@ bool SettingsScene::init()
             audioPlayer("ClickSoundEffect.mp3", false);
         }
         if (type == cocos2d::ui::Slider::EventType::ON_PERCENTAGE_CHANGED) {
-            const cocos2d::ui::Slider* effectVolumnslider = dynamic_cast<cocos2d::ui::Slider*>(sender);
-            const float percent = effectVolumnslider->getPercent();
+            const cocos2d::ui::Slider* slider = dynamic_cast<cocos2d::ui::Slider*>(sender);
+            const float percent = slider->getPercent();
             soundEffectVolumn = percent / 100.0f;
+            // 设置音效音量
             cocos2d::experimental::AudioEngine::setVolume(soundEffectId, soundEffectVolumn);
         }
-
         });
 
     // 将滑动条添加至场景
     this->addChild(backgroundMusicVolumnSlider);
     this->addChild(effectVolumnslider);
+
     // 创建返回按钮（HoverButton）
     auto backButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
     backButton->setPosition(Vec2(1200, 300));  // 设置按钮位置

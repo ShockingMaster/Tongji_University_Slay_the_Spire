@@ -110,13 +110,13 @@ bool MapScene::init() {
         });
 
     this->addChild(backButton);
-    //接下来绘制地图，基本就是不同层数依次绘制，懒得优化了
+    //接下来绘制地图，基本就是不同层数依次绘制,然后增加一些提升可玩性的限制
     srand(static_cast<unsigned>(time(nullptr)));
     for (int i = 1; i < 9; i++) {  // 8层节点
         int ran;
         while (1) {
             ran = rand();
-            if (ran < 100 && ran>-100) {
+            if (ran < 50 && ran>-50) {
                 break;
             }
         }
@@ -127,10 +127,15 @@ bool MapScene::init() {
             Vec2 two = Vec2(900, 300-ran);
             Vec2 three = Vec2(1300+ran, 460);
             Vec2 four = Vec2(1500, 320-ran);
-            int ran1 = rand() % 6 + 1;
-            int ran2 = rand() % 6 + 1;
-            int ran3 = rand() % 6 + 1;
-            int ran4 = rand() % 6 + 1;
+            //前五层不出现精英敌人 第一层不出现休息
+            int ranNum = rand() % 6 + 1;
+            int ran1 = (ranNum == Elite|| ranNum == Rest) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran2 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran3 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran4 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
             MapNode* Node1 = MapNode::create(one, ran1);
             Node1->level = 1;
             levelNodes.push_back(Node1);
@@ -153,10 +158,14 @@ bool MapScene::init() {
             Vec2 two = Vec2(840, 560-ran);
             Vec2 three = Vec2(1200+ran, 680);
             Vec2 four = Vec2(1510, 590 + ran);
-            int ran1 = rand() % 6 + 1;
-            int ran2 = rand() % 6 + 1;
-            int ran3 = rand() % 6 + 1;
-            int ran4 = rand() % 6 + 1;
+            int ranNum = rand() % 6 + 1;
+            int ran1 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran2 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran3 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran4 = (ranNum == Elite) ? Combat : ranNum;
             MapNode* Node1 = MapNode::create(one, ran1);
             Node1->level = 2;
             levelNodes.push_back(Node1);
@@ -179,10 +188,14 @@ bool MapScene::init() {
             Vec2 two = Vec2(910, 990 + ran);
             Vec2 three = Vec2(1100 + ran, 880);
             Vec2 four = Vec2(1450 + ran, 840);
-            int ran1 = rand() % 6 + 1;
-            int ran2 = rand() % 6 + 1;
-            int ran3 = rand() % 6 + 1;
-            int ran4 = rand() % 6 + 1;
+            int ranNum = rand() % 6 + 1;
+            int ran1 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran2 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran3 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran4 = (ranNum == Elite) ? Combat : ranNum;
             MapNode* Node1 = MapNode::create(one, ran1);
             Node1->level = 3;
             levelNodes.push_back(Node1);
@@ -205,10 +218,14 @@ bool MapScene::init() {
             Vec2 two = Vec2(900, 200 + ran);
             Vec2 three = Vec2(1300, 140);
             Vec2 four = Vec2(1500, ran+ 280);
-            int ran1 = rand() % 6 + 1;
-            int ran2 = rand() % 6 + 1;
-            int ran3 = rand() % 6 + 1;
-            int ran4 = rand() % 6 + 1;
+            int ranNum = rand() % 6 + 1;
+            int ran1 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran2 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran3 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran4 = (ranNum == Elite) ? Combat : ranNum;
             MapNode* Node1 = MapNode::create(map2->getPosition() + one, ran1);
             Node1->level = i;
             levelNodes.push_back(Node1);
@@ -231,10 +248,14 @@ bool MapScene::init() {
             Vec2 two = Vec2(800 + ran, 510);
             Vec2 three = Vec2(1000, 550 + ran);
             Vec2 four = Vec2(1450, 400 + ran);
-            int ran1 = rand() % 6 + 1;
-            int ran2 = rand() % 6 + 1;
-            int ran3 = rand() % 6 + 1;
-            int ran4 = rand() % 6 + 1;
+            int ranNum = rand() % 6 + 1;
+            int ran1 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran2 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran3 = (ranNum == Elite) ? Combat : ranNum;
+            ranNum = rand() % 6 + 1;
+            int ran4 = (ranNum == Elite) ? Combat : ranNum;
             MapNode* Node1 = MapNode::create(map2->getPosition() + one, ran1);
             Node1->level = i;
             levelNodes.push_back(Node1);
@@ -336,17 +357,17 @@ bool MapScene::init() {
     //接下来添加固定节点
     
     //第九层 应该被固定为休息区域
-    MapNode* Node9 = MapNode::create(map3->getPosition() + Vec2(1000, 900), 3);
+    MapNode* Node9 = MapNode::create(map3->getPosition() + Vec2(1000, 900), Rest);
     Node9->level = 9;
     mapContainer->addChild(Node9);
     MapNodes.push_back({ Node9 });
     //第十层 被固定为商店区域
-    MapNode* Node10 = MapNode::create(map4->getPosition() + Vec2(1000, 100), 5);
+    MapNode* Node10 = MapNode::create(map4->getPosition() + Vec2(1000, 100), Shop);
     Node10->level = 10;
     mapContainer->addChild(Node10);
     MapNodes.push_back({ Node10 });
     //第十一层 被固定为Boss
-    MapNode* Node11 = MapNode::create(map4->getPosition() + Vec2(1000, 600), 7);
+    MapNode* Node11 = MapNode::create(map4->getPosition() + Vec2(1000, 600), Boss);
     Node11->level = 11;
     mapContainer->addChild(Node11);
     MapNodes.push_back({ Node11 });
