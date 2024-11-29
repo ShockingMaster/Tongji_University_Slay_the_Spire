@@ -4,6 +4,7 @@
 #include "HoverButton.h"
 #include "const.h"
 #include "AudioPlayer.h"
+#include "Player.h"
 #include "HelloWorldScene.h"
 #include "MenuScene.h"
 
@@ -22,8 +23,7 @@ using namespace std;
 using namespace cocos2d;
 
 // 全局变量，用于保存玩家昵称
-string PlayerName;
-
+Player player;
 // 创建场景方法
 Scene* InitialScene::createScene()
 {
@@ -36,6 +36,7 @@ Scene* InitialScene::createScene()
 
     return scene;
 }
+string PlayerName;
 
 // 初始化场景方法
 bool InitialScene::init()
@@ -47,7 +48,6 @@ bool InitialScene::init()
 
     // 播放背景音乐
     audioPlayer(START_MUSIC, true);
-
     // 获取屏幕尺寸
     const auto screenSize = cocos2d::Director::getInstance()->getVisibleSize();
 
@@ -120,7 +120,7 @@ bool InitialScene::init()
                     }, 1.0, "HideInvalidPromptLabel");
             }
             else {
-                PlayerName = nickname;
+                player.name_ = PlayerName;
                 this->scheduleOnce([](float dt) {
                     // 跳转到下一个场景
                     auto nextScene = MenuScene::createScene();

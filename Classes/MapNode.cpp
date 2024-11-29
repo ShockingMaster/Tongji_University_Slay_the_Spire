@@ -1,5 +1,5 @@
 #include "MapNode.h"
-
+#include "RestScene.h"
 // 构造函数，初始化 MapNode 对象的默认属性
 MapNode::MapNode()
     : isVisited(false),         // 默认未访问
@@ -163,7 +163,7 @@ void MapNode::onClick() {
         currentLevel++; // 更新当前层级
         this->setVisited(true); // 标记当前节点已访问
         visitPath.push_back(this);
-        sprite->setColor(Color3B(165, 42, 42));  // 将精灵颜色设置为绿色
+        sprite->setColor(Color3B(165, 42, 42));  
         return;
     }
   
@@ -197,6 +197,12 @@ void MapNode::onClick() {
     }
     CCLOG("Node clicked! Type: %d", type); // 输出节点点击的日志信息
     
+    if (type == Rest) {
+        this->scheduleOnce([](float dt) {
+            auto nextScene = RestScene::createScene(); // 创建目标场景
+            Director::getInstance()->pushScene(TransitionFade::create(1.0f, nextScene)); 
+            }, 2.0f, "LoadNextScene");
+    }
 }
 
 // 获取节点位置

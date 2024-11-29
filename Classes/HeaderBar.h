@@ -41,9 +41,6 @@ public:
     // 更新头栏信息
     void updateHeader(Player* player);
 
-    // 显示头栏内容
-    void displayHeader();
-
     // 静态创建函数（Cocos2d约定）
     static HearderBar* create(Player* player);
 
@@ -57,6 +54,33 @@ public:
     void setPotions(const vector<Potion*>& potions);
     void setLevel(int level);
 };
+
+// GlobalNode 类，用于存储常驻元素
+class GlobalNode : public Node {
+public:
+    static GlobalNode* getInstance() {
+        static GlobalNode instance;
+        return &instance;
+    }
+
+    void addToScene(Scene* scene) {
+        scene->addChild(this);  // 将常驻节点添加到场景中
+    }
+
+    void removeFromScene() {
+        if (this->getParent()) {
+            this->getParent()->removeChild(this);  // 移除常驻节点
+        }
+    }
+
+    void addHeaderBar(HearderBar* headerBar) {
+        this->addChild(headerBar);
+    }
+
+private:
+    GlobalNode() {}  // 防止外部实例化
+};
+
 
 #endif // _HEADER_BAR_H_
 

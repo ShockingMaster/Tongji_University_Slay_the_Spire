@@ -5,12 +5,13 @@
 #include "SelectionScene.h"              // 引入选择场景
 #include "HoverButton.h"                 // 引入HoverButton类，用于按钮的悬停效果
 #include "const.h"
+#include "Player.h"
 #include "AudioPlayer.h"
 
 using namespace std;                    // 使用标准命名空间
 using namespace cocos2d;                // 使用Cocos2d命名空间
 
-extern string PlayerName;              // 外部定义的玩家名称变量
+extern Player player;
 
 /**
  * MenuScene类：游戏主菜单场景，包含开始游戏、游戏设置和退出游戏按钮。
@@ -51,7 +52,7 @@ bool MenuScene::init() {
     this->addChild(background2);
 
     // 创建显示玩家名称的标签
-    auto playerNameLabel = Label::createWithTTF("Player: " + PlayerName,
+    auto playerNameLabel = Label::createWithTTF("Player: " + player.name_,
         "Fonts/FangZhengZhaoGeYuan.ttf", 40);
     playerNameLabel->setPosition(Vec2(20, screenSize.height + 150)); // 设置在左上角位置
     playerNameLabel->setAnchorPoint(Vec2(0, 1));                      // 设置锚点为左上角

@@ -36,12 +36,12 @@ bool HearderBar::init(Player* player) {
 
     // 初始化生命值图标并添加到背景
     healthIcon = Sprite::create("health_icon.png");
-    healthIcon->setPosition(Vec2(175, 100)); // 在 bar.png 的顶部显示
+    healthIcon->setPosition(Vec2(280, 100)); // 在 bar.png 的顶部显示
     backgroundBar->addChild(healthIcon);
 
     // 初始化金币图标并添加到背景
     coinsIcon = Sprite::create("coins_icon.png");
-    coinsIcon->setPosition(Vec2(450, 100)); // 与 healthIcon 垂直对齐
+    coinsIcon->setPosition(Vec2(650, 100)); // 与 healthIcon 垂直对齐
     backgroundBar->addChild(coinsIcon);
 
     // 初始化药水容器并添加到背景
@@ -50,27 +50,31 @@ bool HearderBar::init(Player* player) {
     backgroundBar->addChild(potionIcons);
 
     // 初始化标签并添加到背景
-    string playerinfo = name + character;
-    nameLabel = Label::createWithSystemFont(playerinfo, "Arial", 30);
-    nameLabel->setPosition(Vec2(70, 100)); // 顶部显示名称
+    string playerInfo = name + " (" + character + ")";  // 合并name和character
+    nameLabel = Label::createWithSystemFont(playerInfo, "Marker Felt.ttf", 30);  // 使用艺术字体
+    nameLabel->setPosition(Vec2(100, 100)); // 顶部显示名称
     backgroundBar->addChild(nameLabel);
 
-    healthLabel = Label::createWithSystemFont("Health: " + to_string(health) + "/" + to_string(fullHealth), "Arial", 30);
-    healthLabel->setPosition(Vec2(300, 100)); // 紧邻 healthIcon
+    // 修改生命标签：红色
+    healthLabel = Label::createWithSystemFont("Health: " + to_string(health) + "/" + to_string(fullHealth), "Marker Felt.ttf", 30); // 使用艺术字体
+    healthLabel->setPosition(Vec2(420, 100)); // 紧邻 healthIcon
+    healthLabel->setColor(Color3B::RED);  // 设置为红色
     backgroundBar->addChild(healthLabel);
 
-    coinsLabel = Label::createWithSystemFont("Coins: " + to_string(coins), "Arial", 30);
-    coinsLabel->setPosition(Vec2(550, 100)); // 紧邻 coinsIcon
+    // 修改金币标签：金黄色
+    coinsLabel = Label::createWithSystemFont("Coins: " + to_string(coins), "Marker Felt.ttf", 30); // 使用艺术字体
+    coinsLabel->setPosition(Vec2(750, 100)); // 紧邻 coinsIcon
+    coinsLabel->setColor(Color3B(255, 223, 0));  // 设置为金黄色
     backgroundBar->addChild(coinsLabel);
 
-    levelLabel = Label::createWithSystemFont("Level: " + to_string(level), "Arial", 30);
-    levelLabel->setPosition(Vec2(1000, 100)); // 显示当前关卡信息
+    levelLabel = Label::createWithSystemFont("Level: " + to_string(level), "Marker Felt.ttf", 30); // 使用艺术字体
+    levelLabel->setPosition(Vec2(1300, 100)); // 显示当前关卡信息
     backgroundBar->addChild(levelLabel);
 
-    displayHeader();
 
     return true;
 }
+
 
 
 // 更新头栏信息
@@ -90,12 +94,6 @@ void HearderBar::updateHeader(Player* player) {
         potionSprite->setPosition(Vec2(50 + i * 30, 0));
         potionIcons->addChild(potionSprite);
     }*/
-}
-
-// 显示头栏内容
-void HearderBar::displayHeader() {
-    // 显示名称
-    nameLabel->setString(name);
 }
 
 // 静态创建函数

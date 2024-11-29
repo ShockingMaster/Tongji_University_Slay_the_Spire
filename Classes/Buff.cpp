@@ -3,10 +3,6 @@
 #include "Buff.h"
 #include "Creature.h"  
 
-// 构造函数
-Buff::Buff(string name, string description, TriggerType triggerType, int duration, int priority, bool isStackable, int numericValue)
-    : name(name), description(description), triggerType(triggerType), duration(duration), priority(priority),
-    isStackable(isStackable), numericValue(numericValue), isActive(true) {}
 
 // 生效方法，对对象生效
 void Buff::takeEffect(Creature* target) {
@@ -31,12 +27,6 @@ void Buff::updateDuration() {
         }
     }
 }
-
-// 比较两个buff的优先级
-bool Buff::operator<(const Buff& other) const {
-    return priority < other.priority;
-}
-
 
 class HealingBuff : public Buff
 {

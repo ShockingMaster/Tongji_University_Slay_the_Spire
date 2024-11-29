@@ -23,11 +23,14 @@
  ****************************************************************************/
 
 #include "HelloWorldScene.h"
+#include "StartScene.h"
 #include "SimpleAudioEngine.h"
 #include "Player.h"
+#include "cocos2d.h"
 #include "HeaderBar.h"
 USING_NS_CC;
 
+using namespace cocos2d;
 Scene* HelloWorld::createScene()
 {
     return HelloWorld::create();
@@ -58,12 +61,6 @@ bool HelloWorld::init()
     player->health_ = 50;
     player->fullhealth_ = 100;
     player->potions_ = {};
-
-    // 初始化并添加 HeaderBar
-    auto headbar = HearderBar::create(player); // 创建 HearderBar 对象
-    headbar->setPosition(Vec2(0, 1150));          // 设置位置（在屏幕底部）
-    this->addChild(headbar);                   // 添加到场景中
-
     return true;
 }
 

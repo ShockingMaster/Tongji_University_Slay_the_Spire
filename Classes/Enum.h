@@ -4,6 +4,7 @@ enum YesOrNo
     YES,
     NO
 };
+
 //给一个TriggerType枚举，表示buff的触发时机
 enum TriggerType
 {
