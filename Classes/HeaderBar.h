@@ -19,7 +19,6 @@ private:
     int fullHealth;           // 最大生命值
     int coins;                // 金币数量
     vector<Potion*> potions;  // 药水
-    int level; // 当前关卡
 
     Label* nameLabel;         // 显示名称的标签
     Label* healthLabel;       // 显示生命值的标签
@@ -34,7 +33,7 @@ public:
     // 构造函数和析构函数
     
     
-    
+    int level; // 当前关卡
     HeaderBar();
     ~HeaderBar();
 

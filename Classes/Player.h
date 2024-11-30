@@ -7,6 +7,7 @@ class Potion;
 class Player : public Creature
 {
 public:
+    
     string character_;
     int coins_;  //金币数量
     static Player* getInstance();//返回唯一实例

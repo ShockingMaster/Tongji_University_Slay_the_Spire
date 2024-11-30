@@ -1,5 +1,6 @@
 #include "MapNode.h"
 #include "RestScene.h"
+#include "event1.h"
 #include "audioPlayer.h"
 // 构造函数，初始化 MapNode 对象的默认属性
 MapNode::MapNode()
@@ -164,7 +165,19 @@ void MapNode::onClick() {
         currentLevel++; // 更新当前层级
         this->setVisited(true); // 标记当前节点已访问
         visitPath.push_back(this);
-        sprite->setColor(Color3B(165, 42, 42));  
+        sprite->setColor(Color3B(165, 42, 42));
+        if (type == Rest) {
+            this->scheduleOnce([](float dt) {
+                auto nextScene = RestScene::createScene(); // 创建目标场景
+                Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                }, 1.0f, "LoadNextScene");
+        }
+        if (type == UnknownEvent) {
+            this->scheduleOnce([](float dt) {
+                auto nextScene = event1::createScene(); // 创建目标场景
+                Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                }, 1.0f, "LoadNextScene");
+        }
         return;
     }
   
@@ -202,9 +215,16 @@ void MapNode::onClick() {
     if (type == Rest) {
         this->scheduleOnce([](float dt) {
             auto nextScene = RestScene::createScene(); // 创建目标场景
-            Director::getInstance()->pushScene(TransitionFade::create(0.0f, nextScene)); 
+            Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene)); 
             }, 1.0f, "LoadNextScene");
     }
+    if (type == UnknownEvent) {
+        this->scheduleOnce([](float dt) {
+            auto nextScene = event1::createScene(); // 创建目标场景
+            Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+            }, 1.0f, "LoadNextScene");
+    }
+    
 }
 
 // 获取节点位置

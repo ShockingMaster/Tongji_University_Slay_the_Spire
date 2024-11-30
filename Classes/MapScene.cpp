@@ -37,10 +37,12 @@ Scene* MapScene::createScene() {
 
 void MapScene::onEnter() {
     Scene::onEnter();
+    audioPlayer("start.ogg", true);
     CCLOG("onEnter called!");  // 调试输出
     auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
     if (headbar) {
         headbar->updateHeader(&player);  // 使用 player 的最新数据更新 headbar
+        headbar->level = currentLevel;
     }
 }
 /**
