@@ -121,14 +121,13 @@ bool InitialScene::init()
                     }, 1.0, "HideInvalidPromptLabel");
             }
             else {
-                player.name_ = PlayerName;
-                player.name_ = "google";
+                player.name_ = nickname;
                 player.character_ = "xx";
                 player.coins_ = 100;
                 player.health_ = 50;
                 player.fullhealth_ = 100;
                 player.potions_ = {};
-                
+
                 this->scheduleOnce([](float dt) {
                     // 跳转到下一个场景
                     auto nextScene = MenuScene::createScene();

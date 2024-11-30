@@ -1,5 +1,6 @@
 #include "MapNode.h"
 #include "RestScene.h"
+#include "audioPlayer.h"
 // 构造函数，初始化 MapNode 对象的默认属性
 MapNode::MapNode()
     : isVisited(false),         // 默认未访问
@@ -196,12 +197,13 @@ void MapNode::onClick() {
         }
     }
     CCLOG("Node clicked! Type: %d", type); // 输出节点点击的日志信息
-    
+    audioPlayer("clickSoundEffect.mp3", false);
+
     if (type == Rest) {
         this->scheduleOnce([](float dt) {
             auto nextScene = RestScene::createScene(); // 创建目标场景
-            Director::getInstance()->pushScene(TransitionFade::create(1.0f, nextScene)); 
-            }, 2.0f, "LoadNextScene");
+            Director::getInstance()->pushScene(TransitionFade::create(0.0f, nextScene)); 
+            }, 1.0f, "LoadNextScene");
     }
 }
 

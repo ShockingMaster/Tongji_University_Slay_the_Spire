@@ -28,21 +28,23 @@ bool RestScene::init() {
 
     // 播放背景音乐
     audioPlayer("../Resources/rest.ogg", true);
-    auto headbar = HeaderBar::create(&player);     
+    auto headbar = HeaderBar::create(&player);
     headbar->setPosition(Vec2(0, 1150));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
     headbar->setLocalZOrder(100);  // 将 headbar 的 Z 顺序设置为 100，确保它位于最上层
-    /* 创建背景（假设有一个背景图）
-    auto background = Sprite::create("../Resources/scene1.png");
+    auto background = Sprite::create("../Resources/room.jpg");
     background->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
-        Director::getInstance()->getVisibleSize().height / 2));
-    this->addChild(background);*/
+        Director::getInstance()->getVisibleSize().height / 2+200));
+    background->setScale(1.4f);
+    background->setOpacity(100);
+    this->addChild(background);
 
     // 创建休息按钮
     auto restButton = HoverButton::create("sleep.png", "sleep.png", "sleep.png");
     restButton->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 4,
         Director::getInstance()->getVisibleSize().height / 2));
-    restButton->addClickEventListener([this,headbar](Ref* sender) {
+    restButton->addClickEventListener([this, headbar](Ref* sender) {
+        audioPlayer("addhealth.ogg", false);
         // 恢复最大生命值的 30%
         player.health_ += player.fullhealth_ * 0.3f;
         // 确保血量不超过最大血量
@@ -57,13 +59,14 @@ bool RestScene::init() {
         returnButton->setPosition(Vec2(1000, 300));
         returnButton->addClickEventListener([this](Ref* sender) {
             // 传递玩家数据并返回地图
+            audioPlayer("clickSoundEffect.mp3", false);
             Director::getInstance()->popScene();
             });
         returnButton->setVisible(false);
         this->addChild(returnButton);
 
         // 创建 "继续" 标签
-        auto continueLabel = Label::createWithSystemFont(u8"继续", "Fonts/FangZhengZhaoGeYuan.ttf", 40);
+        auto continueLabel = Label::createWithSystemFont(u8"继续", "Fonts/Kreon-Bold.ttf", 40);
         continueLabel->setPosition(Vec2(1000, 300));
         continueLabel->setColor(Color3B::WHITE);
         this->addChild(continueLabel);
@@ -89,13 +92,14 @@ bool RestScene::init() {
         returnButton->setPosition(Vec2(1000, 300));
         returnButton->addClickEventListener([this](Ref* sender) {
             // 点击“继续”按钮时执行的逻辑
-            Director::getInstance()->popScene(); 
+            audioPlayer("clickSoundEffect.mp3", false);
+            Director::getInstance()->popScene();
             });
         returnButton->setVisible(false); // 初始时隐藏返回按钮
         this->addChild(returnButton);
 
         // 创建 "继续" 标签
-        auto continueLabel = Label::createWithSystemFont(u8"继续", "Fonts/FangZhengZhaoGeYuan.ttf", 40);
+        auto continueLabel = Label::createWithSystemFont(u8"继续", "Fonts/Kreon-Bold.ttf", 40);
         continueLabel->setPosition(Vec2(1000, 300));
         continueLabel->setColor(Color3B::WHITE);
         this->addChild(continueLabel);
@@ -108,18 +112,15 @@ bool RestScene::init() {
         this->runAction(Sequence::create(showReturnButton, nullptr));
         });
     this->addChild(smithButton);
-    auto InstructLabel = Label::createWithSystemFont(u8"欢迎来到休息房间", "Fonts/FangZhengZhaoGeYuan.ttf", 60);
-    InstructLabel->setPosition(Vec2(restButton->getPosition().x+500, restButton->getPosition().y + 500));
-    InstructLabel->setColor(Color3B::WHITE);
-    this->addChild(InstructLabel);
+   
     // 添加按钮上方的说明文字
-    auto restLabel = Label::createWithSystemFont(u8"休息 回复最大生命值的30%", "Fonts/FangZhengZhaoGeYuan.ttf", 50);
-    restLabel->setPosition(Vec2(restButton->getPosition().x, restButton->getPosition().y + 200));
+    auto restLabel = Label::createWithSystemFont(u8"休息 回复最大生命值的30%", "Fonts/Kreon-Bold.ttf", 60);
+    restLabel->setPosition(Vec2(restButton->getPosition().x, restButton->getPosition().y + 150));
     restLabel->setColor(Color3B::WHITE);
     this->addChild(restLabel);
 
-    auto smithLabel = Label::createWithSystemFont(u8"锻造 升级一张卡牌", "Fonts/FangZhengZhaoGeYuan.ttf", 50);
-    smithLabel->setPosition(Vec2(smithButton->getPosition().x, smithButton->getPosition().y + 200));
+    auto smithLabel = Label::createWithSystemFont(u8"锻造 升级一张卡牌", "Fonts/Kreon-Bold.ttf", 60);
+    smithLabel->setPosition(Vec2(smithButton->getPosition().x, smithButton->getPosition().y + 150));
     smithLabel->setColor(Color3B::WHITE);
     this->addChild(smithLabel);
 

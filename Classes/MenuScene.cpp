@@ -52,7 +52,7 @@ bool MenuScene::init() {
     this->addChild(background2);
 
     // 创建显示玩家名称的标签
-    auto playerNameLabel = Label::createWithTTF("Player: " + player.name_,
+    auto playerNameLabel = Label::createWithTTF("Player: "+player.name_,
         "Fonts/FangZhengZhaoGeYuan.ttf", 40);
     playerNameLabel->setPosition(Vec2(20, screenSize.height + 150)); // 设置在左上角位置
     playerNameLabel->setAnchorPoint(Vec2(0, 1));                      // 设置锚点为左上角

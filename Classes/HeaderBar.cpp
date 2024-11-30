@@ -51,23 +51,23 @@ bool HeaderBar::init(Player* player) {
 
     // 初始化标签并添加到背景
     string playerInfo = name + " (" + character + ")";  // 合并name和character
-    nameLabel = Label::createWithSystemFont(playerInfo, "Marker Felt.ttf", 30);  // 使用艺术字体
+    nameLabel = Label::createWithSystemFont(playerInfo, "Marker Felt.ttf", 40);  // 使用艺术字体
     nameLabel->setPosition(Vec2(100, 100)); // 顶部显示名称
     backgroundBar->addChild(nameLabel);
 
     // 修改生命标签：红色
-    healthLabel = Label::createWithSystemFont("Health: " + to_string(health) + "/" + to_string(fullHealth), "Marker Felt.ttf", 30); // 使用艺术字体
-    healthLabel->setPosition(Vec2(420, 100)); // 紧邻 healthIcon
+    healthLabel = Label::createWithSystemFont("Health: " + to_string(health) + "/" + to_string(fullHealth), "Marker Felt.ttf", 40); // 使用艺术字体
+    healthLabel->setPosition(Vec2(460, 100)); // 紧邻 healthIcon
     healthLabel->setColor(Color3B::RED);  // 设置为红色
     backgroundBar->addChild(healthLabel);
 
     // 修改金币标签：金黄色
-    coinsLabel = Label::createWithSystemFont("Coins: " + to_string(coins), "Marker Felt.ttf", 30); // 使用艺术字体
-    coinsLabel->setPosition(Vec2(750, 100)); // 紧邻 coinsIcon
+    coinsLabel = Label::createWithSystemFont("Coins: " + to_string(coins), "Marker Felt.ttf", 40); // 使用艺术字体
+    coinsLabel->setPosition(Vec2(790, 100)); // 紧邻 coinsIcon
     coinsLabel->setColor(Color3B(255, 223, 0));  // 设置为金黄色
     backgroundBar->addChild(coinsLabel);
 
-    levelLabel = Label::createWithSystemFont("Level: " + to_string(level), "Marker Felt.ttf", 30); // 使用艺术字体
+    levelLabel = Label::createWithSystemFont("Level: " + to_string(level), "Marker Felt.ttf", 40); // 使用艺术字体
     levelLabel->setPosition(Vec2(1300, 100)); // 显示当前关卡信息
     backgroundBar->addChild(levelLabel);
 

@@ -1,7 +1,5 @@
 #include "HoverButton.h"
 
-
-
 // 创建一个新的 HoverButton 实例
 HoverButton* HoverButton::create(const std::string& defaultButtonImage, const std::string& hoverButtonImage, const std::string& activeButtonImage)
 {

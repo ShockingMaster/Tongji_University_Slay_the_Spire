@@ -38,7 +38,7 @@ Scene* MapScene::createScene() {
 void MapScene::onEnter() {
     Scene::onEnter();
     CCLOG("onEnter called!");  // 调试输出
-   auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
+    auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
     if (headbar) {
         headbar->updateHeader(&player);  // 使用 player 的最新数据更新 headbar
     }
@@ -139,20 +139,20 @@ bool MapScene::init() {
         }
         vector<MapNode*> levelNodes;  // 当前层的节点
         if (i == 1) {
-            
-            Vec2 one = Vec2(500+ran, 410);
-            Vec2 two = Vec2(900, 300-ran);
-            Vec2 three = Vec2(1300+ran, 460);
-            Vec2 four = Vec2(1500, 320-ran);
+
+            Vec2 one = Vec2(500 + ran, 410);
+            Vec2 two = Vec2(900, 300 - ran);
+            Vec2 three = Vec2(1300 + ran, 460);
+            Vec2 four = Vec2(1500, 320 - ran);
             //前五层不出现精英敌人 第一层不出现休息
             int ranNum = rand() % 6 + 1;
-            int ran1 = (ranNum == Elite|| ranNum == Rest) ? Combat : ranNum;
+            int ran1 = (ranNum == Elite || ranNum == Rest|| ranNum == Shop) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
-            int ran2 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
+            int ran2 = (ranNum == Elite || ranNum == Rest || ranNum == Shop) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
-            int ran3 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
+            int ran3 = (ranNum == Elite || ranNum == Rest || ranNum == Shop) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
-            int ran4 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
+            int ran4 = (ranNum == Elite || ranNum == Rest || ranNum == Shop) ? Combat : ranNum;
             MapNode* Node1 = MapNode::create(one, ran1);
             Node1->level = 1;
             levelNodes.push_back(Node1);
@@ -172,8 +172,8 @@ bool MapScene::init() {
         }
         if (i == 2) {
             Vec2 one = Vec2(600 + ran, 600);
-            Vec2 two = Vec2(840, 560-ran);
-            Vec2 three = Vec2(1200+ran, 680);
+            Vec2 two = Vec2(840, 560 - ran);
+            Vec2 three = Vec2(1200 + ran, 680);
             Vec2 four = Vec2(1510, 590 + ran);
             int ranNum = rand() % 6 + 1;
             int ran1 = (ranNum == Elite) ? Combat : ranNum;
@@ -234,7 +234,7 @@ bool MapScene::init() {
             Vec2 one = Vec2(500 + ran, 230);
             Vec2 two = Vec2(900, 200 + ran);
             Vec2 three = Vec2(1300, 140);
-            Vec2 four = Vec2(1500, ran+ 280);
+            Vec2 four = Vec2(1500, ran + 280);
             int ranNum = rand() % 6 + 1;
             int ran1 = (ranNum == Elite) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
@@ -317,7 +317,7 @@ bool MapScene::init() {
             mapContainer->addChild(Node4);
         }
         if (i == 7) {
-            Vec2 one = Vec2(600+ran, 320);
+            Vec2 one = Vec2(600 + ran, 320);
             Vec2 two = Vec2(750, 210 + ran);
             Vec2 three = Vec2(1000 + ran, 290);
             Vec2 four = Vec2(1300, 350);
@@ -372,7 +372,7 @@ bool MapScene::init() {
     }
 
     //接下来添加固定节点
-    
+
     //第九层 应该被固定为休息区域
     MapNode* Node9 = MapNode::create(map3->getPosition() + Vec2(1000, 900), Rest);
     Node9->level = 9;
