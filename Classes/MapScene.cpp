@@ -83,6 +83,15 @@ bool MapScene::init() {
     auto map3 = Sprite::create("map3.png");
     auto map4 = Sprite::create("map4.png");
 
+    auto map5 = Sprite::create("map5.png");
+    map5->setPosition(Vec2(1800,800));
+    this->addChild(map5);
+
+    auto continueLabel3 = Label::createWithSystemFont(u8"战斗怪物\n战斗精英\n随机事件\n随机宝箱\n休息房间\n工具商店\n  BOSS", "Fonts/Kreon-Bold.ttf", 45);
+    continueLabel3->setPosition(Vec2(1800, 750));
+    continueLabel3->setColor(Color3B::BLACK);
+    this->addChild(continueLabel3);
+
     // 设置地图的锚点和初始位置，地图依次堆叠
     map1->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     map2->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);

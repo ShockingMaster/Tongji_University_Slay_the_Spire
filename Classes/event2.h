@@ -9,6 +9,12 @@ public:
 
     virtual bool init();
 
+
+
+
+
+
+
     CREATE_FUNC(event2);
 
 }; 

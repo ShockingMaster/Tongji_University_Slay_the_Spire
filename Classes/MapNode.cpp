@@ -1,6 +1,8 @@
 #include "MapNode.h"
 #include "RestScene.h"
 #include "event1.h"
+#include "event2.h"
+
 #include "audioPlayer.h"
 // 构造函数，初始化 MapNode 对象的默认属性
 MapNode::MapNode()
@@ -214,7 +216,7 @@ void MapNode::onClick() {
             }
             if (type == UnknownEvent) {
                 this->scheduleOnce([](float dt) {
-                    auto nextScene = event1::createScene(); // 创建目标场景
+                    auto nextScene = event2::createScene(); // 创建目标场景
                     Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                     }, 1.0f, "LoadNextScene");
             }

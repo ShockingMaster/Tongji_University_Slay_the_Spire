@@ -12,11 +12,11 @@ Player* Player::getInstance() {
 }
 
 void Player::start_turn() {
-    block_ = 0;  // Reset block at the start of the turn
+    block_ = 0; 
 }
 
 void Player::end_turn() {
-    // Discard cards, apply end-turn Buffs, etc.
+    
 }
 
 void Player::addPotion(Potion* potion)
