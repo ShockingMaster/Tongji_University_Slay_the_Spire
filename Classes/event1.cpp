@@ -7,7 +7,7 @@
 
 using namespace std;
 using namespace cocos2d;
-extern Player player;
+
 Scene* event1::createScene() {
     // 创建一个新的空场景
     auto scene = Scene::create();
@@ -24,7 +24,8 @@ bool event1::init() {
 
     // 播放音频显示头栏
     audioPlayer("event.ogg", true);
-    auto headbar = HeaderBar::create(&player);
+    Player* player = Player::getInstance();
+    auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 1150));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
     headbar->setLocalZOrder(100);  // 将 headbar 的 Z 顺序设置为 100，确保它位于最上层
@@ -48,18 +49,18 @@ bool event1::init() {
     button1->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
         // 比如减少金币并获得遗物
-        if (player.coins_ <= 85) {
+        if (player->coins_ <= 85) {
             auto continueLabel3 = Label::createWithSystemFont(u8"金币不足", "Fonts/Kreon-Bold.ttf", 45);
             continueLabel3->setPosition(Vec2(1000, 600));
             continueLabel3->setColor(Color3B::WHITE);
             this->addChild(continueLabel3);
         }
         else {
-            player.coins_ -= 85;
-            headbar->updateHeader(&player);
+            player->coins_ -= 85;
+            headbar->updateHeader(player);
             audioPlayer("gold.ogg", false);
             //获得遗物逻辑待更新
-            auto delay = DelayTime::create(3.0f); // 创建一个2秒的延迟动作
+            auto delay = DelayTime::create(2.0f); // 创建一个2秒的延迟动作
             auto pop = CallFunc::create([]() {
                 Director::getInstance()->popScene(); // 延迟后执行popScene()
                 });
@@ -81,7 +82,7 @@ bool event1::init() {
     button2->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
         // 例如，返回到上一场景
-        auto delay = DelayTime::create(3.0f); 
+        auto delay = DelayTime::create(2.0f); 
         auto pop = CallFunc::create([]() {
             Director::getInstance()->popScene(); // 延迟后执行popScene()
             });

@@ -14,7 +14,7 @@
 using namespace std;
 using namespace cocos2d;
 
-extern Player player;
+
 
 // 当前走过的结点路径，用于记录玩家或角色在地图上走过的节点，通常会用于路径回溯或显示。
 vector<MapNode*> visitPath;
@@ -37,12 +37,13 @@ Scene* MapScene::createScene() {
 
 void MapScene::onEnter() {
     Scene::onEnter();
-    audioPlayer("start.ogg", true);
+    audioPlayer("menu.ogg", true);
     CCLOG("onEnter called!");  // 调试输出
     auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
     if (headbar) {
-        headbar->updateHeader(&player);  // 使用 player 的最新数据更新 headbar
-        headbar->level = currentLevel;
+        Player* player = Player::getInstance();
+        headbar->updateHeader(player);  // 使用 player 的最新数据更新 headbar
+        headbar->level = currentLevel-1;
     }
 }
 /**
@@ -54,17 +55,21 @@ bool MapScene::init() {
     if (!Scene::init()) {
         return false;
     }
-    auto headbar = HeaderBar::create(&player);
+    Player* player = Player::getInstance();
+    player->character_ = "xx";
+    player->coins_ = 100;
+    player->health_ = 50;
+    player->fullhealth_ = 100;
+    player->potions_ = {};
+    auto headbar = HeaderBar::create(player);
     headbar->setName("HeaderBar");  // 设置名称
     headbar->setPosition(Vec2(0, 1150));
     this->addChild(headbar);
-
-
     headbar->setLocalZOrder(100);  // 将 headbar 的 Z 顺序设置为 100，确保它位于最上层
     currentLevel = 1;
     visitPath.clear();
     // 播放背景音乐
-    audioPlayer("start.ogg", true);
+    audioPlayer("menu.ogg", true);
     const auto screenSize = Director::getInstance()->getVisibleSize();
     audioPlayer("../Resources/start.ogg", true);
 

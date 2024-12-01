@@ -132,11 +132,8 @@ void MapNode::setSpriteByType(int type) {
 
     sprite->setScale(1.5f); // 设置精灵的缩放比例
     if (isVisited) {
-        auto visitedSprite = Sprite::create("circle4.png");  // "visited.png" 是标识已访问的精灵图像
-        if (visitedSprite) {
-            visitedSprite->setPosition(position);  // 设置相同的位置
-            this->addChild(visitedSprite);
-        } // 添加到节点
+        
+        sprite->setColor(Color3B(165, 42, 42));
     }
     sprite->setPosition(position); // 设置精灵的位置
     this->addChild(sprite); // 添加精灵到节点
@@ -162,7 +159,6 @@ extern int currentLevel;
 void MapNode::onClick() {
 
     if (currentLevel == 1&&this->level==1) {
-        currentLevel++; // 更新当前层级
         this->setVisited(true); // 标记当前节点已访问
         visitPath.push_back(this);
         sprite->setColor(Color3B(165, 42, 42));
@@ -178,6 +174,7 @@ void MapNode::onClick() {
                 Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                 }, 1.0f, "LoadNextScene");
         }
+        currentLevel++;
         return;
     }
   
@@ -203,27 +200,28 @@ void MapNode::onClick() {
         }
 
         if (isConnected) {
-            currentLevel++; // 更新当前层级
             this->setVisited(true); // 标记当前节点已访问
             visitPath.push_back(this);
             sprite->setColor(Color3B(165,42,42));  
+            CCLOG("Node clicked! Type: %d", type); // 输出节点点击的日志信息
+            audioPlayer("clickSoundEffect.mp3", false);
+
+            if (type == Rest) {
+                this->scheduleOnce([](float dt) {
+                    auto nextScene = RestScene::createScene(); // 创建目标场景
+                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                    }, 1.0f, "LoadNextScene");
+            }
+            if (type == UnknownEvent) {
+                this->scheduleOnce([](float dt) {
+                    auto nextScene = event1::createScene(); // 创建目标场景
+                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                    }, 1.0f, "LoadNextScene");
+            }
+            currentLevel++;
         }
     }
-    CCLOG("Node clicked! Type: %d", type); // 输出节点点击的日志信息
-    audioPlayer("clickSoundEffect.mp3", false);
-
-    if (type == Rest) {
-        this->scheduleOnce([](float dt) {
-            auto nextScene = RestScene::createScene(); // 创建目标场景
-            Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene)); 
-            }, 1.0f, "LoadNextScene");
-    }
-    if (type == UnknownEvent) {
-        this->scheduleOnce([](float dt) {
-            auto nextScene = event1::createScene(); // 创建目标场景
-            Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
-            }, 1.0f, "LoadNextScene");
-    }
+    
     
 }
 

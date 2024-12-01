@@ -11,8 +11,6 @@
 using namespace std;                    // 使用标准命名空间
 using namespace cocos2d;                // 使用Cocos2d命名空间
 
-extern Player player;
-
 /**
  * MenuScene类：游戏主菜单场景，包含开始游戏、游戏设置和退出游戏按钮。
  */
@@ -52,7 +50,8 @@ bool MenuScene::init() {
     this->addChild(background2);
 
     // 创建显示玩家名称的标签
-    auto playerNameLabel = Label::createWithTTF("Player: "+player.name_,
+    Player* player = Player::getInstance();
+    auto playerNameLabel = Label::createWithTTF("Player: "+player->name_,
         "Fonts/FangZhengZhaoGeYuan.ttf", 40);
     playerNameLabel->setPosition(Vec2(20, screenSize.height + 150)); // 设置在左上角位置
     playerNameLabel->setAnchorPoint(Vec2(0, 1));                      // 设置锚点为左上角

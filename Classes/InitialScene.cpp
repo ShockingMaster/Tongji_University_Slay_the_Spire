@@ -22,8 +22,7 @@ constexpr char CLICK_SOUND[] = "ClickSoundEffect.mp3";               // 点击音效
 using namespace std;
 using namespace cocos2d;
 
-// 全局变量，用于保存玩家昵称
-Player player;
+
 
 // 创建场景方法
 Scene* InitialScene::createScene()
@@ -121,12 +120,13 @@ bool InitialScene::init()
                     }, 1.0, "HideInvalidPromptLabel");
             }
             else {
-                player.name_ = nickname;
-                player.character_ = "xx";
-                player.coins_ = 100;
-                player.health_ = 50;
-                player.fullhealth_ = 100;
-                player.potions_ = {};
+                Player* player = Player::getInstance();
+                player->name_ = nickname;
+                player->character_ = "xx";
+                player->coins_ = 100;
+                player->health_ = 50;
+                player->fullhealth_ = 100;
+                player->potions_ = {};
 
                 this->scheduleOnce([](float dt) {
                     // 跳转到下一个场景

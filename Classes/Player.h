@@ -16,7 +16,6 @@ public:
     vector<Potion*> potions_;
     void addPotion(Potion* potion);//需要调用本体的addPotion()
     void init();//每场战斗开始时对角色进行初始化
-    //static Player* instance_;
 private:
     static Player* instance_;
     

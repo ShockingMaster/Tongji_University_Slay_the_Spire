@@ -8,7 +8,7 @@
 #include "HeaderBar.h"
 
 
-extern Player player;
+
 using namespace std;
 using namespace cocos2d;
 
@@ -25,10 +25,10 @@ bool RestScene::init() {
     if (!Scene::init()) {
         return false;  // 如果初始化失败则返回 false
     }
-
+    Player* player = Player::getInstance();
     // 播放背景音乐
     audioPlayer("../Resources/rest.ogg", true);
-    auto headbar = HeaderBar::create(&player);
+    auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 1150));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
     headbar->setLocalZOrder(100);  // 将 headbar 的 Z 顺序设置为 100，确保它位于最上层
@@ -43,16 +43,18 @@ bool RestScene::init() {
     auto restButton = HoverButton::create("sleep.png", "sleep.png", "sleep.png");
     restButton->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 4,
         Director::getInstance()->getVisibleSize().height / 2));
+
     restButton->addClickEventListener([this, headbar](Ref* sender) {
-        audioPlayer("addhealth.ogg", false);
+        audioPlayer("addhealth.ogg", false); 
+        Player* player = Player::getInstance();
         // 恢复最大生命值的 30%
-        player.health_ += player.fullhealth_ * 0.3f;
+        player->health_ += player->fullhealth_ * 0.3f;
         // 确保血量不超过最大血量
-        if (player.health_ > player.fullhealth_) {
-            player.health_ = player.fullhealth_;  // 如果恢复后的血量超过最大血量，设为最大血量
+        if (player->health_ > player->fullhealth_) {
+            player->health_ = player->fullhealth_;  // 如果恢复后的血量超过最大血量，设为最大血量
         }
         // 更新头栏中的血量显示
-        headbar->updateHeader(&player);
+        headbar->updateHeader(player);
 
         // 创建返回按钮
         auto returnButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");

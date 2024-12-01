@@ -5,7 +5,7 @@
 using namespace std;
 using namespace cocos2d;
 
-extern int currentLevel;
+extern int  currentLevel;
 // 构造函数
 HeaderBar::HeaderBar() 
     : name(""), character(""), health(0), fullHealth(0), coins(0), level(0),
@@ -67,7 +67,7 @@ bool HeaderBar::init(Player* player) {
     coinsLabel->setColor(Color3B(255, 223, 0));  // 设置为金黄色
     backgroundBar->addChild(coinsLabel);
 
-    levelLabel = Label::createWithSystemFont("Level: " + to_string(currentLevel), "Marker Felt.ttf", 40); // 使用艺术字体
+    levelLabel = Label::createWithSystemFont("Level: " + to_string( currentLevel-1), "Marker Felt.ttf", 40); // 使用艺术字体
     levelLabel->setPosition(Vec2(1300, 100)); // 显示当前关卡信息
     backgroundBar->addChild(levelLabel);
 
@@ -85,7 +85,7 @@ void HeaderBar::updateHeader(Player* player) {
     // 更新标签内容
     healthLabel->setString("Health: " + to_string(health) + "/" + to_string(fullHealth));
     coinsLabel->setString("Coins: " + to_string(coins));
-    levelLabel->setString("Level: " + to_string(currentLevel));
+    levelLabel->setString("Level: " + to_string( currentLevel-1));
 
     // 更新药水图标，图没找齐，先注释掉
     /*potionIcons->removeAllChildren(); // 清空当前药水图标
@@ -127,7 +127,7 @@ void HeaderBar::setPlayerInfo(Player* player) {
     this->fullHealth = player->fullhealth_;
     this->coins = player->coins_;
     this->potions = player->potions_;
-    this->level = currentLevel;
+    this->level =  currentLevel-1;
 }
 
 // 设置生命值
