@@ -31,6 +31,7 @@ bool HeaderBar::init(Player* player) {
         CCLOG("Failed to load bar.png");
         return false;
     }
+    backgroundBar->setScaleX(1.05);
     backgroundBar->setAnchorPoint(Vec2(0.5, 0));  // 锚点设置为底部中心
     backgroundBar->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2, 50)); // 底部中心位置
     this->addChild(backgroundBar);
@@ -77,7 +78,7 @@ bool HeaderBar::init(Player* player) {
         "deck.png",    // 按下状态图片
         [this](Ref* sender) {
             // 创建并显示 CardLayer
-            auto cardLayer = CardLayer::create({});
+            auto cardLayer = CardLayer::create({NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL },3);
             Director::getInstance()->getRunningScene()->addChild(cardLayer); // 使用更高的层级，确保在 HeaderBar 之上
         }
     );

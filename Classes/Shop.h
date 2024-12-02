@@ -8,7 +8,7 @@
 class Shop : public cocos2d::Scene {
 public:
  
-    // 创建场景的静态函数，允许传递discount参数
+    // 创建场景的静态函数
     static cocos2d::Scene* createScene();
 
     // 初始化函数

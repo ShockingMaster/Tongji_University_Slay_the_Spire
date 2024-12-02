@@ -1,5 +1,7 @@
 #include "IncludeAll.h"
 #include "Enum.h"
+
+
 class Attack : public Card
 {
     int damage_;

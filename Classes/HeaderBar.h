@@ -5,7 +5,7 @@
 #include "Potion.h"
 #include "cocos2d.h"
 #include "Player.h"
-
+#include"Relic.h"
 using namespace std;
 using namespace cocos2d;
 
@@ -19,7 +19,7 @@ private:
     int fullHealth;           // 最大生命值
     int coins;                // 金币数量
     vector<Potion*> potions;  // 药水
-
+    vector<Relic*> relics;    // 遗物
     Label* nameLabel;         // 显示名称的标签
     Label* healthLabel;       // 显示生命值的标签
     Label* coinsLabel;        // 显示金币数量的标签
@@ -31,8 +31,6 @@ private:
 
 public:
     // 构造函数和析构函数
-    
-    
     int level; // 当前关卡
     HeaderBar();
     ~HeaderBar();

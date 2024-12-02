@@ -55,7 +55,7 @@ bool HelloWorld::init()
     }
     Player* player=Player::getInstance();
     auto headbar = HeaderBar::create(player);
-    headbar->setPosition(Vec2(0, 1150)); 
+    headbar->setPosition(Vec2(0, 1150));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
     return true;
 }

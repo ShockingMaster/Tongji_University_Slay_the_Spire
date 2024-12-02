@@ -9,7 +9,7 @@
 using namespace cocos2d;
 
 int backgroundMusicId = 0;         ///< ±³¾°ÒôÀÖ ID
-float backgroundVolumn = 0.1f;      ///< ±³¾°ÒôÀÖÒôÁ¿
+float backgroundVolumn = 0.3f;      ///< ±³¾°ÒôÀÖÒôÁ¿
 int soundEffectId = 0;             ///< ÒôÐ§ ID
 float soundEffectVolumn = 0.3f;     ///< ÒôÐ§ÒôÁ¿
 
