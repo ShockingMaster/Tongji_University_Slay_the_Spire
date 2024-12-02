@@ -27,7 +27,8 @@
 #include "SimpleAudioEngine.h"
 #include "Player.h"
 #include "cocos2d.h"
-#include "HeaderBar.h"
+#include "CardLayer.h"
+#include "Headerbar.h"
 USING_NS_CC;
 
 using namespace cocos2d;
@@ -52,17 +53,10 @@ bool HelloWorld::init()
     {
         return false;
     }
-    // ĞŞÕı´úÂë
-    Player* player = new Player();
-
-    player->name_ = "google";
-    player->character_ ="xx";
-    player->coins_ = 100;
-    player->health_ = 50;
-    player->fullhealth_ = 100;
-    player->potions_ = {};
-
-
+    Player* player=Player::getInstance();
+    auto headbar = HeaderBar::create(player);
+    headbar->setPosition(Vec2(0, 1150)); 
+    this->addChild(headbar);
     return true;
 }
 

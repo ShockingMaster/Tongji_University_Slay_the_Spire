@@ -13,7 +13,7 @@ class Creature;
  * 并且可能会有针对单个或多个目标的效果。
  */
 class Card{
-private:
+public:
     string name_;             ///< 卡牌名称
     string description_;      ///< 卡牌描述
     int energyCost_;          ///< 卡牌能量消耗
@@ -23,7 +23,6 @@ private:
     bool targetNum;           ///< 施加攻击的对象数量（单个或多个目标）
     int type_;                ///< 卡牌类型（如攻击卡、防御卡等）
     int triggerTimes_;        ///< 卡牌效果触发次数
-public:
     // 构造函数
     Card(string name, string description, int energyCost, int moneyCost, int rarity, bool isEnabled, int type, int triggerTimes);
 

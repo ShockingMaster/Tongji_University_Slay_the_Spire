@@ -28,7 +28,6 @@ void audioPlayer(const std::string& audioPath, bool isLoop)
 
     if (isLoop) {
         cocos2d::experimental::AudioEngine::stop(backgroundMusicId);
-        
         backgroundMusicId = cocos2d::experimental::AudioEngine::play2d(audioPath, isLoop, backgroundVolumn);
         cocos2d::experimental::AudioEngine::setVolume(backgroundMusicId, backgroundVolumn);
     }

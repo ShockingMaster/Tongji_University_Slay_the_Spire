@@ -2,6 +2,7 @@
 #include"IncludeAll.h"
 #include "cocos2d.h"
 #include "MapScene.h"
+#include "CardLayer.h"
 using namespace std;
 using namespace cocos2d;
 
@@ -71,6 +72,20 @@ bool HeaderBar::init(Player* player) {
     levelLabel->setPosition(Vec2(1300, 100)); // 显示当前关卡信息
     backgroundBar->addChild(levelLabel);
 
+    auto button = MenuItemImage::create(
+        "deck.png",    // 普通状态图片
+        "deck.png",    // 按下状态图片
+        [this](Ref* sender) {
+            // 创建并显示 CardLayer
+            auto cardLayer = CardLayer::create({});
+            Director::getInstance()->getRunningScene()->addChild(cardLayer); // 使用更高的层级，确保在 HeaderBar 之上
+        }
+    );
+
+    // 设置按钮的位置
+    auto menu = Menu::create(button, nullptr);
+    menu->setPosition(Vec2(1600, 150));  // 设置按钮位置
+    this->addChild(menu);
 
     return true;
 }

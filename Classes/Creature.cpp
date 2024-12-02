@@ -1,5 +1,8 @@
 #include "IncludeAll.h"
 #include "Enum.h"
+
+//在enum里面申明了不同的triggertype
+
 void Creature::updateHealth()
 {
 }
