@@ -78,7 +78,8 @@ bool HeaderBar::init(Player* player) {
         "deck.png",    // 按下状态图片
         [this](Ref* sender) {
             // 创建并显示 CardLayer
-            auto cardLayer = CardLayer::create({NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL },3);
+            Player* player = Player::getInstance();
+            auto cardLayer = CardLayer::create(player->cards_, 1);
             Director::getInstance()->getRunningScene()->addChild(cardLayer); // 使用更高的层级，确保在 HeaderBar 之上
         }
     );

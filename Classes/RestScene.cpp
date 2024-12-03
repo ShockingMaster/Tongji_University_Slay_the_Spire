@@ -6,8 +6,7 @@
 #include "const.h"
 #include "Player.h"
 #include "HeaderBar.h"
-
-
+#include "CardLayer.h"
 
 using namespace std;
 using namespace cocos2d;
@@ -89,6 +88,8 @@ bool RestScene::init() {
         Director::getInstance()->getVisibleSize().height / 2));
     smithButton->addClickEventListener([this](Ref* sender) {
         // 升级一张卡牌
+        auto cardLayer = CardLayer::create({ NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL }, 3);
+        Director::getInstance()->getRunningScene()->addChild(cardLayer); // 使用更高的层级，确保在 Header
        // 创建返回按钮
         auto returnButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
         returnButton->setPosition(Vec2(1000, 300));

@@ -16,7 +16,6 @@ public:
     int block_;                 // 护甲值，减少部分伤害
     int can_end_turn_;          // 是否可以结束回合（可能用于某些状态效果判断）
     vector<Buff*> buffs_;       // 存储生物当前所有的增益/减益效果
-
     void updateHealth();        // 更新生物的生命值
     void updateBuff();          // 更新生物的增益/减益效果
     void updateblock();         // 更新生物的护甲值

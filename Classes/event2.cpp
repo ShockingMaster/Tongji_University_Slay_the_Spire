@@ -9,7 +9,7 @@
 #include "const.h"
 #include "Player.h"
 #include "HeaderBar.h"
-
+#include "CardLayer.h"
 using namespace std;
 using namespace cocos2d;
 
@@ -45,7 +45,7 @@ bool event2::init() {
     continueLabel->setPosition(Vec2(1500, 1000));
     continueLabel->setColor(Color3B::WHITE);
     this->addChild(continueLabel);
-
+     
     // 创建第一个 HoverButton
     auto button1 = HoverButton::create(
         "button4(1).png", "button4(2).png", "button4(1).png"
@@ -53,12 +53,22 @@ bool event2::init() {
     button1->setPosition(Vec2(1400, 500));
     button1->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
-        auto delay = DelayTime::create(2.0f);
-        auto pop = CallFunc::create([]() {
-            Director::getInstance()->popScene(); // 延迟后执行popScene()
+        auto cardLayer = CardLayer::create({ NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL }, 2);
+        Director::getInstance()->getRunningScene()->addChild(cardLayer);
+        auto returnButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
+        returnButton->setPosition(Vec2(1000, 300));
+        returnButton->addClickEventListener([this](Ref* sender) {
+            // 点击“继续”按钮时执行的逻辑
+            audioPlayer("clickSoundEffect.mp3", false);
+            Director::getInstance()->popScene();
             });
-        auto sequence = Sequence::create(delay, pop, nullptr); // 将延迟和popScene组合成一个序列动作
-        this->runAction(sequence); // 运行这个动作序列
+        this->addChild(returnButton);
+
+        // 创建 "继续" 标签
+        auto continueLabel = Label::createWithSystemFont(u8"继续", "Fonts/Kreon-Bold.ttf", 40);
+        continueLabel->setPosition(Vec2(1000, 300));
+        continueLabel->setColor(Color3B::WHITE);
+        this->addChild(continueLabel);
         });
     this->addChild(button1);
     auto continueLabel1 = Label::createWithSystemFont(u8"      遗忘\n移除你牌组中一张牌", "Fonts/Kreon-Bold.ttf", 45);
@@ -73,12 +83,22 @@ bool event2::init() {
     button2->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
         // 例如，返回到上一场景
-        auto delay = DelayTime::create(2.0f);
-        auto pop = CallFunc::create([]() {
-            Director::getInstance()->popScene(); // 延迟后执行popScene()
+        auto cardLayer = CardLayer::create({ NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL }, 3);
+        Director::getInstance()->getRunningScene()->addChild(cardLayer);
+        auto returnButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
+        returnButton->setPosition(Vec2(1000, 300));
+        returnButton->addClickEventListener([this](Ref* sender) {
+            // 点击“继续”按钮时执行的逻辑
+            audioPlayer("clickSoundEffect.mp3", false);
+            Director::getInstance()->popScene();
             });
-        auto sequence = Sequence::create(delay, pop, nullptr); // 将延迟和popScene组合成一个序列动作
-        this->runAction(sequence); // 运行这个动作序列
+        this->addChild(returnButton);
+
+        // 创建 "继续" 标签
+        auto continueLabel = Label::createWithSystemFont(u8"继续", "Fonts/Kreon-Bold.ttf", 40);
+        continueLabel->setPosition(Vec2(1000, 300));
+        continueLabel->setColor(Color3B::WHITE);
+        this->addChild(continueLabel);
         });
     this->addChild(button2);
     auto continueLabel2 = Label::createWithSystemFont(u8"      成长\n升级你牌组中一张牌 ", "Fonts/Kreon-Bold.ttf", 45);
