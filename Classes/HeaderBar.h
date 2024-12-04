@@ -6,6 +6,8 @@
 #include "cocos2d.h"
 #include "Player.h"
 #include"Relic.h"
+#include"Card.h"
+#include "CardLayer.h"
 using namespace std;
 using namespace cocos2d;
 
@@ -28,7 +30,7 @@ private:
     Sprite* healthIcon;       // 生命图标
     Sprite* coinsIcon;        // 金币图标
     Sprite* potionIcon;       // 药水图标
-
+    vector<Card*> cards;
 public:
     // 构造函数和析构函数
     int level; // 当前关卡

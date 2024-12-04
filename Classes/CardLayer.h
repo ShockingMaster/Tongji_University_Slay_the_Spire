@@ -3,7 +3,7 @@
 #include "cocos2d.h"
 #include "ui/CocosGUI.h"
 #include "Card.h"
-
+#include "CardLayer.h"
 
 enum CardLayerOperation {
     Show = 1,
@@ -22,9 +22,9 @@ public:
     void updateCardBoundingBoxes();
     void closeLayerCallback(cocos2d::Ref* sender);
     void onMouseScroll(cocos2d::EventMouse* event);
+    std::vector<Card*> _cards;
 private:
     std::vector<cocos2d::Sprite*>_cardSprites;
-    std::vector<Card*> _cards;
     cocos2d::ui::ScrollView* _scrollView;  // ¿¨ÅÆµÄ¹ö¶¯ÊÓÍ¼
     cocos2d::Sprite* _background;  // ±³¾°Í¼Æ¬
 }; 

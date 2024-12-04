@@ -53,7 +53,8 @@ bool event2::init() {
     button1->setPosition(Vec2(1400, 500));
     button1->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
-        auto cardLayer = CardLayer::create({ NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL }, 2);
+        Player* player = Player::getInstance();
+        auto cardLayer = CardLayer::create(player->cards_, 2);
         Director::getInstance()->getRunningScene()->addChild(cardLayer);
         auto returnButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
         returnButton->setPosition(Vec2(1000, 300));
@@ -82,8 +83,8 @@ bool event2::init() {
     button2->setPosition(Vec2(1400, 700));
     button2->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
-        // 例如，返回到上一场景
-        auto cardLayer = CardLayer::create({ NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL,NULL }, 3);
+        // 例如，返回到上一场景 Player* player = Player::getInstance();
+        auto cardLayer = CardLayer::create(player->cards_, 3); 
         Director::getInstance()->getRunningScene()->addChild(cardLayer);
         auto returnButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
         returnButton->setPosition(Vec2(1000, 300));

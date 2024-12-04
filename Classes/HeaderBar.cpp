@@ -77,9 +77,7 @@ bool HeaderBar::init(Player* player) {
         "deck.png",    // 普通状态图片
         "deck.png",    // 按下状态图片
         [this](Ref* sender) {
-            // 创建并显示 CardLayer
-            Player* player = Player::getInstance();
-            auto cardLayer = CardLayer::create(player->cards_, 1);
+            auto cardLayer= CardLayer::create(cards, 1);
             Director::getInstance()->getRunningScene()->addChild(cardLayer); // 使用更高的层级，确保在 HeaderBar 之上
         }
     );
@@ -98,12 +96,11 @@ bool HeaderBar::init(Player* player) {
 void HeaderBar::updateHeader(Player* player) {
     // 更新玩家状态
     setPlayerInfo(player);
-
     // 更新标签内容
     healthLabel->setString("Health: " + to_string(health) + "/" + to_string(fullHealth));
     coinsLabel->setString("Coins: " + to_string(coins));
-    levelLabel->setString("Level: " + to_string( currentLevel-1));
-
+    levelLabel->setString("Level: " + to_string(currentLevel-1));
+    cards = player->cards_;
     // 更新药水图标，图没找齐，先注释掉
     /*potionIcons->removeAllChildren(); // 清空当前药水图标
     for (size_t i = 0; i < potions.size(); ++i) {

@@ -60,25 +60,25 @@ bool CardLayer::init(std::vector<Card*> cards, int op) {
     // 创建返回Label
     auto returnLabel = cocos2d::Label::createWithSystemFont(u8"返回", "Arial", 60);
     returnLabel->setTextColor(cocos2d::Color4B::WHITE);
-    returnLabel->setPosition(cocos2d::Vec2(1750, 260));  // 设置Label的位置，使其在按钮上方
+    returnLabel->setPosition(cocos2d::Vec2(1790, 260));  // 设置Label的位置，使其在按钮上方
     this->addChild(returnLabel, 103);  // Label的层级高于按钮
 
     if (operation == 1) {
-        auto inform = cocos2d::Label::createWithSystemFont(u8"当前\n牌组", "fonts/Marker Felt.ttf", 80);
+        auto inform = cocos2d::Label::createWithSystemFont(u8"当前\n牌组", "Arial", 80);
+        inform->setTextColor(cocos2d::Color4B::WHITE);
+        inform->setPosition(cocos2d::Vec2(1790, 700));  // 设置Label的位置，使其在按钮上方
+        this->addChild(inform, 103);  // Label的层级高于按钮
+    }
+    if (operation == 2) {
+        auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被删除", "Arial", 80);
         inform->setTextColor(cocos2d::Color4B::WHITE);
         inform->setPosition(cocos2d::Vec2(1750, 700));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
-    if (operation == 2) {
-        auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被删除", "fonts/Marker Felt.ttf", 80);
-        inform->setTextColor(cocos2d::Color4B::WHITE);
-        inform->setPosition(cocos2d::Vec2(1700, 700));  // 设置Label的位置，使其在按钮上方
-        this->addChild(inform, 103);  // Label的层级高于按钮
-    }
     if (operation == 3) {
-        auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被升级", "fonts/Marker Felt.ttf", 80);
+        auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被升级", "Arial", 80);
         inform->setTextColor(cocos2d::Color4B::WHITE);
-        inform->setPosition(cocos2d::Vec2(1700, 700));  // 设置Label的位置，使其在按钮上方
+        inform->setPosition(cocos2d::Vec2(1750, 700));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
     return true;
@@ -179,7 +179,7 @@ void CardLayer::displayCards() {
 
                         // 创建右边的文本说明，使用默认字体
                         auto label = cocos2d::Label::createWithSystemFont(u8"是否确定选中？", "Arial", 70);
-                        label->setPosition(1700, 850);  // 设置标签位置
+                        label->setPosition(1790, 850);  // 设置标签位置
                         label->setTextColor(cocos2d::Color4B::WHITE);  // 设置字体颜色为白色
                         popupLayer->addChild(label, 600);  // 添加到弹出层，并确保它在较高层级
 
