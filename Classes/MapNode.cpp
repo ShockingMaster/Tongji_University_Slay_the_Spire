@@ -1,7 +1,9 @@
 #include "MapNode.h"
 #include "RestScene.h"
+#include "ShopScene.h"
 #include "event1.h"
 #include "event2.h"
+#include "event3.h"
 #include "audioPlayer.h"
 // 构造函数，初始化 MapNode 对象的默认属性
 MapNode::MapNode()
@@ -163,6 +165,12 @@ void MapNode::onClick() {
         this->setVisited(true); // 标记当前节点已访问
         visitPath.push_back(this);
         sprite->setColor(Color3B(165, 42, 42));
+        if (type == Shop) {
+            this->scheduleOnce([](float dt) {
+                auto nextScene = ShopScene::createScene(); // 创建目标场景
+                Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                }, 1.0f, "LoadNextScene");
+        }
         if (type == Rest) {
             this->scheduleOnce([](float dt) {
                 auto nextScene = RestScene::createScene(); // 创建目标场景
@@ -171,7 +179,7 @@ void MapNode::onClick() {
         }
         if (type == UnknownEvent) {
             this->scheduleOnce([](float dt) {
-                auto nextScene = event1::createScene(); // 创建目标场景
+                auto nextScene = event3::createScene(); // 创建目标场景
                 Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                 }, 1.0f, "LoadNextScene");
         }
@@ -206,7 +214,12 @@ void MapNode::onClick() {
             sprite->setColor(Color3B(165,42,42));  
             CCLOG("Node clicked! Type: %d", type); // 输出节点点击的日志信息
             audioPlayer("clickSoundEffect.mp3", false);
-
+            if (type == Shop) {
+                this->scheduleOnce([](float dt) {
+                    auto nextScene = ShopScene::createScene(); // 创建目标场景
+                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                    }, 1.0f, "LoadNextScene");
+            }
             if (type == Rest) {
                 this->scheduleOnce([](float dt) {
                     auto nextScene = RestScene::createScene(); // 创建目标场景
@@ -215,7 +228,7 @@ void MapNode::onClick() {
             }
             if (type == UnknownEvent) {
                 this->scheduleOnce([](float dt) {
-                    auto nextScene = event2::createScene(); // 创建目标场景
+                    auto nextScene = event3::createScene(); // 创建目标场景
                     Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                     }, 1.0f, "LoadNextScene");
             }
