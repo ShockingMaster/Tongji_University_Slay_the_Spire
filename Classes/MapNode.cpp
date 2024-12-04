@@ -1,5 +1,6 @@
 #include "MapNode.h"
 #include "RestScene.h"
+#include "ChestScene.h"
 #include "ShopScene.h"
 #include "event1.h"
 #include "event2.h"
@@ -179,7 +180,13 @@ void MapNode::onClick() {
         }
         if (type == UnknownEvent) {
             this->scheduleOnce([](float dt) {
-                auto nextScene = event3::createScene(); // 创建目标场景
+                auto nextScene = event2::createScene(); // 创建目标场景
+                Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                }, 1.0f, "LoadNextScene");
+        }
+        if (type == Chest) {
+            this->scheduleOnce([](float dt) {
+                auto nextScene = ChestScene::createScene(); // 创建目标场景
                 Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                 }, 1.0f, "LoadNextScene");
         }
@@ -228,7 +235,13 @@ void MapNode::onClick() {
             }
             if (type == UnknownEvent) {
                 this->scheduleOnce([](float dt) {
-                    auto nextScene = event3::createScene(); // 创建目标场景
+                    auto nextScene = event2::createScene(); // 创建目标场景
+                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                    }, 1.0f, "LoadNextScene");
+            }
+            if (type ==Chest) {
+                this->scheduleOnce([](float dt) {
+                    auto nextScene = ChestScene::createScene(); // 创建目标场景
                     Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                     }, 1.0f, "LoadNextScene");
             }

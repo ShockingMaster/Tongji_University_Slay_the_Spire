@@ -178,7 +178,7 @@ void CardLayer::displayCards() {
                         popupLayer->addChild(selectedCard);
 
                         // 创建右边的文本说明，使用默认字体
-                        auto label = cocos2d::Label::createWithSystemFont(u8"是否确定选中？", "Arial", 70);
+                        auto label = cocos2d::Label::createWithSystemFont(u8"请点击确定选中", "Arial", 70);
                         label->setPosition(1790, 850);  // 设置标签位置
                         label->setTextColor(cocos2d::Color4B::WHITE);  // 设置字体颜色为白色
                         popupLayer->addChild(label, 600);  // 添加到弹出层，并确保它在较高层级

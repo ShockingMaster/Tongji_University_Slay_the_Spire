@@ -218,14 +218,4 @@ public:
 
 
 
-// 药水池：包含 10 种药水
-vector<Potion*> potion_pool = {
-    new HealthPotion(),
-    new PoisonPotion(),
-    new BlockPotion(),
-    new GoldPotion(),
-    new ExplosivePotion(),
-    new StrengthPotion(),
-    new RegenerationPotion(),
-    new EnergyPotion()
-};
+

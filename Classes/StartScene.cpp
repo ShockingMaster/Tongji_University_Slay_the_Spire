@@ -72,7 +72,7 @@ bool StartScene::init() {
     this->addChild(progressLabel);
 
     // 定义进度条更新间隔
-    constexpr float interval = 2.0 / 100.0f; // 每更新 1% 所需时间
+    constexpr float interval = 1.5 / 100.0f; // 每更新 1% 所需时间
 
     // 更新进度条
     for (int i = 0; i <= 100; i++) {

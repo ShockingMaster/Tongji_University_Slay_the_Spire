@@ -20,7 +20,9 @@ bool event3::init() {
     if (!Scene::init()) {
         return false;  // 如果初始化失败则返回 false
     }
-
+    const auto backgroun = Sprite::create("walkscene.jpg");
+    backgroun->setPosition(Vec2(1100, 300));
+    this->addChild(backgroun);
     // 播放音频显示头栏
     audioPlayer("event.ogg", true);
     Player* player = Player::getInstance();
@@ -31,11 +33,11 @@ bool event3::init() {
     // 设置背景图片
     auto background = Sprite::create("../Resources/nopants.png");
     background->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2 - 600,
-        Director::getInstance()->getVisibleSize().height / 2 + 300));
+        Director::getInstance()->getVisibleSize().height / 2 -200));
     this->addChild(background);
 
     // 创建事件文本标签
-    auto continueLabel = Label::createWithSystemFont(u8"你发现地上有一具冒险者尸体。\n尽管他随身携带的东西好像都还在\n你实在是不想知道这里究竟发生了什么……\n他的裤子都被偷了！", "Fonts/Kreon-Bold.ttf", 45);
+    auto continueLabel = Label::createWithSystemFont(u8"你发现地上有一具冒险者尸体。\n尽管他随身携带的东西好像都还在\n你实在是不想知道这里究竟发生了什么……\n他的裤子都被偷了！", "../Resources/Fonts/FangZhengZhaoGeYuan.ttf", 45);
     continueLabel->setPosition(Vec2(1500, 1000));
     continueLabel->setColor(Color3B::WHITE);
     this->addChild(continueLabel);
@@ -44,7 +46,7 @@ bool event3::init() {
     auto button1 = HoverButton::create(
         "button4(1).png", "button4(2).png", "button4(1).png"
     );
-    button1->setPosition(Vec2(1400, 500));
+    button1->setPosition(Vec2(1600, 500));
     button1->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
         
@@ -64,15 +66,15 @@ bool event3::init() {
         this->addChild(continueLabel);
         });
     this->addChild(button1);  
-    auto continueLabel1 = Label::createWithSystemFont(u8"搜索 寻找尸体上的东西\n25%遇见回来的怪物。", "Fonts/Kreon-Bold.ttf", 45);
-    continueLabel1->setPosition(Vec2(1000, 500));
+    auto continueLabel1 = Label::createWithSystemFont(u8"搜索 寻找尸体上的东西\n25%遇见回来的怪物。", "Fonts/../Resources/Fonts/FangZhengZhaoGeYuan.ttf", 45);
+    continueLabel1->setPosition(Vec2(1200, 500));
     continueLabel1->setColor(Color3B::WHITE);
     this->addChild(continueLabel1);
     // 创建第二个 HoverButton：离开
     auto button2 = HoverButton::create(
         "button4(1).png", "button4(2).png", "button4(1).png"
     );
-    button2->setPosition(Vec2(1400, 700));
+    button2->setPosition(Vec2(1600, 700));
     button2->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
         // 例如，返回到上一场景 Player* player = Player::getInstance();
@@ -93,8 +95,8 @@ bool event3::init() {
         this->addChild(continueLabel);
         });
     this->addChild(button2);
-    auto continueLabel2 = Label::createWithSystemFont(u8"      离开\n你一声不发地离开了。 ", "Fonts/Kreon-Bold.ttf", 45);
-    continueLabel2->setPosition(Vec2(1000, 700));
+    auto continueLabel2 = Label::createWithSystemFont(u8"      离开\n你一声不发地离开了。 ", "../Resources/Fonts/FangZhengZhaoGeYuan.ttf", 45);
+    continueLabel2->setPosition(Vec2(1200, 700));
     continueLabel2->setColor(Color3B::WHITE);
     this->addChild(continueLabel2);
 

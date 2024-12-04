@@ -39,14 +39,14 @@ bool ShopScene::init() {
     this->addChild(continueLabel);
 
     // 商人背景图像
-    const auto background0 = Sprite::create("merchant.jpg");
+    const auto background0 = Sprite::create("merchant-removebg-preview.png");
     background0->setScale(0.5f);
     background0->setOpacity(200);
     background0->setPosition(Vec2(1500, 600));
     this->addChild(background0);
 
     // 使用 DelayTime 来创建延迟
-    auto delay = DelayTime::create(2.0f); // 延迟2秒
+    auto delay = DelayTime::create(3.0f); 
 
     // 创建一个回调函数，在延迟时间后执行
     auto showLayerCallback = CallFunc::create([this]() {
