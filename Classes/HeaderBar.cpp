@@ -132,6 +132,7 @@ void HeaderBar::setPlayerInfo(const string& name, const string& character, int f
     this->character = character;
     this->fullHealth = fullHealth;
     this->coins = coins;
+
 }
 
 void HeaderBar::setPlayerInfo(Player* player) {
@@ -142,6 +143,7 @@ void HeaderBar::setPlayerInfo(Player* player) {
     this->coins = player->coins_;
     this->potions = player->potions_;
     this->level =  currentLevel-1;
+    this->cards = player->cards_;
 }
 
 // ÉèÖÃÉúÃüÖµ

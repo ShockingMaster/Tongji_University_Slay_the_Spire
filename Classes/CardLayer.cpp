@@ -97,14 +97,14 @@ void CardLayer::displayCards() {
     // 遍历卡牌并添加到容器中
     for (size_t i = 0; i < cardCount; ++i) {
         auto card = _cards[i];
-        auto cardSprite = cocos2d::Sprite::create("cardbackground.jpg");
+        auto cardSprite = cocos2d::Sprite::create("hitcard.png");
 
         if (i % 4 == 0 && i != 0) {
             startY -= 400;
         }
 
         cardSprite->setPosition(startX + 350 * (i % 4), startY);
-        cardSprite->setScale(0.4f);
+        cardSprite->setScale(0.8f);
         cardContainer->addChild(cardSprite, 200);  // 初始设置
 
         // 为每个卡牌精灵设置与卡牌的关联
@@ -136,12 +136,12 @@ void CardLayer::displayCards() {
                 // 判断鼠标是否在卡牌的扩展范围内
                 if (extendedBoundingBox.containsPoint(mousePosition)) {
                     // 放大卡牌
-                    cardSprite->setScale(0.5f);
+                    cardSprite->setScale(0.9f);
                     cardSprite->setLocalZOrder(300);  // 提高 zOrder，确保它显示在上层
                 }
                 else {
                     // 恢复原尺寸
-                    cardSprite->setScale(0.4f);  // 恢复到原尺寸
+                    cardSprite->setScale(0.8f);  // 恢复到原尺寸
                     cardSprite->setLocalZOrder(200);  // 恢复初始 zOrder
                 }
             }
@@ -172,13 +172,13 @@ void CardLayer::displayCards() {
                         this->addChild(popupLayer, 500); // 添加到场景，确保它在最上层
 
                         // 创建并添加卡牌到弹出层左边
-                        auto selectedCard = cocos2d::Sprite::create("cardbackground.jpg");
+                        auto selectedCard = cocos2d::Sprite::create("hitcard.png");
                         selectedCard->setPosition(500, 700); // 设置卡牌显示位置
-                        selectedCard->setScale(0.8f); // 放大卡牌
+                        selectedCard->setScale(1.2f); // 放大卡牌
                         popupLayer->addChild(selectedCard);
 
                         // 创建右边的文本说明，使用默认字体
-                        auto label = cocos2d::Label::createWithSystemFont(u8"请点击确定选中", "Arial", 70);
+                        auto label = cocos2d::Label::createWithSystemFont(u8"是否确定选中", "Arial", 70);
                         label->setPosition(1790, 850);  // 设置标签位置
                         label->setTextColor(cocos2d::Color4B::WHITE);  // 设置字体颜色为白色
                         popupLayer->addChild(label, 600);  // 添加到弹出层，并确保它在较高层级
@@ -188,10 +188,11 @@ void CardLayer::displayCards() {
                         confirmButton->setTitleText(u8"确认");
                         confirmButton->setTitleFontSize(24);
                         confirmButton->setScale(1.5f);
-                        confirmButton->setPosition(cocos2d::Vec2(1800, 600)); // 设置按钮位置
+                        confirmButton->setPosition(cocos2d::Vec2(1750, 600)); // 设置按钮位置
                         // 按钮点击事件
                         confirmButton->addClickEventListener([this, popupLayer, cardSprite](cocos2d::Ref* sender) {
                             // 获取卡牌对象
+
                             auto card = static_cast<Card*>(cardSprite->getUserData());
 
                             // 根据操作类型进行删除或其他操作

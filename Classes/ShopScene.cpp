@@ -40,7 +40,7 @@ bool ShopScene::init() {
 
     // 商人背景图像
     const auto background0 = Sprite::create("merchant-removebg-preview.png");
-    background0->setScale(0.5f);
+    background0->setScale(1.0f);
     background0->setOpacity(200);
     background0->setPosition(Vec2(1500, 600));
     this->addChild(background0);
@@ -53,7 +53,7 @@ bool ShopScene::init() {
         // 创建新层，并设置背景图
         auto newLayer = Sprite::create("fin.png");
         newLayer->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
-            Director::getInstance()->getVisibleSize().height / 2 + 200));
+            Director::getInstance()->getVisibleSize().height / 2 + 190));
         newLayer->setScale(0.9f);
         this->addChild(newLayer, 100); // 100是层级，确保在其他元素之上
 

@@ -2,6 +2,7 @@
 #include "RestScene.h"
 #include "ChestScene.h"
 #include "ShopScene.h"
+#include "CombatScene.h"
 #include "event1.h"
 #include "event2.h"
 #include "event3.h"
@@ -190,6 +191,12 @@ void MapNode::onClick() {
                 Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                 }, 1.0f, "LoadNextScene");
         }
+        if (type == Combat) {
+            this->scheduleOnce([](float dt) {
+                auto nextScene = CombatScene::createScene(); // 创建目标场景
+                Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                }, 1.0f, "LoadNextScene");
+        }
         currentLevel++;
         return;
     }
@@ -242,6 +249,12 @@ void MapNode::onClick() {
             if (type ==Chest) {
                 this->scheduleOnce([](float dt) {
                     auto nextScene = ChestScene::createScene(); // 创建目标场景
+                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                    }, 1.0f, "LoadNextScene");
+            }
+            if (type == Combat) {
+                this->scheduleOnce([](float dt) {
+                    auto nextScene = CombatScene::createScene(); // 创建目标场景
                     Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                     }, 1.0f, "LoadNextScene");
             }
