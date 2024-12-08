@@ -1,0 +1,21 @@
+#pragma once
+#include <iostream>
+#include <vector>
+#include <string>
+#include <queue>
+#include "cocos2d.h"
+#include "Buff.h"
+#include "CombatDeck.h"
+#include "Player.h"
+#include "Card.h"
+#include "UIManager.h"
+#include "CombatNode.h"
+#include "Potion.h"
+#include "Relic.h"
+#include "CombatSystem.h"
+#include "Register.h"
+#include "SpriteGenerator.h"
+using namespace std;
+USING_NS_CC;
+const int kWindowSizeX = 2048;
+const int kWindowSizeY = 1536;
