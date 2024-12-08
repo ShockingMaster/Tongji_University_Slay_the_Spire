@@ -23,6 +23,10 @@ public:
 
         //Ìí¼Ó¿¨Ãæ
         auto cardPainting = Sprite::create(card->getName() + ".png");
+        if (cardPainting == nullptr)
+        {
+            CCLOG("Unable to Create CardPainting For %s", card->getName());
+        }
         cardPainting->setContentSize(Size(170, 130));
         cardPainting->setPosition(Vec2(background->getContentSize().width / 2, background->getContentSize().height - 110));
         background->addChild(cardPainting);

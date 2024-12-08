@@ -10,11 +10,11 @@ std::shared_ptr<Player> Player::getInstance() {
     return instance_;
 }
 
-void Player::start_turn() {
+void Player::startTurn() {
     block_ = 0;  // Reset block at the start of the turn
 }
 
-void Player::end_turn() {
+void Player::endTurn() {
     // Discard cards, apply end-turn Buffs, etc.
 }
 
@@ -22,6 +22,13 @@ void Player::addPotion(Potion* potion)
 {
 }
 
+/*
+* 角色初始化需要：初始化血量格挡，将buff列表清空，
+* 遍历遗物列表，添加buff
+*/
 void Player::init()
 {
+    //初始化血量
+    health_ = 10;
+    block_ = 10;
 }

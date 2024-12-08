@@ -45,6 +45,8 @@ public:
     virtual void onLoseHealth(int& numeric_value_) {};
     
     virtual void getBuff() {};
+
+    virtual void onDrawCard(int& num) {};
     
     virtual void onExhaustCard() {};
     

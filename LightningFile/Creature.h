@@ -44,7 +44,7 @@ public:
     
     int getBlockValue();
     
-    virtual void start_turn() = 0;
+    virtual void startTurn() {};
     
-    virtual void end_turn() = 0;
+    virtual void endTurn() {};
 };

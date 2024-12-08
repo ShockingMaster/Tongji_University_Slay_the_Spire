@@ -41,7 +41,7 @@ private:
 #define AUTO_REGISTER_CARD(className)                          \
     const bool className##Registered = []() {                  \
         CardRegistry::registerCard(#className, []() {          \
-            return std::make_shared<className>();              \
+           return std::make_shared<className>();               \
         });                                                    \
         return true;                                           \
     }();

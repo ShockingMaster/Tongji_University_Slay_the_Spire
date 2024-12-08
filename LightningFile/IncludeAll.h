@@ -15,6 +15,8 @@
 #include "CombatSystem.h"
 #include "Register.h"
 #include "SpriteGenerator.h"
+#include "HoverButton.h"
+#include "CombatScene.h"
 using namespace std;
 USING_NS_CC;
 const int kWindowSizeX = 2048;
