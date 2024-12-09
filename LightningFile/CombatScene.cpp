@@ -11,14 +11,23 @@ HandPileLayer* HandPileLayer::getInstance()
     return instance_;
 }
 
+
+/*
+* 函数名称：init()
+* 功能：完成手牌的初始化
+* 
+*/
 bool HandPileLayer::init()
 {
-    //需要创建：抽牌堆数量，弃牌堆数量
-
     return true;
 }
 
-//卡牌拖动
+
+/*
+* 函数名称:enableCardDrag
+* 参数：卡牌精灵及相应的卡牌智能指针
+* 
+*/
 void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> card)
 {
     auto listener = EventListenerTouchOneByOne::create();
@@ -38,18 +47,18 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         cardSprite->setPosition(location);
         };
 
-
+    const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
     //测试使用
-    auto playArea = Rect(500, 500, 400, 200); // 设置打出区域
+    auto playArea = Rect(screenSize.width / 2, screenSize.height / 2, 0.3 * screenSize.width, 0.3 * screenSize.height); // 设置打出区域
 
     listener->onTouchEnded = [=](Touch* touch, Event* event) {
         auto location = touch->getLocation();
-        auto& newhand = CombatSystem::getInstance()->hand; //手牌
+        auto& newhand = CombatSystem::getInstance()->hand;
         if (playArea.containsPoint(location)) {
             CCLOG("Played card: %s", card->getName().c_str());
             CCLOG("Take Effect: %s", card->getDescription().c_str());
-            CombatSystem::getInstance()->discardPile.push(card); //置入弃牌堆
-            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end()); //手牌移除卡牌
+            CombatSystem::getInstance()->discardPile.push(card);
+            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());
             cardSprite->removeFromParent();
         }
         adjustHandPile();
@@ -66,7 +75,7 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 {
     // 创建精灵
     auto cardSprite = CardSpriteGenerator::createCardSprite(card);
-    cardSprite->setPosition(Vec2(400, 300)); // 初始位置
+    cardSprite->setPosition(Vec2(400, 300)); // 初始位置，这个值没有任何影响
     this->addChild(cardSprite);
 
     // 启用拖动
@@ -80,11 +89,18 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
     }
 }
 
+
+/*
+* 函数名称：adjustHandPile()
+* 
+* 
+*/
 void HandPileLayer::adjustHandPile()
 {
     // 手牌中心位置
-    Vec2 handCenter = Vec2(700, 150);
-    float cardSpacing = 100.0f; // 卡牌间距
+    const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
+    Vec2 handCenter = Vec2(screenSize.width / 2, 0.13 * screenSize.height);
+    float cardSpacing = 0.1 * screenSize.height; // 卡牌间距
     auto& newhand = CombatSystem::getInstance()->hand;
     float totalWidth = (newhand.size() - 1) * cardSpacing;
     CCLOG("now my hand has %d cards", newhand.size());
@@ -104,14 +120,16 @@ void HandPileLayer::adjustHandPile()
     }
 }
 
-
 bool CombatScene::init() 
 {
     // 创建并设置背景图像
     auto background = cocos2d::Sprite::create("combatScene.png");
-    if (background) {
-        background->setContentSize(Size(1648, 1500)); // 设置卡牌大小
-        background->setPosition(cocos2d::Vec2(750, 200));
+    cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
+    if (background) 
+    {
+        background->setContentSize(Size(1.1 * screenSize.width, 1.5 * screenSize.height)); // 设置背景大小
+        background->setPosition(cocos2d::Vec2(screenSize.width / 2 + 0.05 * screenSize.width, 
+            screenSize.height / 2 - 0.25 * screenSize.height));
         this->addChild(background);
     }
     else{
@@ -121,7 +139,7 @@ bool CombatScene::init()
     // 创建抽牌堆图标
     auto drawPileIcon = cocos2d::Sprite::create("drawPileIcon.png");
     if (drawPileIcon) {
-        drawPileIcon->setPosition(cocos2d::Vec2(100, 100));
+        drawPileIcon->setPosition(cocos2d::Vec2(0.1 * screenSize.width, 0.12 * screenSize.height));
         this->addChild(drawPileIcon);
     }
     else {
@@ -131,21 +149,19 @@ bool CombatScene::init()
     // 创建抽牌堆数量标记
     auto drawPileNumCount = cocos2d::Sprite::create("countCircle.png");
     if (drawPileNumCount) {
-        drawPileNumCount->setPosition(cocos2d::Vec2(80, 65));
+        drawPileNumCount->setPosition(cocos2d::Vec2(0.078125* screenSize.width, 0.078125 * screenSize.height));
         this->addChild(drawPileNumCount);
     }
     drawPileNumLabel = cocos2d::Label::createWithSystemFont(std::to_string(0), "Arial", 20);
-    drawPileNumLabel->setPosition(cocos2d::Vec2(80, 65));  // 设置在能量图标的中心
+    drawPileNumLabel->setPosition(cocos2d::Vec2(0.078125 * screenSize.width, 0.078125 * screenSize.height));  // 设置在能量图标的中心
     drawPileNumLabel->setColor(cocos2d::Color3B::WHITE);  // 设置文字颜色
     this->addChild(drawPileNumLabel);
     updateDrawPileDisplay();
-    if(!drawPileNumLabel)
-        CCLOG("areyouok");
 
     // 创建弃牌堆图标
     auto discardPileIcon = cocos2d::Sprite::create("discardPileIcon.png");
     if (discardPileIcon) {
-        discardPileIcon->setPosition(cocos2d::Vec2(1350, 100));
+        discardPileIcon->setPosition(cocos2d::Vec2(0.88 * screenSize.width, 0.12 * screenSize.height));
         this->addChild(discardPileIcon);
     }
     else {
@@ -156,34 +172,34 @@ bool CombatScene::init()
     // 创建弃牌堆卡牌数量标志
     auto discardPileNumCount = cocos2d::Sprite::create("countCircle.png");
     if (discardPileNumCount) {
-        discardPileNumCount->setPosition(cocos2d::Vec2(1370, 65));
+        discardPileNumCount->setPosition(cocos2d::Vec2(0.9 * screenSize.width, 0.078125 * screenSize.height));
         this->addChild(discardPileNumCount);
     }
     discardPileNumLabel = cocos2d::Label::createWithSystemFont(std::to_string(0), "Arial", 20);
-    discardPileNumLabel->setPosition(cocos2d::Vec2(1370, 65));  // 设置在能量图标的中心
+    discardPileNumLabel->setPosition(cocos2d::Vec2(0.9 * screenSize.width, 0.078125 * screenSize.height));  // 设置在能量图标的中心
     discardPileNumLabel->setColor(cocos2d::Color3B::WHITE);  // 设置文字颜色
     this->addChild(discardPileNumLabel);
 
     //创建能量标志
     auto energyLayer1 = Sprite::create("energyLayer1.png");
     energyLayer1->setContentSize(Size(200, 200));
-    energyLayer1->setPosition(cocos2d::Vec2(100, 300));
+    energyLayer1->setPosition(cocos2d::Vec2(0.0976525 * screenSize.width, 0.390625 * screenSize.height));
     this->addChild(energyLayer1);
     auto energyLayer2 = Sprite::create("energyGreenVFX.png");
     energyLayer2->setContentSize(Size(120, 120));
-    energyLayer2->setPosition(cocos2d::Vec2(100, 300));
+    energyLayer2->setPosition(cocos2d::Vec2(0.0976525 * screenSize.width, 0.390625 * screenSize.height));
     this->addChild(energyLayer2);
 
     // 创建显示能量的数字
     energyLabel = cocos2d::Label::createWithSystemFont(std::to_string((int)3) + "/" + std::to_string((int)3), "Arial", 24);
-    energyLabel->setPosition(cocos2d::Vec2(100, 300));  // 设置在能量图标的中心
+    energyLabel->setPosition(cocos2d::Vec2(0.0976525 * screenSize.width, 0.390625 * screenSize.height));  // 设置在能量图标的中心
     energyLabel->setColor(cocos2d::Color3B::BLACK);  // 设置文字颜色
     this->addChild(energyLabel);
 
     // 对能量进行更新
     updateEnergyDisplay();
 
-    const auto screenSize = cocos2d::Director::getInstance()->getVisibleSize();
+   
 
     //战斗开始时，先设定不为我方回合
     isMyTurn = 0;
@@ -193,14 +209,14 @@ bool CombatScene::init()
     endTurnButton->setTitleText(u8"回合结束");
     endTurnButton->setScale(1.5f);
     endTurnButton->setTitleFontSize(20);
-    endTurnButton->setPosition(Vec2(screenSize.width - 200, screenSize.height - 550));
+    endTurnButton->setPosition(Vec2(0.906525 * screenSize.width, 0.25625 * screenSize.height));
 
     //测试使用，回合开始按钮，当点击回合开始按钮之后，可以抽5张牌
     auto startTurnButton = HoverButton::create("endTurnButton.png", "endTurnButtonGlow.png", "endTurnButton.png");
     startTurnButton->setTitleText(u8"回合开始");
     startTurnButton->setScale(1.5f);
     startTurnButton->setTitleFontSize(20);
-    startTurnButton->setPosition(Vec2(screenSize.width - 1200, screenSize.height - 550));
+    startTurnButton->setPosition(Vec2(0.0976525 * screenSize.width, 0.25625 * screenSize.height));
     
     // 结束回合按钮
     endTurnButton->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
@@ -220,7 +236,7 @@ bool CombatScene::init()
             if (!isMyTurn)
             {
                 CCLOG("Start Turn clicked!%d");  // 打印日志
-                CombatSystem::getInstance()->startTurn(Player::getInstance());//玩家回合开始，进行更新
+                CombatSystem::getInstance()->startTurn(Player::getInstance());//玩家回合开始
             }
             isMyTurn = 1;
         }
@@ -230,7 +246,8 @@ bool CombatScene::init()
 
 
     //测试使用：创建一个能打出牌的区域，当卡牌被拖动到这个区域时被打出
-    playArea = Rect(500, 500, 400, 200); // 设置打出区域
+    playArea = Rect(screenSize.width / 2 - 0.15 * screenSize.width, screenSize.height / 2, 
+        0.3 * screenSize.width, 0.3 * screenSize.height); // 设置打出区域
     auto playAreaNode = DrawNode::create();
     playAreaNode->drawRect(playArea.origin, playArea.origin + playArea.size, Color4F::GRAY);
     this->addChild(playAreaNode);
@@ -241,7 +258,7 @@ bool CombatScene::init()
 
 void CombatScene::updateEnergyDisplay()
 {
-    int currentEnergy = 4;
+    int currentEnergy = Player::getInstance()->getCurrentEnergy();
     int maxEnergy = 4;
     energyLabel->setString(std::to_string((int)currentEnergy) + "/" + std::to_string((int)maxEnergy));  // 更新标签文本为当前能量值
 }
