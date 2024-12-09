@@ -13,6 +13,7 @@ public:
     {
         // 创建卡牌背景
         auto background = Sprite::create("card_background.png"); // 替换为实际背景图片
+        
         if (!background) {
             CCLOG("Failed to load card background.");
             return nullptr;
@@ -22,7 +23,7 @@ public:
         background->setContentSize(Size(200, 300)); // 设置卡牌大小
 
         //添加卡面
-        auto cardPainting = Sprite::create(card->getName() + ".png");
+        auto cardPainting = Sprite::create("CardPainting/" + card->getName() + ".png");
         if (cardPainting == nullptr)
         {
             CCLOG("Unable to Create CardPainting For %s", card->getName());

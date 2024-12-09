@@ -16,7 +16,11 @@ public:
     vector<Potion*> potions_;
     void addPotion(Potion* potion);//需要调用本体的addPotion()
     void init();//每场战斗开始时对角色进行初始化
+    void addEnergy(int numeric_value_);
+    int getEnergyValue();
+    int getMaxEnergyValue();
 private:
     static Player* instance_;
-    
+    int energy_;
+    int maxEnergy_;
 };

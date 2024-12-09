@@ -25,4 +25,19 @@ void Player::addPotion(Potion* potion)
 
 void Player::init()
 {
+    energy_ = 0;
+    maxEnergy_ = 3;
+}
+
+void Player::addEnergy(int numeric_value_)
+{
+}
+
+int Player::getEnergyValue()
+{
+    return energy_;
+}
+int Player::getMaxEnergyValue()
+{
+    return maxEnergy_;
 }

@@ -39,6 +39,8 @@ public:
     virtual void onAttacked(int& numeric_value_, std::shared_ptr<Creature>, std::shared_ptr<Creature>) {};
     
     virtual void onTakeDamage(int& numeric_value_) {};
+
+    virtual void onGetEnergy(int& numeric_value_) {};
     
     virtual void onLoseBlock(int& numeric_value_) {};
     
