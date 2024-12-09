@@ -219,7 +219,7 @@ void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
 
 void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 {
-	int tempEnergy;
+	int tempEnergy = numeric_value_;
 	for (auto Buff : user->buffs_)
 	{
 		if (Buff != nullptr)
@@ -229,7 +229,7 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 	}
 	if (user == Player::getInstance())
 	{
-		Player::getInstance()->addEnergy(tempEnergy);
+		Player::getInstance()->energyChange(tempEnergy);
 	}
 	// 调用前端能量变化方法,对能量进行更新
 	auto currentScene = Director::getInstance()->getRunningScene();

@@ -26,6 +26,8 @@ public:
     void addPotion(Potion* potion);    //需要调用本体的addPotion()
 
     void init();                       //每场战斗开始时对角色进行初始化
+
+    virtual ~Player() {};
 private:
     static std::shared_ptr<Player> instance_;
     int maxEnergy_;
