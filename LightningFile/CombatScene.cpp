@@ -11,23 +11,14 @@ HandPileLayer* HandPileLayer::getInstance()
     return instance_;
 }
 
-
-/*
-* 函数名称：init()
-* 功能：完成手牌的初始化
-* 
-*/
 bool HandPileLayer::init()
 {
+    //需要创建：抽牌堆数量，弃牌堆数量
+
     return true;
 }
 
-
-/*
-* 函数名称:enableCardDrag
-* 参数：卡牌精灵及相应的卡牌智能指针
-* 
-*/
+//卡牌拖动
 void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> card)
 {
     auto listener = EventListenerTouchOneByOne::create();
@@ -53,12 +44,12 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
 
     listener->onTouchEnded = [=](Touch* touch, Event* event) {
         auto location = touch->getLocation();
-        auto& newhand = CombatSystem::getInstance()->hand;
+        auto& newhand = CombatSystem::getInstance()->hand; //手牌
         if (playArea.containsPoint(location)) {
             CCLOG("Played card: %s", card->getName().c_str());
             CCLOG("Take Effect: %s", card->getDescription().c_str());
-            CombatSystem::getInstance()->discardPile.push(card);
-            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());
+            CombatSystem::getInstance()->discardPile.push(card); //置入弃牌堆
+            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end()); //手牌移除卡牌
             cardSprite->removeFromParent();
         }
         adjustHandPile();
@@ -89,12 +80,6 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
     }
 }
 
-
-/*
-* 函数名称：adjustHandPile()
-* 
-* 
-*/
 void HandPileLayer::adjustHandPile()
 {
     // 手牌中心位置
@@ -119,6 +104,7 @@ void HandPileLayer::adjustHandPile()
         }
     }
 }
+
 
 bool CombatScene::init() 
 {
@@ -157,6 +143,8 @@ bool CombatScene::init()
     drawPileNumLabel->setColor(cocos2d::Color3B::WHITE);  // 设置文字颜色
     this->addChild(drawPileNumLabel);
     updateDrawPileDisplay();
+    if(!drawPileNumLabel)
+        CCLOG("areyouok");
 
     // 创建弃牌堆图标
     auto discardPileIcon = cocos2d::Sprite::create("discardPileIcon.png");
@@ -236,7 +224,7 @@ bool CombatScene::init()
             if (!isMyTurn)
             {
                 CCLOG("Start Turn clicked!%d");  // 打印日志
-                CombatSystem::getInstance()->startTurn(Player::getInstance());//玩家回合开始
+                CombatSystem::getInstance()->startTurn(Player::getInstance());//玩家回合开始，进行更新
             }
             isMyTurn = 1;
         }
@@ -258,7 +246,7 @@ bool CombatScene::init()
 
 void CombatScene::updateEnergyDisplay()
 {
-    int currentEnergy = Player::getInstance()->getCurrentEnergy();
+    int currentEnergy = 4;
     int maxEnergy = 4;
     energyLabel->setString(std::to_string((int)currentEnergy) + "/" + std::to_string((int)maxEnergy));  // 更新标签文本为当前能量值
 }
