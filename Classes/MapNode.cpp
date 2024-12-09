@@ -191,12 +191,7 @@ void MapNode::onClick() {
                 Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                 }, 1.0f, "LoadNextScene");
         }
-        if (type == Combat) {
-            this->scheduleOnce([](float dt) {
-                auto nextScene = CombatScene::createScene(); // 创建目标场景
-                Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
-                }, 1.0f, "LoadNextScene");
-        }
+       
         currentLevel++;
         return;
     }
@@ -252,12 +247,7 @@ void MapNode::onClick() {
                     Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                     }, 1.0f, "LoadNextScene");
             }
-            if (type == Combat) {
-                this->scheduleOnce([](float dt) {
-                    auto nextScene = CombatScene::createScene(); // 创建目标场景
-                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
-                    }, 1.0f, "LoadNextScene");
-            }
+            
             currentLevel++;
         }
     }

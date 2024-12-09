@@ -23,11 +23,6 @@ bool ChestScene::init() {
 
     // ²¥·Å±³¾°ÒôÐ§
     audioPlayer("chest.ogg", true);
-    Player* player = Player::getInstance();
-    auto headbar = HeaderBar::create(player);
-    headbar->setPosition(Vec2(0, 1150));          // ÉèÖÃÎ»ÖÃ£¨ÔÚÆÁÄ»ÉÏ²¿£©
-    this->addChild(headbar);
-    headbar->setLocalZOrder(100);
     // ±³¾°Í¼Ïñ
     const auto background = Sprite::create("scene3.png");
     background->setPosition(Vec2(1100, 500));

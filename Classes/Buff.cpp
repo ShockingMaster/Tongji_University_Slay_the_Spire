@@ -1,40 +1,49 @@
 #include "IncludeAll.h"
 #include "Enum.h"
-#include "Buff.h"
-#include "Creature.h"  
+Buff::Buff(string name, string description, int trigger_type, int duration, int priotity)
+{
+}
 
 
-// 生效方法，对对象生效
-void Buff::takeEffect(Creature* target) {
-    if (target) {
-        cout << "Buff " << name << " applied to creature." << endl;
+Buff::~Buff()
+{
+}
+
+bool Buff::operator<(const Buff& other) const
+{
+    return false;
+}
+
+//力量Buff, 效果为增加伤害数值
+class StrengthBuff : public Buff
+{
+    void onAttack(int& numeric_value_, std::string cardName,
+        std::shared_ptr<Creature> user, std::shared_ptr<Creature> target)
+    {
+        numeric_value_ += 2;
     }
-}
+};
 
-// 生效方法：对数值生效
-void Buff::takeEffect(int& numericValue) {
-    numericValue += this->numericValue;  // 将 Buff 的数值加到目标的属性上
-    cout << "Buff " << name << " increased value by " << numericValue << "." << endl;
-}
 
-// 更新持续时间
-void Buff::updateDuration() {
-    if (isActive && duration > 0) {
-        --duration;  // 每次调用时减去 1
-        if (duration == 0) {
-            isActive = false;  // 持续时间结束，Buff失效
-            cout << "Buff " << name << " has expired." << endl;
+
+//精准Buff，效果为当卡牌名称为小刀时，造成更多伤害
+class Accuracy : public Buff
+{
+    void onAttack(int& numeric_value_, std::string cardName,
+        std::shared_ptr<Creature> user, std::shared_ptr<Creature> target)
+    {
+        if (cardName == "Blade" || cardName == "Blade+")
+        {
+            numeric_value_ += 4;
         }
     }
-}
+};
 
-class HealingBuff : public Buff
+//荆棘，效果为当受到攻击（由攻击牌触发）时，对伤害来源造成一定伤害
+class Thorns :public Buff
 {
-public:
-    HealingBuff(int healing_value);
-    void take_effect(Creature* target)
+    void onAttacked(int& numeric_value_, std::shared_ptr<Creature> user, std::shared_ptr<Creature> target)
     {
-        target->updateHealth();
-        target->updateBuff();
+        CombatSystem::getInstance()->takeDamage(user, 5, target);
     }
 };

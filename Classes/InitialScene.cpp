@@ -122,11 +122,11 @@ bool InitialScene::init()
             else {
                 Player* player = Player::getInstance();
                 player->name_ = nickname;
-                player->character_ = "xx";
+                player->character_ = "战士";
                 player->coins_ = 100;
                 player->health_ = 50;
                 player->fullhealth_ = 100;
-                player->potions_ = {};
+                player->potions_ = { NULL,NULL };
 
                 this->scheduleOnce([](float dt) {
                     // 跳转到下一个场景

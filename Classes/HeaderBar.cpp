@@ -3,6 +3,7 @@
 #include "cocos2d.h"
 #include "MapScene.h"
 #include "CardLayer.h"
+#include "AudioPlayer.h"
 using namespace std;
 using namespace cocos2d;
 
@@ -48,12 +49,11 @@ bool HeaderBar::init(Player* player) {
 
     // 初始化药水容器并添加到背景
     potionIcons = Node::create();
-    potionIcons->setPosition(Vec2(200, 50));
+    potionIcons->setPosition(Vec2(230, 50));
     backgroundBar->addChild(potionIcons);
 
     // 初始化标签并添加到背景
-    string playerInfo = name + " (" + character + ")";  // 合并name和character
-    nameLabel = Label::createWithSystemFont(playerInfo, "Marker Felt.ttf", 40);  // 使用艺术字体
+    nameLabel = Label::createWithSystemFont(name + u8" (战士)", "Marker Felt.ttf", 40);  // 使用艺术字体
     nameLabel->setPosition(Vec2(100, 100)); // 顶部显示名称
     backgroundBar->addChild(nameLabel);
 
@@ -87,6 +87,110 @@ bool HeaderBar::init(Player* player) {
     menu->setPosition(Vec2(1600, 150));  // 设置按钮位置
     this->addChild(menu);
 
+
+    potionIcons = Node::create();
+    int index = 0;
+    for (auto potion : potions) {
+        // 创建一个按钮的精灵，使用MenuItemImage代替Sprite
+        cocos2d::MenuItemImage* potionMenuItem = cocos2d::MenuItemImage::create(
+            "potion_t_glass.png",    // 普通状态图片
+            "potion_t_glass.png",
+            [=](Ref* sender) {       // 点击事件回调
+                // 点击药水时弹出询问使用药水的Layer
+                auto usePotionLayer = LayerColor::create(Color4B(0, 0, 0, 0));  // 半透明背景
+                auto visibleSize = Director::getInstance()->getVisibleSize();
+                usePotionLayer->setContentSize(visibleSize);
+                usePotionLayer->setPosition(Vec2(0, 0));
+                Director::getInstance()->getRunningScene()->addChild(usePotionLayer, 100);
+
+                // 创建 "Yes" 按钮
+                auto yesButton = MenuItemImage::create(
+                    "potionyes.png",  // 普通状态图片
+                    "potionyes.png",  // 按下状态图片
+                    [=](Ref* sender) {
+                        // 执行使用药水操作
+                        CCLOG("Potion used!");
+                        auto it = std::find(potions.begin(), potions.end(), potion);
+                        potions.erase(it); // 删除对应的药水
+                        Player::getInstance()->potions_ = potions;
+                        audioPlayer("SOTE_SFX_Potion_1_v2.ogg", false);
+                        this->updateHeader(Player::getInstance());
+                        usePotionLayer->removeFromParent();  // 移除询问层
+                    }
+                );
+                yesButton->setPosition(visibleSize.width / 2 - 100, visibleSize.height / 2 + 200);
+                yesButton->setScale(0.5f);
+
+                // 创建 "No" 按钮
+                auto noButton = MenuItemImage::create(
+                    "potionno.png",
+                    "potionno.png",  // 按下状态图片
+                    [=](Ref* sender) {
+                        // 取消使用药水
+                        CCLOG("Potion use canceled!");
+                        usePotionLayer->removeFromParent();  // 移除询问层
+                    }
+                );
+                noButton->setPosition(visibleSize.width / 2 + 100, visibleSize.height / 2 + 200);
+                noButton->setScale(0.5f);
+
+                // 创建菜单并添加按钮
+                auto menu = Menu::create(yesButton, noButton, nullptr);
+                menu->setPosition(Vec2::ZERO);  // 设置菜单位置
+                usePotionLayer->addChild(menu);  // 将菜单添加到询问层
+
+
+                auto askLabel = Label::createWithSystemFont(u8"是否喝下药水", "Marker Felt.ttf", 50); // 使用艺术字体
+                askLabel->setPosition(Vec2(1000, 900)); // 紧邻 healthIcon
+                askLabel->setColor(Color3B::WHITE);  // 设置为红色
+                usePotionLayer->addChild(askLabel);
+            });
+
+        // 设置药水菜单项的缩放和位置
+        potionMenuItem->setScale(1.8f);
+        potionMenuItem->setPosition(cocos2d::Vec2(950 + 80 * index, 100));
+
+        // 创建一个菜单，并将MenuItem添加到菜单中
+        auto menu = cocos2d::Menu::create(potionMenuItem, nullptr);
+        menu->setPosition(cocos2d::Vec2::ZERO);  // Menu本身的位置不影响Item的位置
+        potionIcons->addChild(menu);  // 将菜单添加到场景
+
+        // 关联药水对象和药水菜单项（按钮）
+        potionMenuItem->setUserData((void*)potion);
+
+        index++;
+    }
+
+    backgroundBar->addChild(potionIcons, 200000);
+
+
+    relicIcons = Node::create();
+    relicIcons->setPosition(Vec2(200, 50));
+    backgroundBar->addChild(relicIcons);
+    int i = 0;
+    for (auto relic :relics) {
+        // 创建一个按钮的精灵，使用MenuItemImage代替Sprite
+        cocos2d::MenuItemImage* relicMenuItem = cocos2d::MenuItemImage::create(
+            "bell.png",  "bell.png");
+
+        // 设置药水菜单项的缩放和位置
+        relicMenuItem->setScale(1.0f);
+        relicMenuItem->setPosition(cocos2d::Vec2(50 + 80 * i, 30));
+
+        // 创建一个菜单，并将MenuItem添加到菜单中
+        auto menu = cocos2d::Menu::create(relicMenuItem, nullptr);
+        menu->setPosition(cocos2d::Vec2::ZERO);  // Menu本身的位置不影响Item的位置
+        potionIcons->addChild(menu);  // 将菜单添加到场景
+
+        // 关联药水对象和药水菜单项（按钮）
+        relicMenuItem->setUserData((void*)relic);
+
+        i++;
+    }
+
+ 
+
+
     return true;
 }
 
@@ -101,13 +205,107 @@ void HeaderBar::updateHeader(Player* player) {
     coinsLabel->setString("Coins: " + to_string(coins));
     levelLabel->setString("Level: " + to_string(currentLevel-1));
     cards = player->cards_;
-    // 更新药水图标，图没找齐，先注释掉
-    /*potionIcons->removeAllChildren(); // 清空当前药水图标
-    for (size_t i = 0; i < potions.size(); ++i) {
-        auto potionSprite = Sprite::create("potion_icon.png");
-        potionSprite->setPosition(Vec2(50 + i * 30, 0));
-        potionIcons->addChild(potionSprite);
-    }*/
+    potions = player->potions_;
+    potionIcons->removeAllChildren();
+    potionIcons = Node::create();
+    int index = 0;
+    for (auto potion : potions) {
+        // 创建一个按钮的精灵，使用MenuItemImage代替Sprite
+        cocos2d::MenuItemImage* potionMenuItem = cocos2d::MenuItemImage::create(
+            "potion_t_glass.png",    // 普通状态图片
+            "potion_t_glass.png",
+            [=](Ref* sender) {       // 点击事件回调
+                // 点击药水时弹出询问使用药水的Layer
+                auto usePotionLayer = LayerColor::create(Color4B(0, 0, 0, 0));  // 半透明背景
+                auto visibleSize = Director::getInstance()->getVisibleSize();
+                usePotionLayer->setContentSize(visibleSize);
+                usePotionLayer->setPosition(Vec2(0, 0));
+                Director::getInstance()->getRunningScene()->addChild(usePotionLayer, 100);
+
+                // 创建 "Yes" 按钮
+                auto yesButton = MenuItemImage::create(
+                    "potionyes.png",  // 普通状态图片
+                    "potionyes.png",  // 按下状态图片
+                    [=](Ref* sender) {
+                        // 执行使用药水操作
+                        CCLOG("Potion used!");
+                        audioPlayer("SOTE_SFX_Potion_1_v2.ogg", false);
+                        auto it = std::find(potions.begin(), potions.end(), potion);
+                        potions.erase(it); // 删除对应的药水
+                        Player::getInstance()->potions_ = potions;
+                        this->updateHeader(Player::getInstance());
+                        usePotionLayer->removeFromParent();  // 移除询问层
+                    }
+                );
+                yesButton->setPosition(visibleSize.width / 2 - 100, visibleSize.height / 2 + 200);
+                yesButton->setScale(0.5f);
+
+                // 创建 "No" 按钮
+                auto noButton = MenuItemImage::create(
+                    "potionno.png",
+                    "potionno.png",  // 按下状态图片
+                    [=](Ref* sender) {
+                        // 取消使用药水
+                        CCLOG("Potion use canceled!");
+                        usePotionLayer->removeFromParent();  // 移除询问层
+                    }
+                );
+                noButton->setPosition(visibleSize.width / 2 + 100, visibleSize.height / 2 + 200);
+                noButton->setScale(0.5f);
+
+                // 创建菜单并添加按钮
+                auto menu = Menu::create(yesButton, noButton, nullptr);
+                menu->setPosition(Vec2::ZERO);  // 设置菜单位置
+                usePotionLayer->addChild(menu);  // 将菜单添加到询问层
+
+
+                auto askLabel = Label::createWithSystemFont(u8"是否喝下药水", "Marker Felt.ttf", 50); // 使用艺术字体
+                askLabel->setPosition(Vec2(1000, 900)); // 紧邻 healthIcon
+                askLabel->setColor(Color3B::WHITE);  // 设置为红色
+                usePotionLayer->addChild(askLabel);
+            });
+
+        // 设置药水菜单项的缩放和位置
+        potionMenuItem->setScale(1.8f);
+        potionMenuItem->setPosition(cocos2d::Vec2(950 + 80 * index, 100));
+
+        // 创建一个菜单，并将MenuItem添加到菜单中
+        auto menu = cocos2d::Menu::create(potionMenuItem, nullptr);
+        menu->setPosition(cocos2d::Vec2::ZERO);  // Menu本身的位置不影响Item的位置
+        potionIcons->addChild(menu);  // 将菜单添加到场景
+
+        // 关联药水对象和药水菜单项（按钮）
+        potionMenuItem->setUserData((void*)potion);
+
+        index++;
+    }
+    potionIcons->setPosition(Vec2(65, 50));
+    this->addChild(potionIcons);
+    relicIcons = Node::create();
+    relicIcons->setPosition(Vec2(230, 50));
+    this->addChild(relicIcons);
+    int i = 0;
+    for (auto relic : relics) {
+        // 创建一个按钮的精灵，使用MenuItemImage代替Sprite
+        cocos2d::MenuItemImage* relicMenuItem = cocos2d::MenuItemImage::create(
+            "bell.png", "bell.png");
+
+        // 设置药水菜单项的缩放和位置
+        relicMenuItem->setScale(1.0f);
+        relicMenuItem->setPosition(cocos2d::Vec2(30 + 80 * i, 30));
+
+        // 创建一个菜单，并将MenuItem添加到菜单中
+        auto menu = cocos2d::Menu::create(relicMenuItem, nullptr);
+        menu->setPosition(cocos2d::Vec2::ZERO);  // Menu本身的位置不影响Item的位置
+        potionIcons->addChild(menu);  // 将菜单添加到场景
+
+        // 关联药水对象和药水菜单项（按钮）
+        relicMenuItem->setUserData((void*)relic);
+
+        i++;
+    }
+
+
 }
 
 // 静态创建函数
@@ -142,6 +340,7 @@ void HeaderBar::setPlayerInfo(Player* player) {
     this->fullHealth = player->fullhealth_;
     this->coins = player->coins_;
     this->potions = player->potions_;
+    this->relics = player->relics_;
     this->level =  currentLevel-1;
     this->cards = player->cards_;
 }

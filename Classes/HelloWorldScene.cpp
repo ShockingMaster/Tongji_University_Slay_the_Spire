@@ -27,8 +27,8 @@
 #include "SimpleAudioEngine.h"
 #include "Player.h"
 #include "cocos2d.h"
-#include "CardLayer.h"
-#include "Headerbar.h"
+#include "HeaderBar.h"
+#include "EnergyBall.h"
 USING_NS_CC;
 
 using namespace cocos2d;
@@ -53,10 +53,10 @@ bool HelloWorld::init()
     {
         return false;
     }
-    Player* player=Player::getInstance();
+    auto player = Player::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 1150));          // 设置位置（在屏幕上部）
-    this->addChild(headbar);
+    this->addChild(headbar);        // 添加到场景
     return true;
 }
 

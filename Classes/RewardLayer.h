@@ -11,9 +11,6 @@ public:
     // 构造和析构函数
     RewardLayer();
     ~RewardLayer();
-    int goldReward=150;
-    Card* cardReward;
-    Relic* relicReward;
     // 创建 RewardLayer 层
     static RewardLayer* create();
 
@@ -23,6 +20,7 @@ public:
     // 按钮点击事件回调
     void onCloseButtonClicked(cocos2d::Ref* sender);
 
+ 
 
 private:
 

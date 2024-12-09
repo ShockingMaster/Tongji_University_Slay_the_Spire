@@ -64,19 +64,19 @@ bool CardLayer::init(std::vector<Card*> cards, int op) {
     this->addChild(returnLabel, 103);  // Label的层级高于按钮
 
     if (operation == 1) {
-        auto inform = cocos2d::Label::createWithSystemFont(u8"当前\n牌组", "Arial", 80);
+        auto inform = cocos2d::Label::createWithSystemFont(u8"当前\n牌组", "fonts/Marker Felt", 70);
         inform->setTextColor(cocos2d::Color4B::WHITE);
         inform->setPosition(cocos2d::Vec2(1790, 700));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
     if (operation == 2) {
-        auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被删除", "Arial", 80);
+        auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被删除", "fonts/Marker Felt", 70);
         inform->setTextColor(cocos2d::Color4B::WHITE);
         inform->setPosition(cocos2d::Vec2(1750, 700));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
     if (operation == 3) {
-        auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被升级", "Arial", 80);
+        auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被升级", "fonts/Marker Felt", 70);
         inform->setTextColor(cocos2d::Color4B::WHITE);
         inform->setPosition(cocos2d::Vec2(1750, 700));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
@@ -178,7 +178,7 @@ void CardLayer::displayCards() {
                         popupLayer->addChild(selectedCard);
 
                         // 创建右边的文本说明，使用默认字体
-                        auto label = cocos2d::Label::createWithSystemFont(u8"是否确定选中", "Arial", 70);
+                        auto label = cocos2d::Label::createWithSystemFont(u8"是否确定选中", "fonts/Marker Felt", 70);
                         label->setPosition(1790, 850);  // 设置标签位置
                         label->setTextColor(cocos2d::Color4B::WHITE);  // 设置字体颜色为白色
                         popupLayer->addChild(label, 600);  // 添加到弹出层，并确保它在较高层级
@@ -202,8 +202,8 @@ void CardLayer::displayCards() {
                                 if (it != _cards.end()) {
                                     _cards.erase(it);  // 删除卡牌
                                     // 移除该精灵
-                                    //cardSprite->removeFromParent();
-                                    //_cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
+                                    cardSprite->removeFromParent();                           
+                                    _cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
                                     CCLOG("删除卡牌成功");
                                     Player* player = Player::getInstance();
                                     player->cards_ = _cards;

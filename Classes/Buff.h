@@ -1,42 +1,58 @@
 #pragma once
-#include <iostream>
-#include <string>
-#include <Enum.h>
+#include<iostream>
 using namespace std;
-
+class CombatSystem;
 class Creature;
-
-
+class Card;
 class Buff
 {
 public:
-    // 成员变量
-    string name;           // Buff的名称
-    string description;    // Buff的描述
-    int duration;          // Buff的持续时间
-    int triggerType;       // Buff触发方式
-    int priority;          // Buff的触发优先级
-    bool isStackable;      // 是否可以叠加
-    int numericValue;      // Buff的数值（如：力量、精准度等）
-    bool isActive;         // Buff是否有效
+    Buff(string name, string description, int trigger_type, int duration, int priotity);
 
-    // 构造函数
-    Buff(string name, string description, int triggerType, int duration, int priority, bool isStackable = true, int numericValue = 0)
-        : name(name), description(description), triggerType(triggerType), duration(duration), priority(priority),
-        isStackable(isStackable), numericValue(numericValue), isActive(true) {}
+    string name_;
 
-    // 生效方法
-    virtual void takeEffect(Creature* target);          // 对生物生效
-    virtual void takeEffect(int& numericValue);         // 对数值生效（如增加某些属性）
+    string description_;
 
-    // 更新持续时间
-    void updateDuration();
+    int duration_;                                                     //buff持续时间
 
-    // 析构函数
-    virtual ~Buff() {}
+    int trigger_type_;                                                 //buff触发方式
 
-    // 比较两个buff的优先级
-    bool operator<(const Buff& other) const {
-        return priority < other.priority;
-    }
+    int priotity_;                                                     //buff触发优先级 
+
+    bool is_stackable_;                                                //有的buff可以叠加
+
+    bool is_positive_;                                                 //区分正负面buff
+
+    int numeric_value_;                                                //buff的数值，比如力量的数值，精准的数值，无实体的数值
+
+    virtual void onCardPlayed(std::shared_ptr<Card> card) {};                          //在打出一张牌时触发
+
+    virtual void onTurnStart() {};                                     //在回合开始时触发
+
+    virtual void onTurnEnd() {};                                       //在回合结束时触发
+
+    virtual void onAttack(int& numeric_value_, std::string cardName = "",
+        std::shared_ptr<Creature> user = nullptr, std::shared_ptr<Creature> target = nullptr) {};      //在进行攻击时触发,主要应用于修改：易伤、虚弱、力量
+
+    virtual void onGetBlock(int& numeric_value_) {};                   //在得到格挡时触发，主要应用于修改：敏捷
+
+    virtual void onAttacked(int& numeric_value_, std::shared_ptr<Creature>, std::shared_ptr<Creature>) {};
+
+    virtual void onTakeDamage(int& numeric_value_) {};
+
+    virtual void onLoseBlock(int& numeric_value_) {};
+
+    virtual void onLoseHealth(int& numeric_value_) {};
+
+    virtual void getBuff() {};
+
+    virtual void onDrawCard(int& num) {};
+
+    virtual void onExhaustCard() {};
+
+    virtual ~Buff();
+
+    bool operator<(const Buff& other) const;                           //比较两个buff的优先级
+private:
+
 };

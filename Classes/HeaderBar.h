@@ -27,6 +27,7 @@ private:
     Label* coinsLabel;        // 显示金币数量的标签
     Label* levelLabel;        // 显示当前关卡的标签
     Node* potionIcons;        // 显示药水图标的容器
+    Node* relicIcons;        // 显示药水图标的容器
     Sprite* healthIcon;       // 生命图标
     Sprite* coinsIcon;        // 金币图标
     Sprite* potionIcon;       // 药水图标

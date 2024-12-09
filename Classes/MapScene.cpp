@@ -56,11 +56,7 @@ bool MapScene::init() {
         return false;
     }
     Player* player = Player::getInstance();
-    player->character_ = "xx";
-    player->coins_ = 100;
-    player->health_ = 50;
-    player->fullhealth_ = 100;
-    player->potions_ = {};
+
     auto headbar = HeaderBar::create(player);
     headbar->setName("HeaderBar");  // ÉèÖÃÃû³Æ
     headbar->setPosition(Vec2(0, 1150));
