@@ -17,11 +17,8 @@ public:
 	std::queue<std::shared_ptr<Card>> drawPile;                                 // 抽牌堆
 	std::vector<std::shared_ptr<Card>> hand;                                    // 手牌
 	std::queue<std::shared_ptr<Card>> discardPile;                              // 弃牌堆
-	int tem_energy;
 
 	void init();                                                                //初始化战斗系统
-	void shuffleDeck();                                                          //洗牌函数
-	std::vector<std::shared_ptr<Card>>& getHandPile() { return hand; }           //返回手牌堆
 
 	void onAttack(std::shared_ptr<Creature> attacker, std::shared_ptr<Creature> target,
 		int numeric_value_, std::string cardName = "") ;
@@ -39,6 +36,8 @@ public:
 
 	void cardPlayed(std::shared_ptr<Card> card) ;                               //打出卡牌效果
 
+	void cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature);//对于需要目标的卡牌进行重载
+
 	void exhaustCard(std::shared_ptr<Card> card) ;                              //消耗卡牌
 
 	void discardCard(std::shared_ptr<Card> card) ;                              //主动丢弃卡牌
@@ -51,9 +50,9 @@ public:
 
 	void addBuff();                                                             //增加Buff
 
-	void shuffle();                                                             //进行洗牌
+	void shuffleDeck();                                                             //进行洗牌
 
-	void drawCard(int num);                                                            //进行抽牌
+	void drawCard(int num);                                                     //进行抽牌
 
 	int getDrawPileNumber();                                                    //获取抽牌堆卡牌数量
 
@@ -74,7 +73,6 @@ public:
 		return round_;
 	}
 	~CombatSystem() {};
-
 
 private:
 	static CombatSystem* instance_;

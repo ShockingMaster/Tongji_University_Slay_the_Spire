@@ -12,7 +12,7 @@
 class Attack : public Card
 {
 public:
-    Attack() : Card("Attack", "Deal 6 damage", 1, 20, COMMON, PLAYABLE, ATTACK, YES) {}
+    Attack() : Card("Attack", "Deal 6 damage", 1, 20, COMMON, PLAYABLE, ATTACK, YES, NO) {}
     void takeEffect(std::shared_ptr<Creature> target)
     {
         int temp_attack = 6;
