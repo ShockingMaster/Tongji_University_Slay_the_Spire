@@ -1,43 +1,42 @@
 #include "IncludeAll.h"
 #include "Enum.h"
 
-Player* Player::instance_ = nullptr;
+std::shared_ptr<Player> Player::instance_ = nullptr;  // 定义静态成员变量
 
-// 定义 getInstance 方法  
-Player* Player::getInstance() {
-    if (instance_ == nullptr) {
-        instance_ = new Player(); // 创建唯一实例  
+std::shared_ptr<Player> Player::getInstance() {
+    if (!instance_) {
+        instance_ = std::make_shared<Player>();
     }
     return instance_;
 }
 
-void Player::start_turn() {
-    block_ = 0; 
+void Player::startTurn() noexcept
+{
+    block_ = 0;
 }
 
-void Player::end_turn() {
-    
+void Player::endTurn() {
+    currentEnergy_ = 0;
+}
+
+void Player::energyChange(int changeValue)
+{
+    currentEnergy_ += changeValue;
 }
 
 void Player::addPotion(Potion* potion)
 {
 }
 
+/*
+* 角色初始化需要：初始化血量格挡，将buff列表清空，
+* 遍历遗物列表，添加buff
+*/
 void Player::init()
 {
-    energy_ = 0;
-    maxEnergy_ = 3;
+    //初始化血量
+    health_ = 10;
+    block_ = 10;
+    currentEnergy_ = 0;
 }
 
-void Player::addEnergy(int numeric_value_)
-{
-}
-
-int Player::getEnergyValue()
-{
-    return energy_;
-}
-int Player::getMaxEnergyValue()
-{
-    return maxEnergy_;
-}
