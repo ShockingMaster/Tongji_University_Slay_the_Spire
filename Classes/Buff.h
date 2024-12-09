@@ -40,6 +40,8 @@ public:
 
     virtual void onTakeDamage(int& numeric_value_) {};
 
+    virtual void onGetEnergy(int& numeric_value_) {};
+
     virtual void onLoseBlock(int& numeric_value_) {};
 
     virtual void onLoseHealth(int& numeric_value_) {};
@@ -56,3 +58,5 @@ public:
 private:
 
 };
+
+

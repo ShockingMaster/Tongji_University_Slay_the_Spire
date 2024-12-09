@@ -38,19 +38,21 @@ bool MenuScene::init() {
 
     // 添加背景图片
     const auto background0 = Sprite::create("title4.png");
-    background0->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
+    background0->setPosition(Vec2(screenSize.width / 2+150, screenSize.height / 2-200));
     this->addChild(background0);
 
     const auto background1 = Sprite::create("title5.png");
-    background1->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
+    background1->setPosition(Vec2(screenSize.width / 2+150, screenSize.height / 2-200));
     this->addChild(background1);
 
     const auto background2 = Sprite::create("title6.png");
-    background2->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
+    background2->setPosition(Vec2(screenSize.width / 2+150, screenSize.height / 2-200));
     this->addChild(background2);
 
     // 创建显示玩家名称的标签
-    Player* player = Player::getInstance();
+    
+
+    shared_ptr<Player> player = Player::getInstance();
     auto playerNameLabel = Label::createWithTTF("Player: "+player->name_,
         "Fonts/FangZhengZhaoGeYuan.ttf", 40);
     playerNameLabel->setPosition(Vec2(20, screenSize.height + 150)); // 设置在左上角位置
@@ -67,7 +69,7 @@ bool MenuScene::init() {
     startGameButton->setTitleText(u8"开始游戏");
     startGameButton->setScale(1.5f);
     startGameButton->setTitleFontSize(50);
-    startGameButton->setPosition(Vec2(screenSize.width - 700, buttonStartY));
+    startGameButton->setPosition(Vec2(screenSize.width - 500, buttonStartY-200));
     startGameButton->addTouchEventListener([](Ref* sender, ui::Widget::TouchEventType type) {
         if (type == ui::Widget::TouchEventType::ENDED) {
             CCLOG("Start Game clicked!"); // 打印日志
@@ -83,7 +85,7 @@ bool MenuScene::init() {
     settingsButton->setTitleText(u8"游戏设置");
     settingsButton->setTitleFontSize(50);
     settingsButton->setScale(1.5f);
-    settingsButton->setPosition(Vec2(screenSize.width - 700, buttonStartY - buttonSpacing));
+    settingsButton->setPosition(Vec2(screenSize.width - 500, buttonStartY - buttonSpacing-200));
     settingsButton->addTouchEventListener([](Ref* sender, ui::Widget::TouchEventType type) {
         if (type == ui::Widget::TouchEventType::ENDED) {
             CCLOG("Settings clicked!"); // 打印日志
@@ -99,7 +101,7 @@ bool MenuScene::init() {
     exitGameButton->setTitleText(u8"退出游戏");
     exitGameButton->setTitleFontSize(50);
     exitGameButton->setScale(1.5f);
-    exitGameButton->setPosition(Vec2(screenSize.width - 700, buttonStartY - buttonSpacing * 2));
+    exitGameButton->setPosition(Vec2(screenSize.width - 500, buttonStartY -200-buttonSpacing * 2));
     exitGameButton->addTouchEventListener([this](Ref* sender, ui::Widget::TouchEventType type) {
         if (type == ui::Widget::TouchEventType::ENDED) {
             audioPlayer("ClickSoundEffect.mp3", false);  // 播放点击音效

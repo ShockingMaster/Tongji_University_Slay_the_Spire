@@ -22,19 +22,19 @@ bool ShopScene::init() {
     audioPlayer("../Resources/event.ogg", true);
 
 
-    Player* player = Player::getInstance();
+    shared_ptr<Player> player = Player::getInstance();
     auto headbar = HeaderBar::create(player);
-    headbar->setPosition(Vec2(0, 1150));          // 设置位置（在屏幕上部）
+    headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
-    headbar->setLocalZOrder(100);
+    headbar->setLocalZOrder(2000100);
     // 背景图像
     const auto background = Sprite::create("walkscene.jpg");
-    background->setPosition(Vec2(1100, 300));
+    background->setPosition(Vec2(1100, 100));
     this->addChild(background);
 
     // 欢迎标签
     auto continueLabel = Label::createWithSystemFont(u8"“欢迎来到商店！”\n一个戴面具的商人\n出现在你的面前", "Fonts/Kreon-Bold.ttf", 65);
-    continueLabel->setPosition(Vec2(600, 800));
+    continueLabel->setPosition(Vec2(600, 600));
     continueLabel->setColor(Color3B::WHITE);
     this->addChild(continueLabel);
 
@@ -42,7 +42,7 @@ bool ShopScene::init() {
     const auto background0 = Sprite::create("merchant-removebg-preview.png");
     background0->setScale(1.0f);
     background0->setOpacity(200);
-    background0->setPosition(Vec2(1500, 600));
+    background0->setPosition(Vec2(1500, 400));
     this->addChild(background0);
 
     // 使用 DelayTime 来创建延迟
@@ -53,7 +53,7 @@ bool ShopScene::init() {
         // 创建新层，并设置背景图
         auto newLayer = Sprite::create("fin.png");
         newLayer->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
-            Director::getInstance()->getVisibleSize().height / 2 + 190));
+            Director::getInstance()->getVisibleSize().height / 2 -10));
         newLayer->setScale(0.9f);
         this->addChild(newLayer, 100); // 100是层级，确保在其他元素之上
 

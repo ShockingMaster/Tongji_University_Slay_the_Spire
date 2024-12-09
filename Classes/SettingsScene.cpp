@@ -51,33 +51,33 @@ bool SettingsScene::init()
     // 加载背景
     const auto screenSize = cocos2d::Director::getInstance()->getVisibleSize();
     const auto background = Sprite::create("scene2.jfif");
-    background->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 + 210));
+    background->setPosition(Vec2(screenSize.width / 2+50, screenSize.height / 2 + 10));
     this->addChild(background);
 
     // 创建说明文字
     auto bgMusicLabel = Label::createWithSystemFont(u8"背景音乐音量", "Arial", 50);
-    bgMusicLabel->setPosition(Vec2(400, 740));  // 设置位置
+    bgMusicLabel->setPosition(Vec2(450, 540));  // 设置位置
     this->addChild(bgMusicLabel);
 
     auto soundEffectLabel = Label::createWithSystemFont(u8"音效音量", "Arial", 50);
-    soundEffectLabel->setPosition(Vec2(400, 450));  // 设置位置
+    soundEffectLabel->setPosition(Vec2(450, 250));  // 设置位置
     this->addChild(soundEffectLabel);
 
     // 创建“0”和“100”的说明文字
     auto zeroLabel1 = Label::createWithSystemFont("0", "Arial", 50);
-    zeroLabel1->setPosition(Vec2(150, 700));  // 设置位置
+    zeroLabel1->setPosition(Vec2(200, 500));  // 设置位置
     this->addChild(zeroLabel1);
 
     auto hundredLabel1 = Label::createWithSystemFont("100", "Arial", 50);
-    hundredLabel1->setPosition(Vec2(700, 700));  // 设置位置
+    hundredLabel1->setPosition(Vec2(750, 500));  // 设置位置
     this->addChild(hundredLabel1);
 
     auto zeroLabel2 = Label::createWithSystemFont("0", "Arial", 50);
-    zeroLabel2->setPosition(Vec2(150, 400));  // 设置位置
+    zeroLabel2->setPosition(Vec2(200, 200));  // 设置位置
     this->addChild(zeroLabel2);
 
     auto hundredLabel2 = Label::createWithSystemFont("100", "Arial", 50);
-    hundredLabel2->setPosition(Vec2(700, 400));  // 设置位置
+    hundredLabel2->setPosition(Vec2(750, 200));  // 设置位置
     this->addChild(hundredLabel2);
 
     // 创建滑动条
@@ -85,14 +85,14 @@ bool SettingsScene::init()
     backgroundMusicVolumnSlider->loadBarTexture("SliderBackground.png");
     backgroundMusicVolumnSlider->loadSlidBallTextures("SliderNodeNormal.png", "SliderNodePress.png", "SliderNodeDisable.png");
     backgroundMusicVolumnSlider->loadProgressBarTexture("SliderBar.png");
-    backgroundMusicVolumnSlider->setPosition(cocos2d::Vec2(400, 700));
+    backgroundMusicVolumnSlider->setPosition(cocos2d::Vec2(450, 500));
     backgroundMusicVolumnSlider->setPercent(backgroundVolumn * 100);
 
     auto effectVolumnslider = cocos2d::ui::Slider::create();
     effectVolumnslider->loadBarTexture("SliderBackground.png");
     effectVolumnslider->loadSlidBallTextures("SliderNodeNormal.png", "SliderNodePress.png", "SliderNodeDisable.png");
     effectVolumnslider->loadProgressBarTexture("SliderBar.png");
-    effectVolumnslider->setPosition(cocos2d::Vec2(400, 400));
+    effectVolumnslider->setPosition(cocos2d::Vec2(450, 200));
     effectVolumnslider->setPercent(soundEffectVolumn * 100);
 
     // 为滑动条添加事件处理器
@@ -131,7 +131,7 @@ bool SettingsScene::init()
 
     // 创建返回按钮（HoverButton）
     auto backButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
-    backButton->setPosition(Vec2(1200, 300));  // 设置按钮位置
+    backButton->setPosition(Vec2(1250, 100));  // 设置按钮位置
     backButton->setTitleText(u8"返回");
     backButton->setTitleFontSize(50);
     backButton->addClickEventListener([=](Ref* sender) {

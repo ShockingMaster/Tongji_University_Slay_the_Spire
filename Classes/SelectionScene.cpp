@@ -39,14 +39,14 @@ bool SelectionScene::init()
     // 创建显示文本的Label
     auto label = Label::createWithSystemFont(u8"随机地图生成中...", "Arial", 60);
     label->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
-        Director::getInstance()->getVisibleSize().height / 2 - 200));
+        Director::getInstance()->getVisibleSize().height / 2 - 300));
     label->setTextColor(Color4B::WHITE); // 设置文字颜色为白色
     this->addChild(label);
 
     // 将每张图片设置为在屏幕中心位置
     for (auto& image : images) {
         image->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
-            Director::getInstance()->getVisibleSize().height / 2));
+            Director::getInstance()->getVisibleSize().height / 2-100));
         image->setVisible(false);  // 初始时不显示
         this->addChild(image);
     }

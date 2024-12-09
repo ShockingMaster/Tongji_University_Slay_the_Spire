@@ -29,7 +29,7 @@ bool CardLayer::init(std::vector<Card*> cards, int op) {
     if (_background) {
         _background->setScale(1.0f);
         _background->setColor(cocos2d::Color3B(240, 240, 240));
-        _background->setPosition(cocos2d::Vec2(1000, 720));
+        _background->setPosition(cocos2d::Vec2(1000, 520));
         _background->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
         this->addChild(_background, 100);
     }
@@ -52,7 +52,7 @@ bool CardLayer::init(std::vector<Card*> cards, int op) {
         "cancelButton.png", "cancelButtonOutline.png",
         CC_CALLBACK_1(CardLayer::closeLayerCallback, this)
     );
-    closeButton->setPosition(cocos2d::Vec2(1940, 190));
+    closeButton->setPosition(cocos2d::Vec2(1940, -10));
     closeButton->setScale(1.3f);
     auto menu = cocos2d::Menu::create(closeButton, nullptr);
     menu->setPosition(cocos2d::Vec2::ZERO);
@@ -60,25 +60,25 @@ bool CardLayer::init(std::vector<Card*> cards, int op) {
     // 创建返回Label
     auto returnLabel = cocos2d::Label::createWithSystemFont(u8"返回", "Arial", 60);
     returnLabel->setTextColor(cocos2d::Color4B::WHITE);
-    returnLabel->setPosition(cocos2d::Vec2(1790, 260));  // 设置Label的位置，使其在按钮上方
+    returnLabel->setPosition(cocos2d::Vec2(1790, 60));  // 设置Label的位置，使其在按钮上方
     this->addChild(returnLabel, 103);  // Label的层级高于按钮
 
     if (operation == 1) {
         auto inform = cocos2d::Label::createWithSystemFont(u8"当前\n牌组", "fonts/Marker Felt", 70);
         inform->setTextColor(cocos2d::Color4B::WHITE);
-        inform->setPosition(cocos2d::Vec2(1790, 700));  // 设置Label的位置，使其在按钮上方
+        inform->setPosition(cocos2d::Vec2(1720, 500));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
     if (operation == 2) {
         auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被删除", "fonts/Marker Felt", 70);
         inform->setTextColor(cocos2d::Color4B::WHITE);
-        inform->setPosition(cocos2d::Vec2(1750, 700));  // 设置Label的位置，使其在按钮上方
+        inform->setPosition(cocos2d::Vec2(1700, 500));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
     if (operation == 3) {
         auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被升级", "fonts/Marker Felt", 70);
         inform->setTextColor(cocos2d::Color4B::WHITE);
-        inform->setPosition(cocos2d::Vec2(1750, 700));  // 设置Label的位置，使其在按钮上方
+        inform->setPosition(cocos2d::Vec2(1700, 500));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
     return true;
@@ -168,18 +168,18 @@ void CardLayer::displayCards() {
                         // 创建一个弹出层（Popup Layer）
                         auto popupLayer = cocos2d::LayerColor::create(cocos2d::Color4B(0, 0, 0, 250)); // 半透明黑色背景
                         popupLayer->setContentSize(cocos2d::Size(2100, 1200)); // 设置弹出层大小
-                        popupLayer->setPosition(cocos2d::Vec2(0, 60)); // 设置弹出层位置
+                        popupLayer->setPosition(cocos2d::Vec2(0, -140)); // 设置弹出层位置
                         this->addChild(popupLayer, 500); // 添加到场景，确保它在最上层
 
                         // 创建并添加卡牌到弹出层左边
                         auto selectedCard = cocos2d::Sprite::create("hitcard.png");
-                        selectedCard->setPosition(500, 700); // 设置卡牌显示位置
+                        selectedCard->setPosition(500, 500); // 设置卡牌显示位置
                         selectedCard->setScale(1.2f); // 放大卡牌
                         popupLayer->addChild(selectedCard);
 
                         // 创建右边的文本说明，使用默认字体
                         auto label = cocos2d::Label::createWithSystemFont(u8"是否确定选中", "fonts/Marker Felt", 70);
-                        label->setPosition(1790, 850);  // 设置标签位置
+                        label->setPosition(1700, 650);  // 设置标签位置
                         label->setTextColor(cocos2d::Color4B::WHITE);  // 设置字体颜色为白色
                         popupLayer->addChild(label, 600);  // 添加到弹出层，并确保它在较高层级
 
@@ -188,7 +188,7 @@ void CardLayer::displayCards() {
                         confirmButton->setTitleText(u8"确认");
                         confirmButton->setTitleFontSize(24);
                         confirmButton->setScale(1.5f);
-                        confirmButton->setPosition(cocos2d::Vec2(1750, 600)); // 设置按钮位置
+                        confirmButton->setPosition(cocos2d::Vec2(1750, 400)); // 设置按钮位置
                         // 按钮点击事件
                         confirmButton->addClickEventListener([this, popupLayer, cardSprite](cocos2d::Ref* sender) {
                             // 获取卡牌对象
@@ -205,7 +205,10 @@ void CardLayer::displayCards() {
                                     cardSprite->removeFromParent();                           
                                     _cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
                                     CCLOG("删除卡牌成功");
-                                    Player* player = Player::getInstance();
+                                    
+
+
+                                    shared_ptr<Player> player = Player::getInstance(); 
                                     player->cards_ = _cards;
                                 }
                             }

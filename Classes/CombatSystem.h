@@ -18,7 +18,7 @@ public:
 	std::queue<std::shared_ptr<Card>> drawPile;                                 // 抽牌堆
 	std::vector<std::shared_ptr<Card>> hand;                                    // 手牌
 	std::queue<std::shared_ptr<Card>> discardPile;                              // 弃牌堆
-
+	std::queue<std::shared_ptr<Card>> exhaustPile;                              // 被消耗的坟墓牌堆
 
 	void init();                                                                //初始化战斗系统
 
@@ -79,4 +79,4 @@ public:
 private:
 	static CombatSystem* instance_;
 	int round_;
-}; 
+};

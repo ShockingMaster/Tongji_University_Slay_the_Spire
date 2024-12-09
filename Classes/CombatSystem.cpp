@@ -142,16 +142,28 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 /*
  * 函数名称：startTurn
  * 参数：正在进行回合开始的生物的指针
- * 功能：完成该生物的回合开始类buff的结算
+ * 功能：完成该生物的回合开始类buff的结算，并进行回合开始操作
  */
 void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 {
+	// 触发
 	for (auto Buff : creature->buffs_)
 	{
 		if (Buff != nullptr)
 		{
 			Buff->onTurnStart();
 		}
+	}
+	// 判断是否为玩家，如果是玩家，那么需要进行操作
+	// 1.失去所有格挡
+	// 2.获得能量上限的能量
+	// 3.抽5张牌
+	// 
+	if (creature == Player::getInstance())
+	{
+		int energy = 4;//让我们假设玩家的能量上限目前为4
+		addEnergy(Player::getInstance(), energy);
+		drawCard(5);
 	}
 }
 
@@ -205,6 +217,28 @@ void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
 	}
 }
 
+void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
+{
+	int tempEnergy = numeric_value_;
+	for (auto Buff : user->buffs_)
+	{
+		if (Buff != nullptr)
+		{
+			Buff->onGetEnergy(tempEnergy);
+		}
+	}
+	if (user == Player::getInstance())
+	{
+		Player::getInstance()->energyChange(tempEnergy);
+	}
+	// 调用前端能量变化方法,对能量进行更新
+	auto currentScene = Director::getInstance()->getRunningScene();
+	if (currentScene && dynamic_cast<CombatScene*>(currentScene)) { //检查是否为战斗场景
+		CombatScene* combatScene = static_cast<CombatScene*>(currentScene);
+		combatScene->updateEnergyDisplay();
+	}
+}
+
 
 /*
 * 函数名称：drawCard
@@ -231,6 +265,7 @@ void CombatSystem::drawCard(int num)
 				Buff->onDrawCard(tempNum);
 			}
 		}
+		//当抽牌堆为空时进行洗牌
 		if (drawPile.empty())
 		{
 			/*
@@ -240,14 +275,33 @@ void CombatSystem::drawCard(int num)
 			CCLOG("No cards in my draw pile!");
 		}
 
-		// 抽取卡牌
-		auto card = drawPile.front();
-		drawPile.pop();
-		hand.push_back(card);
-		CCLOG("the hand now has %d cards", hand.size());
+		//如果重新进行洗牌之后仍然为空则不进行抽牌
+		if (!drawPile.empty())
+		{
+			// 抽取卡牌
+			auto card = drawPile.front();
+			drawPile.pop();
+			hand.push_back(card);
+			CCLOG("the hand now has %d cards", hand.size());
 
-		// 调用前端抽牌堆的抽牌效果
-		HandPileLayer::getInstance()->drawCard(card);
+			// 调用前端抽牌堆的抽牌效果,修改
+			HandPileLayer::getInstance()->drawCard(card);
+		}
 	}
+	HandPileLayer::getInstance()->adjustHandPile();
+}
 
+int CombatSystem::getDrawPileNumber()
+{
+	return drawPile.size();
+}
+
+int CombatSystem::getHandNumber()
+{
+	return hand.size();
+}
+
+int CombatSystem::getDiscardPileNumber()
+{
+	return discardPile.size();
 }

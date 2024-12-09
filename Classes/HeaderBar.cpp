@@ -18,7 +18,7 @@ HeaderBar::HeaderBar()
 HeaderBar::~HeaderBar() {}
 
 // 初始化头栏
-bool HeaderBar::init(Player* player) {
+bool HeaderBar::init(shared_ptr<Player> player) {
     if (!Node::init()) {
         return false;
     }
@@ -32,9 +32,8 @@ bool HeaderBar::init(Player* player) {
         CCLOG("Failed to load bar.png");
         return false;
     }
-    backgroundBar->setScaleX(1.05);
-    backgroundBar->setAnchorPoint(Vec2(0.5, 0));  // 锚点设置为底部中心
-    backgroundBar->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2, 50)); // 底部中心位置
+    backgroundBar->setScale(1.1f);
+    backgroundBar->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2+55, 125)); // 底部中心位置
     this->addChild(backgroundBar);
 
     // 初始化生命值图标并添加到背景
@@ -54,7 +53,7 @@ bool HeaderBar::init(Player* player) {
 
     // 初始化标签并添加到背景
     nameLabel = Label::createWithSystemFont(name + u8" (战士)", "Marker Felt.ttf", 40);  // 使用艺术字体
-    nameLabel->setPosition(Vec2(100, 100)); // 顶部显示名称
+    nameLabel->setPosition(Vec2(150, 100)); // 顶部显示名称
     backgroundBar->addChild(nameLabel);
 
     // 修改生命标签：红色
@@ -84,7 +83,7 @@ bool HeaderBar::init(Player* player) {
 
     // 设置按钮的位置
     auto menu = Menu::create(button, nullptr);
-    menu->setPosition(Vec2(1600, 150));  // 设置按钮位置
+    menu->setPosition(Vec2(1600, 160));  // 设置按钮位置
     this->addChild(menu);
 
 
@@ -114,7 +113,7 @@ bool HeaderBar::init(Player* player) {
                         potions.erase(it); // 删除对应的药水
                         Player::getInstance()->potions_ = potions;
                         audioPlayer("SOTE_SFX_Potion_1_v2.ogg", false);
-                        this->updateHeader(Player::getInstance());
+                        this->updateHeader((Player::getInstance()));
                         usePotionLayer->removeFromParent();  // 移除询问层
                     }
                 );
@@ -141,7 +140,7 @@ bool HeaderBar::init(Player* player) {
 
 
                 auto askLabel = Label::createWithSystemFont(u8"是否喝下药水", "Marker Felt.ttf", 50); // 使用艺术字体
-                askLabel->setPosition(Vec2(1000, 900)); // 紧邻 healthIcon
+                askLabel->setPosition(Vec2(1000, 800)); // 紧邻 healthIcon
                 askLabel->setColor(Color3B::WHITE);  // 设置为红色
                 usePotionLayer->addChild(askLabel);
             });
@@ -197,7 +196,7 @@ bool HeaderBar::init(Player* player) {
 
 
 // 更新头栏信息
-void HeaderBar::updateHeader(Player* player) {
+void HeaderBar::updateHeader(shared_ptr<Player> player) {
     // 更新玩家状态
     setPlayerInfo(player);
     // 更新标签内容
@@ -260,14 +259,14 @@ void HeaderBar::updateHeader(Player* player) {
 
 
                 auto askLabel = Label::createWithSystemFont(u8"是否喝下药水", "Marker Felt.ttf", 50); // 使用艺术字体
-                askLabel->setPosition(Vec2(1000, 900)); // 紧邻 healthIcon
+                askLabel->setPosition(Vec2(1000, 800)); // 紧邻 healthIcon
                 askLabel->setColor(Color3B::WHITE);  // 设置为红色
                 usePotionLayer->addChild(askLabel);
             });
 
         // 设置药水菜单项的缩放和位置
         potionMenuItem->setScale(1.8f);
-        potionMenuItem->setPosition(cocos2d::Vec2(950 + 80 * index, 100));
+        potionMenuItem->setPosition(cocos2d::Vec2(950 + 80 * index, 110));
 
         // 创建一个菜单，并将MenuItem添加到菜单中
         auto menu = cocos2d::Menu::create(potionMenuItem, nullptr);
@@ -298,10 +297,7 @@ void HeaderBar::updateHeader(Player* player) {
         auto menu = cocos2d::Menu::create(relicMenuItem, nullptr);
         menu->setPosition(cocos2d::Vec2::ZERO);  // Menu本身的位置不影响Item的位置
         potionIcons->addChild(menu);  // 将菜单添加到场景
-
-        // 关联药水对象和药水菜单项（按钮）
         relicMenuItem->setUserData((void*)relic);
-
         i++;
     }
 
@@ -314,7 +310,7 @@ void HeaderBar::updateHeader(Player* player) {
 
 
 
-HeaderBar* HeaderBar::create(Player* player) {
+HeaderBar* HeaderBar::create(shared_ptr<Player> player) {
     HeaderBar* headerBar = new (std::nothrow) HeaderBar();
     if (headerBar && headerBar->init(player)) {
         headerBar->autorelease();
@@ -333,9 +329,8 @@ void HeaderBar::setPlayerInfo(const string& name, const string& character, int f
 
 }
 
-void HeaderBar::setPlayerInfo(Player* player) {
+void HeaderBar::setPlayerInfo(shared_ptr<Player> player) {
     this->name = player->name_;
-    this->character = player->character_;
     this->health = player->health_;
     this->fullHealth = player->fullhealth_;
     this->coins = player->coins_;

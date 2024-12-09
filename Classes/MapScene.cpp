@@ -41,7 +41,7 @@ void MapScene::onEnter() {
     CCLOG("onEnter called!");  // 调试输出
     auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
     if (headbar) {
-        Player* player = Player::getInstance();
+        shared_ptr<Player> player= Player::getInstance();
         headbar->updateHeader(player);  // 使用 player 的最新数据更新 headbar
         headbar->level = currentLevel-1;
     }
@@ -55,13 +55,12 @@ bool MapScene::init() {
     if (!Scene::init()) {
         return false;
     }
-    Player* player = Player::getInstance();
-
+    shared_ptr<Player> player = Player::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setName("HeaderBar");  // 设置名称
-    headbar->setPosition(Vec2(0, 1150));
+    headbar->setPosition(Vec2(50, 750));
     this->addChild(headbar);
-    headbar->setLocalZOrder(100);  // 将 headbar 的 Z 顺序设置为 100，确保它位于最上层
+    headbar->setLocalZOrder(2000000);  // 将 headbar 的 Z 顺序设置为 100，确保它位于最上层
     currentLevel = 1;
     visitPath.clear();
     // 播放背景音乐
@@ -80,11 +79,11 @@ bool MapScene::init() {
     auto map4 = Sprite::create("map4.png");
 
     auto map5 = Sprite::create("map5.png");
-    map5->setPosition(Vec2(1800,800));
+    map5->setPosition(Vec2(1800,600));
     this->addChild(map5);
 
     auto continueLabel3 = Label::createWithSystemFont(u8"战斗怪物\n战斗精英\n随机事件\n随机宝箱\n休息房间\n工具商店\n  BOSS", "Fonts/Kreon-Bold.ttf", 45);
-    continueLabel3->setPosition(Vec2(1800, 750));
+    continueLabel3->setPosition(Vec2(1800, 550));
     continueLabel3->setColor(Color3B::BLACK);
     this->addChild(continueLabel3);
 
@@ -94,10 +93,10 @@ bool MapScene::init() {
     map3->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
     map4->setAnchorPoint(Vec2::ANCHOR_BOTTOM_LEFT);
 
-    map1->setPosition(Vec2(0, 0));
-    map2->setPosition(Vec2(0, map1->getContentSize().height));
-    map3->setPosition(Vec2(0, map1->getContentSize().height + map2->getContentSize().height));
-    map4->setPosition(Vec2(0, map1->getContentSize().height + map2->getContentSize().height + map3->getContentSize().height));
+    map1->setPosition(Vec2(0, -200));
+    map2->setPosition(Vec2(0, map1->getContentSize().height-200));
+    map3->setPosition(Vec2(0, map1->getContentSize().height + map2->getContentSize().height-200));
+    map4->setPosition(Vec2(0, -200+map1->getContentSize().height + map2->getContentSize().height + map3->getContentSize().height));
 
     // 添加地图到容器
     mapContainer->addChild(map1);
@@ -130,7 +129,7 @@ bool MapScene::init() {
 
     // 创建返回按钮
     auto backButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
-    backButton->setPosition(Vec2(200, 300));  // 设置按钮位置
+    backButton->setPosition(Vec2(200, 100));  // 设置按钮位置
     backButton->setTitleText(u8"返回");
     backButton->setTitleFontSize(50);
     backButton->addClickEventListener([=](Ref* sender) {
@@ -145,7 +144,7 @@ bool MapScene::init() {
         int ran;
         while (1) {
             ran = rand();
-            if (ran < 50 && ran>-50) {
+            if (ran < 40 && ran>-40) {
                 break;
             }
         }
@@ -214,7 +213,7 @@ bool MapScene::init() {
         }
         if (i == 3) {
             Vec2 one = Vec2(560, 910);
-            Vec2 two = Vec2(910, 990 + ran);
+            Vec2 two = Vec2(910, 8000 + ran);
             Vec2 three = Vec2(1100 + ran, 880);
             Vec2 four = Vec2(1450 + ran, 840);
             int ranNum = rand() % 6 + 1;
@@ -489,7 +488,7 @@ bool MapScene::init() {
     // 绘制路径并实现渐变色效果
     for (auto con : connections) {
         // 配置渐变色效果的相关参数
-        Color4F startColor(1.0f, 1.0f, 1.0f, 0.15f); // 起始颜色，白色，透明度较高
+        Color4F startColor(1.0f, 1.0f, 1.0f, 0.25f); // 起始颜色，白色，透明度较高
         Color4F endColor(1.0f, 1.0f, 1.0f, 0.05f);   // 终止颜色，白色，透明度较低
         float lineWidth = 20.0f; // 定义路径的线条宽度
 

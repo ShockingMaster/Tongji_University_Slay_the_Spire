@@ -180,10 +180,26 @@ void MapNode::onClick() {
                 }, 1.0f, "LoadNextScene");
         }
         if (type == UnknownEvent) {
-            this->scheduleOnce([](float dt) {
-                auto nextScene = event2::createScene(); // 创建目标场景
-                Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
-                }, 1.0f, "LoadNextScene");
+            int random = rand();
+            if (random % 3 == 0) {
+                this->scheduleOnce([](float dt) {
+
+                    auto nextScene = event1::createScene(); // 创建目标场景
+                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                    }, 1.0f, "LoadNextScene");
+            }
+            if (random % 3 == 1) {
+                this->scheduleOnce([](float dt) {
+                    auto nextScene = event2::createScene(); // 创建目标场景
+                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                    }, 1.0f, "LoadNextScene");
+            }
+            if (random % 3 == 2) {
+                this->scheduleOnce([](float dt) {
+                    auto nextScene = event3::createScene(); // 创建目标场景
+                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                    }, 1.0f, "LoadNextScene");
+            }
         }
         if (type == Chest) {
             this->scheduleOnce([](float dt) {
@@ -191,7 +207,12 @@ void MapNode::onClick() {
                 Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                 }, 1.0f, "LoadNextScene");
         }
-       
+        if (type == Combat|| type == Elite) {
+            this->scheduleOnce([](float dt) {
+                auto nextScene = CombatScene::create(); // 创建目标场景
+                Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                }, 1.0f, "LoadNextScene");
+        }
         currentLevel++;
         return;
     }
@@ -236,10 +257,26 @@ void MapNode::onClick() {
                     }, 1.0f, "LoadNextScene");
             }
             if (type == UnknownEvent) {
-                this->scheduleOnce([](float dt) {
-                    auto nextScene = event2::createScene(); // 创建目标场景
-                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
-                    }, 1.0f, "LoadNextScene");
+                int random = rand();
+                if (random % 3 == 0) {
+                    this->scheduleOnce([](float dt) {
+
+                        auto nextScene = event1::createScene(); // 创建目标场景
+                        Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                        }, 1.0f, "LoadNextScene");
+                }
+                if (random % 3 == 1) {
+                    this->scheduleOnce([](float dt) {
+                        auto nextScene = event2::createScene(); // 创建目标场景
+                        Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                        }, 1.0f, "LoadNextScene");
+                }
+                if (random % 3 == 2) {
+                    this->scheduleOnce([](float dt) {
+                        auto nextScene = event3::createScene(); // 创建目标场景
+                        Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                        }, 1.0f, "LoadNextScene");
+                }
             }
             if (type ==Chest) {
                 this->scheduleOnce([](float dt) {
@@ -247,7 +284,12 @@ void MapNode::onClick() {
                     Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                     }, 1.0f, "LoadNextScene");
             }
-            
+            if (type == Combat || type == Elite) {
+                this->scheduleOnce([](float dt) {
+                    auto nextScene = CombatScene::create(); // 创建目标场景
+                    Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
+                    }, 1.0f, "LoadNextScene");
+            }
             currentLevel++;
         }
     }

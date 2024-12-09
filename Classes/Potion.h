@@ -15,7 +15,7 @@ public:
     int money_cost_;         // 药水的金钱花费
     int rarity_;             // 药水的稀有度
     bool is_enabled_;        // 是否启用
-
+    
     // 析构函数
     virtual ~Potion() {}
 

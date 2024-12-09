@@ -43,7 +43,7 @@ public:
     void discard(Card* card);
 
     //消耗卡牌
-     
+
     void exhaust(Card* card);
 
     //临时升级卡牌
@@ -71,5 +71,5 @@ public:
 // 模板函数的实现
 template<typename operation_type>
 inline void CombatDeck::choose_target(const int num, operation_type operation) {
-    
+
 }

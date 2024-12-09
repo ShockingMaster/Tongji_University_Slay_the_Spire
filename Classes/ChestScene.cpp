@@ -25,12 +25,12 @@ bool ChestScene::init() {
     audioPlayer("chest.ogg", true);
     // 背景图像
     const auto background = Sprite::create("scene3.png");
-    background->setPosition(Vec2(1100, 500));
+    background->setPosition(Vec2(1100, 300));
     this->addChild(background);
 
     // 创建宝箱并设置位置
     auto chest = Sprite::create("largeChest.png");
-    chest->setPosition(Vec2(1100, 700));
+    chest->setPosition(Vec2(1100, 500));
     this->addChild(chest);
 
     // 创建鼠标事件监听器
@@ -71,7 +71,7 @@ bool ChestScene::init() {
     );
 
     // 设置按钮位置
-    startButton->setPosition(Vec2(1800, 500));
+    startButton->setPosition(Vec2(1800, 300));
     this->addChild(startButton);
 
     // 添加按钮点击事件监听器
