@@ -18,6 +18,7 @@ bool HandPileLayer::init()
     return true;
 }
 
+//卡牌拖动
 void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> card)
 {
     auto listener = EventListenerTouchOneByOne::create();
@@ -43,12 +44,12 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
 
     listener->onTouchEnded = [=](Touch* touch, Event* event) {
         auto location = touch->getLocation();
-        auto& newhand = CombatSystem::getInstance()->hand;
+        auto& newhand = CombatSystem::getInstance()->hand; //手牌
         if (playArea.containsPoint(location)) {
             CCLOG("Played card: %s", card->getName().c_str());
             CCLOG("Take Effect: %s", card->getDescription().c_str());
-            CombatSystem::getInstance()->discardPile.push(card);
-            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());
+            CombatSystem::getInstance()->discardPile.push(card); //置入弃牌堆
+            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end()); //手牌移除卡牌
             cardSprite->removeFromParent();
         }
         adjustHandPile();
@@ -219,7 +220,7 @@ bool CombatScene::init()
             if (!isMyTurn)
             {
                 CCLOG("Start Turn clicked!%d");  // 打印日志
-                CombatSystem::getInstance()->startTurn(Player::getInstance());//玩家回合开始
+                CombatSystem::getInstance()->startTurn(Player::getInstance());//玩家回合开始，进行更新
             }
             isMyTurn = 1;
         }
