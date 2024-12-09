@@ -11,13 +11,23 @@ HandPileLayer* HandPileLayer::getInstance()
     return instance_;
 }
 
+
+/*
+* 函数名称：init()
+* 功能：完成手牌的初始化
+* 
+*/
 bool HandPileLayer::init()
 {
-    //需要创建：抽牌堆数量，弃牌堆数量
-
     return true;
 }
 
+
+/*
+* 函数名称:enableCardDrag
+* 参数：卡牌精灵及相应的卡牌智能指针
+* 
+*/
 void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> card)
 {
     auto listener = EventListenerTouchOneByOne::create();
@@ -79,6 +89,12 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
     }
 }
 
+
+/*
+* 函数名称：adjustHandPile()
+* 
+* 
+*/
 void HandPileLayer::adjustHandPile()
 {
     // 手牌中心位置
@@ -102,7 +118,6 @@ void HandPileLayer::adjustHandPile()
         }
     }
 }
-
 
 bool CombatScene::init() 
 {
@@ -138,8 +153,6 @@ bool CombatScene::init()
     drawPileNumLabel->setColor(cocos2d::Color3B::WHITE);  // 设置文字颜色
     this->addChild(drawPileNumLabel);
     updateDrawPileDisplay();
-    if(!drawPileNumLabel)
-        CCLOG("areyouok");
 
     // 创建弃牌堆图标
     auto discardPileIcon = cocos2d::Sprite::create("discardPileIcon.png");
@@ -240,7 +253,7 @@ bool CombatScene::init()
 
 void CombatScene::updateEnergyDisplay()
 {
-    int currentEnergy = 4;
+    int currentEnergy = Player::getInstance()->getCurrentEnergy();
     int maxEnergy = 4;
     energyLabel->setString(std::to_string((int)currentEnergy) + "/" + std::to_string((int)maxEnergy));  // 更新标签文本为当前能量值
 }

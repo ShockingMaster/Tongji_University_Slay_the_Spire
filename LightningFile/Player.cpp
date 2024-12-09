@@ -10,12 +10,18 @@ std::shared_ptr<Player> Player::getInstance() {
     return instance_;
 }
 
-void Player::startTurn() {
-    block_ = 0;  // Reset block at the start of the turn
+void Player::startTurn() noexcept
+{
+    block_ = 0;
 }
 
 void Player::endTurn() {
-    // Discard cards, apply end-turn Buffs, etc.
+    currentEnergy_ = 0;
+}
+
+void Player::energyChange(int changeValue)
+{
+    currentEnergy_ += changeValue;
 }
 
 void Player::addPotion(Potion* potion)
@@ -31,4 +37,6 @@ void Player::init()
     //³õÊ¼»¯ÑªÁ¿
     health_ = 10;
     block_ = 10;
+    currentEnergy_ = 0;
 }
+
