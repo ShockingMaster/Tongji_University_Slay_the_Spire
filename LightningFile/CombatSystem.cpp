@@ -1,4 +1,7 @@
 #include "IncludeAll.h"
+#include <algorithm>
+#include <random>
+#include <chrono>
 
 CombatSystem* CombatSystem::instance_ = nullptr;
 
@@ -17,10 +20,20 @@ CombatSystem* CombatSystem::getInstance()
 * 功能：对战斗系统先进行清空，对角色进行初始化，将抽牌堆，弃牌堆，手牌中的卡牌全部进行清空
 * 随机生成怪物，将卡组中所有的卡牌进行一次复制，放入抽牌堆，调用场景的初始化方法
 */
-void CombatSystem::init()
+void CombatSystem::init()//需要传入怪物实例参数
 {
 	// 对角色进行初始化
-	Player::getInstance()->init();
+	//Player::getInstance()->init();
+	//获得角色实例
+	std::shared_ptr<Player> player = Player::getInstance();
+	//获得怪物实例
+
+	//获取角色手牌
+	std::vector<std::shared_ptr<Card>> cardPool = player->hand_card;
+	// 打乱卡牌池，确保卡牌顺序随机
+	auto rng = std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count());
+	std::shuffle(cardPool.begin(), cardPool.end(), rng);
+
 
 	// 清空抽牌堆、弃牌堆和手牌
 	std::queue<std::shared_ptr<Card>> emptyQueue;
@@ -29,8 +42,19 @@ void CombatSystem::init()
 	hand = emptyVector;
 	discardPile = emptyQueue;
 
-	// 将卡组中的牌加入到抽牌堆中
-	// 这里只是一个测试
+	// 将前 `handSize` 张卡牌分配到手牌
+	int handSize = 5;  // 假设手牌数量为 5
+	for (int i = 0; i < handSize && i < cardPool.size(); ++i) {
+		hand.push_back(cardPool[i]);  // 将卡牌加入手牌
+	}
+
+	// 将剩余的卡牌分配到抽牌堆
+	for (size_t i = handSize; i < cardPool.size(); ++i) {
+		drawPile.push(cardPool[i]);  // 将卡牌加入抽牌堆
+	}
+
+	
+	/*/ 这里只是一个测试
 	std::vector<std::string>  tempDeck = CardRegistry::getAllCardNames();
 	if (tempDeck.empty())
 	{
@@ -44,6 +68,7 @@ void CombatSystem::init()
 			drawPile.push(CardRegistry::createCard(name));
 		}
 	}
+	*/
 
 	// 清空怪物列表,随机生成怪物
 	Monsters_.clear();  
@@ -174,6 +199,18 @@ void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
  */
 void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
 {
+	// 判断是否为玩家，如果是玩家，记录当前能量并归零
+	if (creature == Player::getInstance())
+	{
+		tem_energy = Player::getInstance()->currentEnergy_;  //记录当前玩家能量
+		Player::getInstance()->energyChange(0); //玩家能量归零
+		// 调用前端能量变化方法,对能量进行更新
+		auto currentScene = Director::getInstance()->getRunningScene();
+		if (currentScene && dynamic_cast<CombatScene*>(currentScene)) { //检查是否为战斗场景
+			CombatScene* combatScene = static_cast<CombatScene*>(currentScene);
+			combatScene->updateEnergyDisplay();
+		}
+	}
 	for (auto Buff : creature->buffs_)
 	{
 		if (Buff != nullptr)
@@ -241,6 +278,35 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 
 
 /*
+* 函数名称：shuffleDeck
+* 参数：
+* 功能：抽牌区为空时候调用，进行洗牌
+*/
+void CombatSystem::shuffleDeck() {
+	// 临时容器：存储弃牌堆的卡牌
+	std::vector<std::shared_ptr<Card>> discardCards;
+	// 将弃牌堆中的卡牌取出并存储到临时容器中
+	while (!discardPile.empty())
+	{
+		discardCards.push_back(discardPile.front());
+		discardPile.pop();
+	}
+	// 打乱临时容器中的卡牌顺序
+	auto rng = std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count());
+	std::shuffle(discardCards.begin(), discardCards.end(), rng);
+
+	// 将打乱后的卡牌放入抽牌堆
+	for (const auto& card : discardCards)
+	{
+		drawPile.push(card);
+	}
+
+	CCLOG("Moved all cards from discard pile to draw pile and shuffled. Draw pile now has %d cards", drawPile.size());
+}
+
+
+
+/*
 * 函数名称：drawCard
 * 参数：抽卡的数量
 * 功能：抽一定数量的牌并完成抽卡相关的buff结算
@@ -268,10 +334,8 @@ void CombatSystem::drawCard(int num)
 		//当抽牌堆为空时进行洗牌
 		if (drawPile.empty())
 		{
-			/*
-			* 此处先不管重新洗牌的问题
-			shuffle();
-			*/
+			CCLOG("Draw pile is empty! Shuffling...");
+			shuffleDeck();//调用洗牌函数
 			CCLOG("No cards in my draw pile!");
 		}
 

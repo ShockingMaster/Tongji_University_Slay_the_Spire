@@ -17,10 +17,10 @@ public:
 	std::queue<std::shared_ptr<Card>> drawPile;                                 // 抽牌堆
 	std::vector<std::shared_ptr<Card>> hand;                                    // 手牌
 	std::queue<std::shared_ptr<Card>> discardPile;                              // 弃牌堆
-
+	int tem_energy;
 
 	void init();                                                                //初始化战斗系统
-
+	void shuffleDeck();                                                          //洗牌函数
 	std::vector<std::shared_ptr<Card>>& getHandPile() { return hand; }           //返回手牌堆
 
 	void onAttack(std::shared_ptr<Creature> attacker, std::shared_ptr<Creature> target,
@@ -74,6 +74,7 @@ public:
 		return round_;
 	}
 	~CombatSystem() {};
+
 
 private:
 	static CombatSystem* instance_;

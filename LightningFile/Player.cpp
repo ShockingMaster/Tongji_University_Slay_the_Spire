@@ -21,7 +21,7 @@ void Player::endTurn() {
 
 void Player::energyChange(int changeValue)
 {
-    currentEnergy_ += changeValue;
+    currentEnergy_ = changeValue;
 }
 
 void Player::addPotion(Potion* potion)

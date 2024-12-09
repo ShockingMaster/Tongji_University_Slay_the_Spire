@@ -30,7 +30,8 @@ bool HandPileLayer::init()
 */
 void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> card)
 {
-    auto listener = EventListenerTouchOneByOne::create();
+    //卡牌拖动
+    auto listener = EventListenerTouchOneByOne::create(); 
     listener->setSwallowTouches(true);
 
     //
@@ -47,18 +48,21 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         cardSprite->setPosition(location);
         };
 
+    //设置打出区域
     const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
     //测试使用
     auto playArea = Rect(screenSize.width / 2, screenSize.height / 2, 0.3 * screenSize.width, 0.3 * screenSize.height); // 设置打出区域
-
+    //打出
     listener->onTouchEnded = [=](Touch* touch, Event* event) {
         auto location = touch->getLocation();
-        auto& newhand = CombatSystem::getInstance()->hand;
+        auto& newhand = CombatSystem::getInstance()->hand; //获得系统中手牌
         if (playArea.containsPoint(location)) {
             CCLOG("Played card: %s", card->getName().c_str());
             CCLOG("Take Effect: %s", card->getDescription().c_str());
-            CombatSystem::getInstance()->discardPile.push(card);
-            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());
+            //还需要判断是否need_target_，以及读取
+            //card->takeEffect(); //打出卡牌效果
+            CombatSystem::getInstance()->discardPile.push(card); //卡牌移到弃牌堆
+            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end()); //删除手牌
             cardSprite->removeFromParent();
         }
         adjustHandPile();
@@ -71,6 +75,7 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
     cardSprite->setTag(reinterpret_cast<intptr_t>(card.get()));
 }
 
+//显示卡牌
 void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 {
     // 创建精灵
@@ -95,14 +100,15 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 * 
 * 
 */
+//调整手牌布局
 void HandPileLayer::adjustHandPile()
 {
     // 手牌中心位置
     const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
     Vec2 handCenter = Vec2(screenSize.width / 2, 0.13 * screenSize.height);
     float cardSpacing = 0.1 * screenSize.height; // 卡牌间距
-    auto& newhand = CombatSystem::getInstance()->hand;
-    float totalWidth = (newhand.size() - 1) * cardSpacing;
+    auto& newhand = CombatSystem::getInstance()->hand; //获得系统中手牌
+    float totalWidth = (newhand.size() - 1) * cardSpacing;  //计算手牌总宽度
     CCLOG("now my hand has %d cards", newhand.size());
     for (size_t i = 0; i < newhand.size(); ++i)
     {
@@ -204,7 +210,7 @@ bool CombatScene::init()
     //战斗开始时，先设定不为我方回合
     isMyTurn = 0;
 
-    //创建回合结束按钮,当点击回合结束按钮之后，丢弃所有的卡牌
+    //创建回合结束按钮,当点击回合结束按钮之后，丢弃所有的卡牌？
     auto endTurnButton = HoverButton::create("endTurnButton.png", "endTurnButtonGlow.png", "endTurnButton.png");
     endTurnButton->setTitleText(u8"回合结束");
     endTurnButton->setScale(1.5f);
@@ -263,12 +269,14 @@ void CombatScene::updateEnergyDisplay()
     energyLabel->setString(std::to_string((int)currentEnergy) + "/" + std::to_string((int)maxEnergy));  // 更新标签文本为当前能量值
 }
 
+//更新抽牌堆显示
 void CombatScene::updateDrawPileDisplay()
 {
     const int drawPileNum = CombatSystem::getInstance()->getDrawPileNumber();
     drawPileNumLabel->setString(std::to_string(drawPileNum));
 }
 
+//更新弃牌堆显示
 void CombatScene::updateDiscardPileDisplay()
 {
     const int discardPileNum = CombatSystem::getInstance()->getDiscardPileNumber();

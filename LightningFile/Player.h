@@ -6,6 +6,10 @@ class Potion;
 class Player :public Creature
 {
 public:
+    static std::shared_ptr<Player> instance_;
+    int maxEnergy_;
+    int currentEnergy_;
+    vector<std::shared_ptr<Card>> hand_card; //手牌数组
     static std::shared_ptr<Player> getInstance();
 
     void startTurn();          //得牌，得能量，失去所有格挡，进行一次buff结算
@@ -15,7 +19,7 @@ public:
     int getMaxEnergy() const {         //返回角色最大能量
         return maxEnergy_;
     }          
-
+    
     int getCurrentEnergy() const {     //返回角色当前有的能量
         return currentEnergy_;
     }
@@ -29,8 +33,6 @@ public:
 
     virtual ~Player() {};
 private:
-    static std::shared_ptr<Player> instance_;
-    int maxEnergy_;
-    int currentEnergy_;
+    
 };
 
