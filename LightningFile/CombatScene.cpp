@@ -11,14 +11,23 @@ HandPileLayer* HandPileLayer::getInstance()
     return instance_;
 }
 
+
+/*
+* 函数名称：init()
+* 功能：完成手牌的初始化
+* 
+*/
 bool HandPileLayer::init()
 {
-    //需要创建：抽牌堆数量，弃牌堆数量
-
     return true;
 }
 
-//卡牌拖动
+
+/*
+* 函数名称:enableCardDrag
+* 参数：卡牌精灵及相应的卡牌智能指针
+* 
+*/
 void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> card)
 {
     auto listener = EventListenerTouchOneByOne::create();
@@ -44,12 +53,12 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
 
     listener->onTouchEnded = [=](Touch* touch, Event* event) {
         auto location = touch->getLocation();
-        auto& newhand = CombatSystem::getInstance()->hand; //手牌
+        auto& newhand = CombatSystem::getInstance()->hand;
         if (playArea.containsPoint(location)) {
             CCLOG("Played card: %s", card->getName().c_str());
             CCLOG("Take Effect: %s", card->getDescription().c_str());
-            CombatSystem::getInstance()->discardPile.push(card); //置入弃牌堆
-            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end()); //手牌移除卡牌
+            CombatSystem::getInstance()->discardPile.push(card);
+            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());
             cardSprite->removeFromParent();
         }
         adjustHandPile();
@@ -80,6 +89,12 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
     }
 }
 
+
+/*
+* 函数名称：adjustHandPile()
+* 
+* 
+*/
 void HandPileLayer::adjustHandPile()
 {
     // 手牌中心位置
@@ -104,7 +119,6 @@ void HandPileLayer::adjustHandPile()
         }
     }
 }
-
 
 bool CombatScene::init() 
 {
@@ -143,8 +157,6 @@ bool CombatScene::init()
     drawPileNumLabel->setColor(cocos2d::Color3B::WHITE);  // 设置文字颜色
     this->addChild(drawPileNumLabel);
     updateDrawPileDisplay();
-    if(!drawPileNumLabel)
-        CCLOG("areyouok");
 
     // 创建弃牌堆图标
     auto discardPileIcon = cocos2d::Sprite::create("discardPileIcon.png");
@@ -180,7 +192,7 @@ bool CombatScene::init()
 
     // 创建显示能量的数字
     energyLabel = cocos2d::Label::createWithSystemFont(std::to_string((int)3) + "/" + std::to_string((int)3), "Arial", 24);
-    energyLabel->setPosition(cocos2d::Vec2(100, 300));  // 设置在能量图标的中心
+    energyLabel->setPosition(cocos2d::Vec2(0.0976525 * screenSize.width, 0.390625 * screenSize.height));  // 设置在能量图标的中心
     energyLabel->setColor(cocos2d::Color3B::BLACK);  // 设置文字颜色
     this->addChild(energyLabel);
 
@@ -224,7 +236,7 @@ bool CombatScene::init()
             if (!isMyTurn)
             {
                 CCLOG("Start Turn clicked!%d");  // 打印日志
-                CombatSystem::getInstance()->startTurn(Player::getInstance());//玩家回合开始，进行更新
+                CombatSystem::getInstance()->startTurn(Player::getInstance());//玩家回合开始
             }
             isMyTurn = 1;
         }
@@ -246,7 +258,7 @@ bool CombatScene::init()
 
 void CombatScene::updateEnergyDisplay()
 {
-    int currentEnergy = 4;
+    int currentEnergy = Player::getInstance()->getCurrentEnergy();
     int maxEnergy = 4;
     energyLabel->setString(std::to_string((int)currentEnergy) + "/" + std::to_string((int)maxEnergy));  // 更新标签文本为当前能量值
 }
