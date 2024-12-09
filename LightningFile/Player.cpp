@@ -10,7 +10,7 @@ std::shared_ptr<Player> Player::getInstance() {
     return instance_;
 }
 
-void Player::startTurn() noexcept
+void Player::startTurn() 
 {
     block_ = 0;
 }
