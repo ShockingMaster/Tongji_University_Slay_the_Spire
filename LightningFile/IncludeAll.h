@@ -9,7 +9,6 @@
 #include "Player.h"
 #include "Card.h"
 #include "UIManager.h"
-#include "CombatNode.h"
 #include "Potion.h"
 #include "Relic.h"
 #include "CombatSystem.h"
