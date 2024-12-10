@@ -151,6 +151,48 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 }
 
 /*
+ * 函数名称：Addblock
+ * 参数：加护盾对象，护盾数值，卡牌名称
+ * 功能：触发护盾类buff并改写护盾值
+ */
+
+void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_,std::string cardName) {
+	//遍历使用者的buff列表，触发所有buff的Addblock效果
+	for (auto Buff : target->buffs_)
+	{
+		if (Buff != nullptr)
+			Buff->Addblock(numeric_value_);
+	}
+	//防止被减至负数
+	numeric_value_ = max(numeric_value_, 0);
+	target->addBlock(numeric_value_);  //增加护盾
+}
+
+
+/*
+ * 函数名称：deleteCard
+ * 参数：消耗第几张卡牌，卡牌名称
+ * 功能：消耗特定卡牌
+ */
+
+void CombatSystem::deleteCard(int num, std::string cardName) {
+	//遍历使用者的buff列表，触发所有buff的deleteCard效果（暂且未实现）
+	
+	if (num < 0 || num >= hand.size()) {
+		CCLOG("Error: Invalid card index %d", num);
+		return;  // 如果 num 无效，直接返回
+	}
+	//删去相应位置卡牌
+	hand.erase(hand.begin() + num);
+	CCLOG("Card '%s' at index %d has been deleted", cardName.c_str(), num);
+}
+
+
+
+
+
+
+/*
  * 函数名称：startTurn
  * 参数：正在进行回合开始的生物的指针
  * 功能：完成该生物的回合开始类buff的结算，并进行回合开始操作

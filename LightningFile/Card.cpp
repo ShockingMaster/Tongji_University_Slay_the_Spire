@@ -36,16 +36,16 @@ public:
     {
         int temp_block = 5;
         int num = 0;
-        std::vector<std::shared_ptr<Card>> card_hand = CombatSystem::getInstance()->hand;
-        for (size_t i = 0; i < card_hand.size(); ++i) {
-            const auto& card = card_hand[i];  // 获取当前卡牌
+        for (size_t i = 0; i < CombatSystem::getInstance()->hand.size(); ++i) {
+            const auto& card = CombatSystem::getInstance()->hand[i];  // 获取当前卡牌
             if (card->getType() != ATTACK) {
                 ++num;
-                CombatSystem::getInstance()->hand.erase(card_hand.begin() + i); //消耗非攻击牌
+                CombatSystem::getInstance()->deleteCard(i, "Second_wind"); //消耗非攻击牌
+                i--;
                 CCLOG("Card at index %zu is an attack card", i);  // 输出当前卡牌的索引
             }
         }
-        Player::getInstance()->block_ += num * temp_block;
+        CombatSystem::getInstance()->Addblock(Player::getInstance(),temp_block*num, "Second_wind"); //增加护盾
     }
 };
 //进行卡牌注册

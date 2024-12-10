@@ -30,6 +30,11 @@ public:
 	void takeDamage(std::shared_ptr<Creature> target, int numeric_value_,
 		std::shared_ptr<Creature> attacker = nullptr) ;                         //需要考虑具体需要传入什么参数
 
+	void Addblock(std::shared_ptr<Creature> target, int numeric_value_,
+		std::string cardName = "");
+
+	void deleteCard(int num,std::string cardName = "");
+
 	void startTurn(std::shared_ptr<Creature> creature) ;                        //回合开始效果
 
 	void endTurn(std::shared_ptr<Creature> creature) ;                          //回合结束效果

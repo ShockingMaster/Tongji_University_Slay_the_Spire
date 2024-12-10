@@ -32,3 +32,7 @@ int Creature::getBlockValue()
 {
 	return 0;
 }
+
+void Creature::addBlock(int numeric_value) {
+	
+}
