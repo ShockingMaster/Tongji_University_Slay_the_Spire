@@ -54,23 +54,15 @@ AUTO_REGISTER_CARD(Second_wind)
     class BurningContract : public Card
 {
 public:
-<<<<<<< HEAD
-    BurningContract() : Card("BurningContract", "Consume one card and draw two cards", 1, 20, UNCOMMON, PLAYABLE, ABILITY, YES, YES) {}
-=======
     BurningContract() : Card("BurningContract", "Consume one card and draw two cards", 1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO) {}
->>>>>>> 28eb26a6e1cd136316170735cc10b41e486c5c00
     void takeEffect()
     {
         int draw_num = 2;
-        int num = 0;
-<<<<<<< HEAD
         //实现前端选择卡牌并读取位数
        // 创建 selectScene 并使用 pushScene 进行切换
         auto selectScene = SelectScene::create();
         cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene
-=======
         // 实现前端选择卡牌并读取位数
->>>>>>> 28eb26a6e1cd136316170735cc10b41e486c5c00
 
         // 目前为消耗第0张牌
         // CombatSystem::getInstance()->exhaustCard(num, "BurningContract"); //消耗选择的卡牌
