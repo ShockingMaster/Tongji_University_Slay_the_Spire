@@ -73,6 +73,7 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
     listener->onTouchBegan = [=](Touch* touch, Event* event) -> bool {
         auto location = touch->getLocation();
         if (cardSprite->getBoundingBox().containsPoint(location)) {
+        
             return true;
         }
         return false;
@@ -93,6 +94,8 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
     listener->onTouchEnded = [=](Touch* touch, Event* event) {
         auto location = touch->getLocation();
         auto& newhand = CombatSystem::getInstance()->hand;                                      //获取手牌引用
+
+        
 
         //这里的card->needTarget()是错误的，仅仅为了进行测试
         if (playArea.containsPoint(location) && card->getCanBePlayed() && card->needTarget()   //对于不需要选中敌人的卡牌
@@ -124,6 +127,9 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
     // 使用卡牌地址作为唯一 tag
     cardSprite->setTag(reinterpret_cast<intptr_t>(card.get()));
 }
+
+
+
 
 void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 {

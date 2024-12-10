@@ -53,6 +53,29 @@ AUTO_REGISTER_CARD(Second_wind)
 
 
 /*
+* 卡牌名称：BurningContract
+* 效果：消耗一张手牌，抽两张牌
+ */
+    class BurningContract : public Card
+{
+public:
+    BurningContract() : Card("BurningContract", "Consume one card and draw two cards", 1, 20, UNCOMMON, PLAYABLE, ABILITY, NO, YES) {}
+    void takeEffect()
+    {
+        int draw_num = 2;
+        int num = 0;
+        //实现前端选择卡牌并读取位数
+       
+
+        CombatSystem::getInstance()->deleteCard(num, "BurningContract"); //消耗选择的卡牌
+        CombatSystem::getInstance()->drawCard(draw_num); //抽取卡牌
+    }
+};
+//进行卡牌注册
+AUTO_REGISTER_CARD(BurningContract)
+
+
+/*
 * 卡牌名称：Revival
 * 效果：
  */
