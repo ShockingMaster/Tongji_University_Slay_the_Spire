@@ -21,35 +21,33 @@ public:
 	void init();                                                                //初始化战斗系统
 
 	void onAttack(std::shared_ptr<Creature> attacker, std::shared_ptr<Creature> target,
-		int numeric_value_, std::string cardName = "") ;
+		int numeric_value_, std::string cardName = "");
 
 	void combatStart();                                                         //战斗开始
 
 	void combatEnd();                                                           //战斗结束·
 
 	void takeDamage(std::shared_ptr<Creature> target, int numeric_value_,
-		std::shared_ptr<Creature> attacker = nullptr) ;                         //需要考虑具体需要传入什么参数
+		std::shared_ptr<Creature> attacker = nullptr);                         //需要考虑具体需要传入什么参数
 
 	void Addblock(std::shared_ptr<Creature> target, int numeric_value_,
 		std::string cardName = "");
 
-	void deleteCard(int num,std::string cardName = "");
+	void exhaustCard(int num, std::string cardName = "");
 
-	void startTurn(std::shared_ptr<Creature> creature) ;                        //回合开始效果
+	void startTurn(std::shared_ptr<Creature> creature);                        //回合开始效果
 
-	void endTurn(std::shared_ptr<Creature> creature) ;                          //回合结束效果
+	void endTurn(std::shared_ptr<Creature> creature);                          //回合结束效果
 
-	void cardPlayed(std::shared_ptr<Card> card) ;                               //打出卡牌效果
+	void cardPlayed(std::shared_ptr<Card> card);                               //打出卡牌效果
 
 	void cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature);//对于需要目标的卡牌进行重载
 
-	void exhaustCard(std::shared_ptr<Card> card) ;                              //消耗卡牌
-
-	void discardCard(std::shared_ptr<Card> card) ;                              //主动丢弃卡牌
+	void discardCard(std::shared_ptr<Card> card);                              //主动丢弃卡牌
 
 	void upgradeCard(std::shared_ptr<Card> card);                               //战斗临时升级
 
-	void addEnergy(std::shared_ptr<Creature> user, int numeric_value_) ;        //增加能量
+	void addEnergy(std::shared_ptr<Creature> user, int numeric_value_);        //增加能量
 
 	void addDebuff();                                                           //增加Debuff
 

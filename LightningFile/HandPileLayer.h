@@ -29,6 +29,9 @@ public:
     // 抽一张牌
     void drawCard(std::shared_ptr<Card> card);
 
+    // 移除一张牌
+    void removeCard(std::shared_ptr<Card> card);
+
     // 更新手牌显示
     void adjustHandPile();
 

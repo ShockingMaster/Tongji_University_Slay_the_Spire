@@ -1,7 +1,7 @@
 #include "IncludeAll.h"
 #include "Enum.h"
 /* 
- * 初始化：卡牌名称，卡牌描述，卡牌费用，卡牌商店价格，卡牌稀有度，卡牌是否能被打出，卡牌类型
+ * 初始化：卡牌名称，卡牌描述，卡牌费用，卡牌商店价格，卡牌稀有度，卡牌是否能被打出，卡牌类型，卡牌是否需要目标打出，卡牌是否为消耗牌
  * 
  */
 
@@ -23,34 +23,29 @@ public:
 //进行卡牌注册
 AUTO_REGISTER_CARD(Attack)
 
-
-/*
-* 卡牌名称：second_wind
-* 效果：消耗所有非攻击牌，每张获得5点格挡
- */
-    class Second_wind : public Card
+class Second_wind : public Card
 {
 public:
-    Second_wind() : Card("Second_wind", "Consume all non attack cards and receive 5 grid blocks per card", 1, 20, UNCOMMON, PLAYABLE, ABILITY, NO, YES) {}
+    Second_wind() : Card("Second_wind", "Consume all non attack cards and receive 5 grid blocks per card", 1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO) {}
     void takeEffect()
     {
         int temp_block = 5;
         int num = 0;
-        for (size_t i = 0; i < CombatSystem::getInstance()->hand.size(); ++i) {
+        for (size_t i = 0; i < CombatSystem::getInstance()->hand.size(); ++i) 
+        {
             const auto& card = CombatSystem::getInstance()->hand[i];  // 获取当前卡牌
             if (card->getType() != ATTACK) {
                 ++num;
-                CombatSystem::getInstance()->deleteCard(i, "Second_wind"); //消耗非攻击牌
+                CombatSystem::getInstance()->exhaustCard(i, "Second_wind"); //消耗非攻击牌
                 i--;
-                CCLOG("Card at index %zu is an attack card", i);  // 输出当前卡牌的索引
+                CCLOG("Card at index %zu isn't an attack card", i);  // 输出当前卡牌的索引
+                CombatSystem::getInstance()->Addblock(Player::getInstance(), temp_block, "Second_wind"); //增加护盾
             }
         }
-        CombatSystem::getInstance()->Addblock(Player::getInstance(),temp_block*num, "Second_wind"); //增加护盾
     }
 };
 //进行卡牌注册
 AUTO_REGISTER_CARD(Second_wind)
-
 
 /*
 * 卡牌名称：BurningContract
@@ -59,23 +54,31 @@ AUTO_REGISTER_CARD(Second_wind)
     class BurningContract : public Card
 {
 public:
+<<<<<<< HEAD
     BurningContract() : Card("BurningContract", "Consume one card and draw two cards", 1, 20, UNCOMMON, PLAYABLE, ABILITY, YES, YES) {}
+=======
+    BurningContract() : Card("BurningContract", "Consume one card and draw two cards", 1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO) {}
+>>>>>>> 28eb26a6e1cd136316170735cc10b41e486c5c00
     void takeEffect()
     {
         int draw_num = 2;
         int num = 0;
+<<<<<<< HEAD
         //实现前端选择卡牌并读取位数
        // 创建 selectScene 并使用 pushScene 进行切换
         auto selectScene = SelectScene::create();
         cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene
+=======
+        // 实现前端选择卡牌并读取位数
+>>>>>>> 28eb26a6e1cd136316170735cc10b41e486c5c00
 
-        CombatSystem::getInstance()->deleteCard(num, "BurningContract"); //消耗选择的卡牌
+        // 目前为消耗第0张牌
+        // CombatSystem::getInstance()->exhaustCard(num, "BurningContract"); //消耗选择的卡牌
         CombatSystem::getInstance()->drawCard(draw_num); //抽取卡牌
     }
 };
 //进行卡牌注册
 AUTO_REGISTER_CARD(BurningContract)
-
 
 /*
 * 卡牌名称：Revival

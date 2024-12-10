@@ -2,6 +2,10 @@
 
 bool CombatScene::init() 
 {
+    // 先进行战斗系统初始化
+    CombatSystem::getInstance()->init();
+
+
     // 创建并设置背景图像
     auto background = cocos2d::Sprite::create("combatScene.png");
     const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
@@ -90,8 +94,8 @@ bool CombatScene::init()
 
     HandPileLayer::getInstance()->init();
     //测试使用：创建一个能打出牌的区域，当卡牌被拖动到这个区域时被打出
-    playArea = Rect(screenSize.width / 2 - 0.15 * screenSize.width, screenSize.height / 2, 
-        0.3 * screenSize.width, 0.3 * screenSize.height); // 设置打出区域
+    playArea = Rect(screenSize.width / 2 - 0.15 * screenSize.width, screenSize.height / 2,
+        0.3 * screenSize.width, 0.3 * screenSize.height);
     auto playAreaNode = DrawNode::create();
     playAreaNode->drawRect(playArea.origin, playArea.origin + playArea.size, Color4F::GRAY);
     this->addChild(playAreaNode);

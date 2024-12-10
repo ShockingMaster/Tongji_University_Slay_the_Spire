@@ -17,7 +17,12 @@
 #include "HoverButton.h"
 #include "CombatScene.h"
 #include "HandPileLayer.h"
+<<<<<<< HEAD
 #include "SelectScene.h"
+=======
+#include "RandomGenerator.h"
+
+>>>>>>> 28eb26a6e1cd136316170735cc10b41e486c5c00
 using namespace std;
 USING_NS_CC;
 const int kWindowSizeX = 2048;

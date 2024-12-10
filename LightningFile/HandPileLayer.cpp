@@ -73,7 +73,6 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
     listener->onTouchBegan = [=](Touch* touch, Event* event) -> bool {
         auto location = touch->getLocation();
         if (cardSprite->getBoundingBox().containsPoint(location)) {
-        
             return true;
         }
         return false;
@@ -95,14 +94,13 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         auto location = touch->getLocation();
         auto& newhand = CombatSystem::getInstance()->hand;                                      //获取手牌引用
 
-        
-
         //这里的card->needTarget()是错误的，仅仅为了进行测试
-        if (playArea.containsPoint(location) && card->getCanBePlayed() && card->needTarget()   //对于不需要选中敌人的卡牌
+        if (playArea.containsPoint(location) && card->getCanBePlayed() && 1   //对于不需要选中敌人的卡牌
             && card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy()) 
         {
-            CombatSystem::getInstance()->cardPlayed(card);                                      //告诉战斗系统打出这张牌
+            //auto& tempcard = card;
             newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());    //在手牌中移除这张卡牌
+            CombatSystem::getInstance()->cardPlayed(card);                                      //告诉战斗系统打出这张牌
             cardSprite->removeFromParent();                                                     //将卡牌移除出屏幕
 
             if (!card->isExhaust()) {                                                           //如果卡牌不是消耗类型
@@ -113,11 +111,18 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         //需要更新！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         //
         //
-        else if (playArea.containsPoint(location) 
-            && card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())//还需要更新对于需要选中敌人的卡牌的逻辑
+        else if (card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())//还需要更新对于需要选中敌人的卡牌的逻辑
         {
+            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());    //在手牌中移除这张卡牌
+            CombatSystem::getInstance()->cardPlayed(card);                                      //告诉战斗系统打出这张牌
+            cardSprite->removeFromParent();                                                     //将卡牌移除出屏幕
 
+            if (!card->isExhaust()) {                                                           //如果卡牌不是消耗类型
+                CombatSystem::getInstance()->discardPile.push(card);                            //向弃牌堆中加入这张卡牌
+                HandPileLayer::getInstance()->updateDiscardPileDisplay();                       //对弃牌堆进行更新
+            }
         }
+        
         adjustHandPile();                                                                   //每次进行点击都调整卡牌位置
         };
 
@@ -127,9 +132,6 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
     // 使用卡牌地址作为唯一 tag
     cardSprite->setTag(reinterpret_cast<intptr_t>(card.get()));
 }
-
-
-
 
 void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 {
@@ -143,8 +145,27 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 
     // 对抽牌堆进行更新
     updateDrawPileDisplay();
+
+    //adjustHandPile();
 }
 
+
+/*
+* 函数名称：removeCard
+* 功能：给定某一张卡牌的指针，将该卡牌对应的精灵移除
+*/
+void HandPileLayer::removeCard(std::shared_ptr<Card> card)
+{
+    auto& newhand = CombatSystem::getInstance()->hand;
+    for (size_t i = 0; i < newhand.size(); ++i)
+    {
+        if (card == newhand[i])
+        {
+            auto cardSprite = HandPileLayer::getInstance()->getChildByTag(reinterpret_cast<intptr_t>(newhand[i].get()));
+            HandPileLayer::getInstance()->removeChild(cardSprite);
+        }
+    }
+}
 /*
 * 函数名称：adjustHandPile()
 *
@@ -168,8 +189,15 @@ void HandPileLayer::adjustHandPile()
             // 根据手牌数量调整位置，确保居中显示
             const float xOffset = -totalWidth / 2 + i * cardSpacing;
             Vec2 newPosition = handCenter + Vec2(xOffset, 0);
+
             // 使用动作移动到新位置，显得更平滑
-            cardSprite->runAction(MoveTo::create(0.2f, newPosition));
+            auto moveAction = MoveTo::create(0.2f, newPosition);
+
+            // 确保只有一个移动动作在执行
+            cardSprite->stopAllActions();
+            cardSprite->runAction(moveAction);
+    
+            CCLOG("Card %zu position: (%f, %f)", i, newPosition.x, newPosition.y);
         }
     }
 }

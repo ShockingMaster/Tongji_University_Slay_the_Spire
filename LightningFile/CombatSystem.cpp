@@ -5,7 +5,7 @@ CombatSystem* CombatSystem::instance_ = nullptr;
 //返回CombatSytem的唯一实例
 CombatSystem* CombatSystem::getInstance()
 {
-	if (instance_ == nullptr) 
+	if (instance_ == nullptr)
 	{
 		instance_ = new CombatSystem(); // 创建唯一实例  
 	}
@@ -21,18 +21,7 @@ void CombatSystem::init()
 {
 	// 对角色进行初始化
 	Player::getInstance()->init();
-
-	/*
-	std::vector<std::shared_ptr<Card>> cardPool = HeaderBar->hand_card;
-	// 打乱卡牌池，确保卡牌顺序随机
-	auto rng = std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count());
-	std::shuffle(cardPool.begin(), cardPool.end(), rng);
-	for (size_t i = handSize; i < cardPool.size(); ++i) {
-		drawPile.push(cardPool[i]);  // 将卡牌加入抽牌堆
-	}
-	*/
-
-
+	
 	// 清空抽牌堆、弃牌堆和手牌
 	std::queue<std::shared_ptr<Card>> emptyQueue;
 	std::vector<std::shared_ptr<Card>> emptyVector;
@@ -47,7 +36,7 @@ void CombatSystem::init()
 	{
 		CCLOG("tempDeck is empty!");
 	}
-	for (int i = 0;i < 23;i++)
+	for (int i = 0;i < 4;i++)
 	{
 		for (auto name : tempDeck)
 		{
@@ -57,8 +46,8 @@ void CombatSystem::init()
 	}
 
 	// 清空怪物列表,随机生成怪物
-	Monsters_.clear();  
-	int numMonsters = 1; 
+	Monsters_.clear();
+	int numMonsters = 1;
 	for (int i = 0; i < numMonsters; i++)
 	{
 		// 生成怪物并加入到怪物列表
@@ -76,7 +65,7 @@ void CombatSystem::init()
 void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Creature> target, int numeric_value_, std::string cardName)
 {
 	//首先遍历使用者的buff列表，触发所有buff的onAttack效果
-	for (auto Buff:user->buffs_)
+	for (auto Buff : user->buffs_)
 	{
 		if (Buff != nullptr)
 			Buff->onAttack(numeric_value_, cardName, user, target);
@@ -156,12 +145,12 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
  * 功能：触发护盾类buff并改写护盾值
  */
 
-void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_,std::string cardName) {
+void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_, std::string cardName) {
 	//遍历使用者的buff列表，触发所有buff的Addblock效果
 	for (auto Buff : target->buffs_)
 	{
 		if (Buff != nullptr)
-			Buff->Addblock(numeric_value_);
+			Buff->onGetBlock(numeric_value_);
 	}
 	//防止被减至负数
 	numeric_value_ = max(numeric_value_, 0);
@@ -170,26 +159,37 @@ void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_
 
 
 /*
- * 函数名称：deleteCard
+ * 函数名称：exhuastCard
  * 参数：消耗第几张卡牌，卡牌名称
  * 功能：消耗特定卡牌
  */
 
-void CombatSystem::deleteCard(int num, std::string cardName) {
-	//遍历使用者的buff列表，触发所有buff的deleteCard效果（暂且未实现）
-	
+void CombatSystem::exhaustCard(int num, std::string cardName) 
+{
+	//遍历使用者的buff列表，触发所有buff的deleteCard效果
+	for (auto Buff : Player::getInstance()->buffs_)
+	{
+		if (Buff != nullptr)
+		{
+			Buff->onExhaustCard();
+		}
+	}
 	if (num < 0 || num >= hand.size()) {
 		CCLOG("Error: Invalid card index %d", num);
 		return;  // 如果 num 无效，直接返回
 	}
-	//删去相应位置卡牌
+
+	// 触发卡牌被消耗的效果
+	auto card = hand[num];
+	card->takeEffectOnExhaust();
+
+	// 调用前端效果对卡牌进行移除
+	HandPileLayer::getInstance()->removeCard(card);
+
+	// 消耗相应位置卡牌
 	hand.erase(hand.begin() + num);
-	CCLOG("Card '%s' at index %d has been deleted", cardName.c_str(), num);
+	CCLOG("Card '%s' at index %d has been exhuasted", cardName.c_str(), num);
 }
-
-
-
-
 
 
 /*
@@ -214,7 +214,7 @@ void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 	if (creature == Player::getInstance())
 	{
 		const int energy = Player::getInstance()->getMaxEnergy();//获取玩家的最大能量上限
-		addEnergy(Player::getInstance(),energy);
+		addEnergy(Player::getInstance(), energy);
 		drawCard(5);
 	}
 }
@@ -277,24 +277,6 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creatu
 		}
 	}
 	card->takeEffect(creature);
-}
-
-/*
- * 函数名称：exhaustCard
- * 参数：被消耗的卡牌的指针
- * 功能：完成打出卡牌相关buff的结算
- */
-void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
-{
-	//首先触发卡牌被消耗的效果
-	card->takeEffectOnExhaust();
-	for (auto Buff : Player::getInstance()->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onExhaustCard();
-		}
-	}
 }
 
 void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
@@ -360,7 +342,7 @@ void CombatSystem::drawCard(int num)
 			drawPile.pop();
 			hand.push_back(card);
 			CCLOG("the hand now has %d cards", hand.size());
-			
+
 			// 调用前端抽牌堆的抽牌效果
 			HandPileLayer::getInstance()->drawCard(card);
 		}
@@ -386,7 +368,7 @@ void CombatSystem::shuffleDeck() {
 	{
 		drawPile.push(card);
 	}
-	
+
 	HandPileLayer::getInstance()->updateDrawPileDisplay();
 	HandPileLayer::getInstance()->updateDiscardPileDisplay();
 
