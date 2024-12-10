@@ -9,18 +9,25 @@ enum YesOrNo
     NO,
     YES
 };
+enum Enemy 
+{
+    NORMAL,
+    ELITE,
+    BOSS
+};
 
 enum CardRarity
 {
     COMMON,
     UNCOMMON,
-    RARE
+    RARE,
+    ALL
 };
 enum CardType
 {
     ABILITY,
     ATTACK,
-    SKILL
+    SKILL,
 };
 
 #define AUTO_REGISTER_CARD(className)                          \

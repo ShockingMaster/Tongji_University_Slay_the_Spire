@@ -16,6 +16,10 @@ void Creature::addBuff(Buff* buff)
 {
 }
 
+void Creature::addBlock(int numeric_value)
+{
+}
+
 void Creature::takeDamage(int numeric_value)
 {
 }
@@ -31,8 +35,4 @@ void Creature::take_damage(int damage)
 int Creature::getBlockValue()
 {
 	return 0;
-}
-
-void Creature::addBlock(int numeric_value) {
-	
 }
