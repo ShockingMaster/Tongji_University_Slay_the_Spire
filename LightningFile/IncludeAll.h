@@ -17,6 +17,7 @@
 #include "HoverButton.h"
 #include "CombatScene.h"
 #include "HandPileLayer.h"
+#include "SelectScene.h"
 using namespace std;
 USING_NS_CC;
 const int kWindowSizeX = 2048;
