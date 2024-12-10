@@ -21,18 +21,7 @@ void CombatSystem::init()
 {
 	// 对角色进行初始化
 	Player::getInstance()->init();
-
-	/*
-	std::vector<std::shared_ptr<Card>> cardPool = HeaderBar->hand_card;
-	// 打乱卡牌池，确保卡牌顺序随机
-	auto rng = std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count());
-	std::shuffle(cardPool.begin(), cardPool.end(), rng);
-	for (size_t i = handSize; i < cardPool.size(); ++i) {
-		drawPile.push(cardPool[i]);  // 将卡牌加入抽牌堆
-	}
-	*/
-
-
+	
 	// 清空抽牌堆、弃牌堆和手牌
 	std::queue<std::shared_ptr<Card>> emptyQueue;
 	std::vector<std::shared_ptr<Card>> emptyVector;

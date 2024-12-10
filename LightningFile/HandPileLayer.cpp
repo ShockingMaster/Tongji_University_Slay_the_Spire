@@ -111,11 +111,18 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         //需要更新！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         //
         //
-        else if (playArea.containsPoint(location) 
-            && card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())//还需要更新对于需要选中敌人的卡牌的逻辑
+        else if (card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())//还需要更新对于需要选中敌人的卡牌的逻辑
         {
+            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());    //在手牌中移除这张卡牌
+            CombatSystem::getInstance()->cardPlayed(card);                                      //告诉战斗系统打出这张牌
+            cardSprite->removeFromParent();                                                     //将卡牌移除出屏幕
 
+            if (!card->isExhaust()) {                                                           //如果卡牌不是消耗类型
+                CombatSystem::getInstance()->discardPile.push(card);                            //向弃牌堆中加入这张卡牌
+                HandPileLayer::getInstance()->updateDiscardPileDisplay();                       //对弃牌堆进行更新
+            }
         }
+        
         adjustHandPile();                                                                   //每次进行点击都调整卡牌位置
         };
 

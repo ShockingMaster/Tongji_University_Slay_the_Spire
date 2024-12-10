@@ -10,9 +10,22 @@ std::shared_ptr<Player> Player::getInstance() {
     return instance_;
 }
 
+void Player::startTurn()
+{
+    block_ = 0;
+}
+
+void Player::endTurn() {
+    currentEnergy_ = 0;
+}
+
 void Player::energyChange(int changeValue)
 {
     currentEnergy_ += changeValue;
+}
+
+void Player::addPotion(Potion* potion)
+{
 }
 
 /*
