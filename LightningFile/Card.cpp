@@ -25,6 +25,34 @@ AUTO_REGISTER_CARD(Attack)
 
 
 /*
+* 卡牌名称：second_wind
+* 效果：消耗所有非攻击牌，每张获得5点格挡
+ */
+    class Second_wind : public Card
+{
+public:
+    Second_wind() : Card("Second_wind", "Consume all non attack cards and receive 5 grid blocks per card", 1, 20, UNCOMMON, PLAYABLE, ABILITY, NO, YES) {}
+    void takeEffect()
+    {
+        int temp_block = 5;
+        int num = 0;
+        std::vector<std::shared_ptr<Card>> card_hand = CombatSystem::getInstance()->hand;
+        for (size_t i = 0; i < card_hand.size(); ++i) {
+            const auto& card = card_hand[i];  // 获取当前卡牌
+            if (card->getType() != ATTACK) {
+                ++num;
+                CombatSystem::getInstance()->hand.erase(card_hand.begin() + i); //消耗非攻击牌
+                CCLOG("Card at index %zu is an attack card", i);  // 输出当前卡牌的索引
+            }
+        }
+        Player::getInstance()->block_ += num * temp_block;
+    }
+};
+//进行卡牌注册
+AUTO_REGISTER_CARD(Second_wind)
+
+
+/*
 * 卡牌名称：Revival
 * 效果：
  */
