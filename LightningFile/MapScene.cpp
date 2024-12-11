@@ -41,7 +41,7 @@ void MapScene::onEnter() {
     CCLOG("onEnter called!");  // 调试输出
     auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
     if (headbar) {
-        shared_ptr<Player> player= Player::getInstance();
+        auto player= EventSystem::getInstance();
         headbar->updateHeader(player);  // 使用 player 的最新数据更新 headbar
         headbar->level = currentLevel-1;
     }
@@ -55,7 +55,7 @@ bool MapScene::init() {
     if (!Scene::init()) {
         return false;
     }
-    shared_ptr<Player> player = Player::getInstance();
+    auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setName("HeaderBar");  // 设置名称
     headbar->setPosition(Vec2(50, 750));

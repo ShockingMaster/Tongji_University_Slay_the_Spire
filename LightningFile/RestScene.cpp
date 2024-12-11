@@ -29,7 +29,7 @@ bool RestScene::init() {
 
     // 播放背景音乐
     audioPlayer("rest.ogg", true);
-    shared_ptr<Player> player = Player::getInstance();
+    auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
@@ -48,13 +48,9 @@ bool RestScene::init() {
 
     restButton->addClickEventListener([this, headbar](Ref* sender) {
         audioPlayer("addhealth.ogg", false); 
-        shared_ptr<Player> player= Player::getInstance();
+        auto player = EventSystem::getInstance();
         // 恢复最大生命值的 30%
-        player->health_ += player->fullhealth_ * 0.3f;
-        // 确保血量不超过最大血量
-        if (player->health_ > player->fullhealth_) {
-            player->health_ = player->fullhealth_;  // 如果恢复后的血量超过最大血量，设为最大血量
-        }
+        player->changeHealth(0.3f * player->getFullHealth());
         // 更新头栏中的血量显示
         headbar->updateHeader(player);
 
@@ -91,7 +87,7 @@ bool RestScene::init() {
         Director::getInstance()->getVisibleSize().height / 2));
     smithButton->addClickEventListener([this](Ref* sender) {
         // 升级一张卡牌
-        shared_ptr<Player> player= Player::getInstance();
+        auto player = EventSystem::getInstance();
         auto cardLayer = CardLayer::create(player->cards_, 3); 
         Director::getInstance()->getRunningScene()->addChild(cardLayer); // 使用更高的层级，确保在 Header
        // 创建返回按钮

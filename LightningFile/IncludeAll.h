@@ -19,6 +19,8 @@
 #include "HandPileLayer.h"
 #include "SelectScene.h"
 #include "RandomGenerator.h"
+#include "EventSystem.h"
+#include "HeaderBar.h"
 
 using namespace std;
 USING_NS_CC;

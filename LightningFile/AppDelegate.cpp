@@ -1,6 +1,9 @@
 #include "AppDelegate.h"
 #include "IncludeAll.h"
 #include "TestScene.h"  // 引入 TestScene 头文件
+#include "InitialScene.h"
+#include "EventScene.h"
+#include "TestEvent1.h"
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -18,7 +21,7 @@ using namespace CocosDenshion;
 
 USING_NS_CC;
 
-static cocos2d::Size designResolutionSize = cocos2d::Size(1024, 768);
+static cocos2d::Size designResolutionSize = cocos2d::Size(2048, 950);
 static cocos2d::Size smallResolutionSize = cocos2d::Size(1480, 1320);
 static cocos2d::Size mediumResolutionSize = cocos2d::Size(1024, 768);
 static cocos2d::Size largeResolutionSize = cocos2d::Size(2048, 1536);
@@ -52,6 +55,8 @@ static int register_all_packages()
 {
     return 0; //flag for packages manager
 }
+
+
 
 bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
@@ -102,7 +107,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
     // 设置初始场景为 TestScene
-    auto testScene = TestScene::create();
+    auto testScene = Event1::create();
     cocos2d::Director::getInstance()->runWithScene(testScene);
 
 

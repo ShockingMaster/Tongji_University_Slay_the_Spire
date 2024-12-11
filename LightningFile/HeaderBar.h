@@ -12,25 +12,27 @@
 using namespace std;
 using namespace cocos2d;
 
+class EventSystem;
 class HeaderBar : public Node {
 private:
-    string name;                // 玩家名称
-    string character;           // 玩家角色
-    int health;                 // 当前生命值
-    int fullHealth;             // 最大生命值
-    int coins;                  // 金币数量
-    vector<Potion*> potions;    // 药水
-    vector<Relic*> relics;      // 遗物
-    Label* nameLabel;           // 显示名称的标签
-    Label* healthLabel;         // 显示生命值的标签
-    Label* coinsLabel;          // 显示金币数量的标签
-    Label* levelLabel;          // 显示当前关卡的标签
-    Node* potionIcons;          // 显示药水图标的容器
-    Node* relicIcons;           // 显示药水图标的容器
-    Sprite* healthIcon;         // 生命图标
-    Sprite* coinsIcon;          // 金币图标
-    Sprite* potionIcon;         // 药水图标
-    vector<Card*> cards;
+    string name;                                // 玩家名称
+    string character;                           // 玩家角色
+    int health;                                 // 当前生命值
+    int fullHealth;                             // 最大生命值
+    int maxPotions;                             // 药水最大数量
+    int coins;                                  // 金币数量
+    vector<std::shared_ptr<Potion>> potions;    // 药水
+    vector<std::shared_ptr<Relic>> relics;      // 遗物
+    Label* nameLabel;                           // 显示名称的标签
+    Label* healthLabel;                         // 显示生命值的标签
+    Label* coinsLabel;                          // 显示金币数量的标签
+    Label* levelLabel;                          // 显示当前关卡的标签
+    Node* potionIcons;                          // 显示药水图标的容器
+    Node* relicIcons;                           // 显示药水图标的容器
+    Sprite* healthIcon;                         // 生命图标
+    Sprite* coinsIcon;                          // 金币图标
+    Sprite* potionIcon;                         // 药水图标
+    vector<std::shared_ptr<Card>> cards;        // 当前卡牌
 
 public:
     // 构造函数和析构函数
@@ -39,23 +41,28 @@ public:
     ~HeaderBar();
 
     // 初始化头栏
-    bool init(shared_ptr<Player> player);
+    bool init(EventSystem* eventSystem);
 
     // 更新头栏信息
-    void updateHeader(shared_ptr<Player> player);
+    void updateHeader(EventSystem* eventSystem);
 
     // 静态创建函数（Cocos2d约定）
-    static HeaderBar* create(shared_ptr<Player> player);
+    static HeaderBar* create(EventSystem* eventSystem);
 
     // 设置和获取函数
     void setPlayerInfo(const string& name, const string& character, int fullHealth, int coins);
-    void setPlayerInfo(shared_ptr<Player> player);
+    void setPlayerInfo(EventSystem* eventSystem);
 
     // 设置玩家信息的函数
     void setHealth(int health);
     void setCoins(int coins);
-    void setPotions(const vector<Potion*>& potions);
+    void setPotions(const vector<std::shared_ptr<Potion>>& potions);
     void setLevel(int level);
+
+    // 获取头栏信息
+    int getCurrentHealth();
+    int getFullHealth();
+    int getCoins();
 };
 
 // GlobalNode 类，用于存储常驻元素

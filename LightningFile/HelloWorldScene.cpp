@@ -53,7 +53,7 @@ bool HelloWorld::init()
     {
         return false;
     }
-    auto player = Player::getInstance();
+    auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 1150));          // 设置位置（在屏幕上部）
     this->addChild(headbar);        // 添加到场景

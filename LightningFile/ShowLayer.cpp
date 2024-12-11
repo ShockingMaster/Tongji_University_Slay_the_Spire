@@ -27,7 +27,7 @@ bool ShowLayer::init( int op) {
     if (!Layer::init()) {
         return false;
     } 
-    auto headbar = HeaderBar::create(Player::getInstance());
+    auto headbar = HeaderBar::create(EventSystem::getInstance());
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
     headbar->setLocalZOrder(100);
@@ -72,8 +72,8 @@ bool ShowLayer::init( int op) {
         Label1->setPosition(cocos2d::Vec2(1000, 60));  // 设置Label的位置，使其在按钮上方
         this->addChild(Label1, 103);  // Label的层级高于按钮
         audioPlayer("gold.ogg", false);
-        Player::getInstance()->coins_ += random_number;
-        headbar->updateHeader(Player::getInstance());
+        EventSystem::getInstance()->changeCoins(random_number);
+        headbar->updateHeader(EventSystem::getInstance());
     }
     if (op == 2) {
         // 创建返回Label
@@ -91,27 +91,24 @@ bool ShowLayer::init( int op) {
         Label1->setPosition(cocos2d::Vec2(1000, 60));  // 设置Label的位置，使其在按钮上方
         this->addChild(Label1, 103);  // Label的层级高于按钮
         audioPlayer("gold.ogg", false);
-        Player::getInstance()->cards_.push_back(NULL);
-        headbar->updateHeader(Player::getInstance());
+        EventSystem::getInstance()->cards_.push_back(NULL);//请调用Eventsystem进行卡牌增加
+        headbar->updateHeader(EventSystem::getInstance());
     }
     if (op == 3) {
         // 创建返回Label
-        std::random_device rd;  // 随机数种子
-        std::mt19937 gen(rd()); // Mersenne Twister 随机数生成器
-        std::uniform_int_distribution<> distrib(100, 200);
         auto background4 = Sprite::create("bell.png");
         background4->setScale(4.0f);
         background4->setPosition(Vec2(1000, 400));
         this->addChild(background4, 2000);
         // 生成随机数
-        int random_number = distrib(gen);
+        auto randomRelic = RandomGenerator::getInstance()->getRandomRelic();
         auto Label1 = cocos2d::Label::createWithSystemFont(u8"恭喜获得新遗物", "Arial", 60);
         Label1->setTextColor(cocos2d::Color4B::WHITE);
         Label1->setPosition(cocos2d::Vec2(1000, 60));  // 设置Label的位置，使其在按钮上方
         this->addChild(Label1, 103);  // Label的层级高于按钮
         audioPlayer("gold.ogg", false);
-        Player::getInstance()->relics_.push_back(NULL);
-        headbar->updateHeader(Player::getInstance());
+        EventSystem::getInstance()->relics_.push_back(randomRelic);
+        headbar->updateHeader(EventSystem::getInstance());
     }
     return true;
 }

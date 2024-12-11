@@ -2,6 +2,7 @@
 #include "ui/CocosGUI.h"  
 #include "Card.h"
 #include "Player.h"
+#include "EventSystem.h"
 
 CardLayer::CardLayer() : _cards({}), _scrollView(nullptr), _background(nullptr) {
 }
@@ -9,7 +10,7 @@ CardLayer::CardLayer() : _cards({}), _scrollView(nullptr), _background(nullptr) 
 CardLayer::~CardLayer() {
 }
 
-CardLayer* CardLayer::create(std::vector<Card*> cards,int op) {
+CardLayer* CardLayer::create(std::vector<std::shared_ptr<Card>> cards,int op) {
     CardLayer* ret = new CardLayer();
     if (ret && ret->init(cards,op)) {
         ret->autorelease();
@@ -19,7 +20,7 @@ CardLayer* CardLayer::create(std::vector<Card*> cards,int op) {
     return nullptr;
 }
 
-bool CardLayer::init(std::vector<Card*> cards, int op) {
+bool CardLayer::init(std::vector<std::shared_ptr<Card>> cards, int op) {
     if (!Layer::init()) {
         return false;
     }
@@ -108,7 +109,7 @@ void CardLayer::displayCards() {
         cardContainer->addChild(cardSprite, 200);  // 初始设置
 
         // 为每个卡牌精灵设置与卡牌的关联
-        cardSprite->setUserData(static_cast<void*>(card));
+        cardSprite->setUserData(static_cast<void*>(card.get()));
 
         // 将每个卡牌的精灵添加到容器中，并存储卡牌的指针以便之后使用
         _cardSprites.push_back(cardSprite);
@@ -194,22 +195,19 @@ void CardLayer::displayCards() {
                             // 获取卡牌对象
 
                             auto card = static_cast<Card*>(cardSprite->getUserData());
-
+                            std::shared_ptr<Card> deleteCard(card);
                             // 根据操作类型进行删除或其他操作
                             if (operation == 2) {
                                 // 删除该卡牌对象
-                                auto it = std::find(_cards.begin(), _cards.end(), card);
+                                auto it = std::find(_cards.begin(), _cards.end(), deleteCard);
                                 if (it != _cards.end()) {
                                     _cards.erase(it);  // 删除卡牌
+                                    EventSystem::getInstance()->deleteCard(deleteCard);
                                     // 移除该精灵
                                     cardSprite->removeFromParent();                           
                                     _cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
                                     CCLOG("删除卡牌成功");
                                     
-
-
-                                    shared_ptr<Player> player = Player::getInstance(); 
-                                    player->cards_ = _cards;
                                 }
                             }
                             else if (operation == 3) {

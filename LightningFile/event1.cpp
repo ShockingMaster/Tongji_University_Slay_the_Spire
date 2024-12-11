@@ -27,7 +27,7 @@ bool event1::init() {
     this->addChild(backgroun);
     // 播放音频显示头栏
     audioPlayer("event.ogg", true);
-    shared_ptr<Player> player = Player::getInstance();
+    auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
@@ -59,7 +59,7 @@ bool event1::init() {
             this->addChild(continueLabel3);
         }
         else {
-            player->coins_ -= 85;
+            player->changeCoins(-85);
             headbar->updateHeader(player);
             audioPlayer("gold.ogg", false);
             //获得遗物逻辑待更新
