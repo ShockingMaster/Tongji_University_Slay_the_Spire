@@ -2,6 +2,7 @@
 
 bool SelectScene::init()
 {
+
     // 创建并设置背景图像
     auto background = cocos2d::Sprite::create("combatScene.png");
     const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
@@ -62,9 +63,14 @@ bool SelectScene::init()
             CCLOG("Switch Scene clicked!");  // 打印日志
 
             // 在此处执行切换场景的操作
-
-            auto newScene = CombatScene::create();  // 创建新场景
-            cocos2d::Director::getInstance()->pushScene(newScene);
+            //切回原来卡牌的监听
+            auto combatsystem = CombatSystem::getInstance();
+            for (auto& card : combatsystem->hand) {
+                HandPileLayer::getInstance()->switchToenableCardDrag(card);
+            }
+            
+            HandPileLayer::getInstance() ->setSceneType(HandPileLayer::SceneType::SCENE_TYPE_1);
+            Director::getInstance()->popScene(); //切回原来场景
         }
         });
 
@@ -73,20 +79,21 @@ bool SelectScene::init()
 
 
 
-
-    // 调用 HandPileLayer 实例并初始化
-    HandPileLayer::getInstance()->init();
-
-    // 测试使用：创建一个变暗的打出区域
-    playArea = Rect(screenSize.width / 2 - 0.15 * screenSize.width, screenSize.height / 2,
-        0.3 * screenSize.width, 0.3 * screenSize.height);
-    auto playAreaNode = DrawNode::create();
-    playAreaNode->drawRect(playArea.origin, playArea.origin + playArea.size, Color4F(0.5f, 0.5f, 0.5f, 0.8f)); // 灰色区域
-    this->addChild(playAreaNode);
-
-    this->addChild(HandPileLayer::getInstance());
-
+    
+    
+    //改变原来的卡牌监听
+    auto handPileLayer = HandPileLayer::getInstance();
+    auto combatsystem = CombatSystem::getInstance();
+    
+    handPileLayer->setSceneType(HandPileLayer::SceneType::SCENE_TYPE_2);
+    for (auto& card : combatsystem->hand) {
+        HandPileLayer::getInstance()->switchToCardHighlight(card);
+    }
+    HandPileLayer::getInstance()->adjustHandPile();
+    this->addChild(handPileLayer);
+    
     return true;
+    
 }
 
 

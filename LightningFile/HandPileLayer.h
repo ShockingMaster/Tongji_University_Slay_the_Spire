@@ -11,12 +11,18 @@ class Creature;
 
 class HandPileLayer : public cocos2d::Layer
 {
-private:
-    static HandPileLayer* instance_;
-    cocos2d::Label* drawPileNumLabel;
-    cocos2d::Label* discardPileNumLabel;
+
 
 public:
+    HandPileLayer():_currentSceneType(SceneType::SCENE_TYPE_1) {}
+    enum class SceneType {
+        SCENE_TYPE_1,
+        SCENE_TYPE_2
+    };
+
+    void setSceneType(SceneType type) {
+        _currentSceneType = type;
+    }
 
     bool init() override;
 
@@ -25,6 +31,14 @@ public:
 
     // 启用拖动
     void enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> card);
+
+
+    void enableCardHighlight (Sprite* cardSprite, std::shared_ptr<Card> card);
+
+    void switchToCardHighlight( std::shared_ptr<Card> card);
+
+    void switchToenableCardDrag(std::shared_ptr<Card> card);
+    
 
     // 抽一张牌
     void drawCard(std::shared_ptr<Card> card);
@@ -40,4 +54,11 @@ public:
     void HandPileLayer::updateDiscardPileDisplay();//更新手牌数量显示
 
     CREATE_FUNC(HandPileLayer);
+
+
+private:
+    static HandPileLayer* instance_;
+    cocos2d::Label* drawPileNumLabel;
+    cocos2d::Label* discardPileNumLabel;
+    SceneType _currentSceneType;
 };

@@ -56,6 +56,9 @@ bool HandPileLayer::init()
     HandPileLayer::getInstance()->discardPileNumLabel->setPosition(cocos2d::Vec2(0.9 * screenSize.width, 0.078125 * screenSize.height));  // 设置在能量图标的中心
     HandPileLayer::getInstance()->discardPileNumLabel->setColor(cocos2d::Color3B::WHITE);  // 设置文字颜色
     this->addChild(HandPileLayer::getInstance()->discardPileNumLabel);
+
+
+    setSceneType(HandPileLayer::SceneType::SCENE_TYPE_1); //初始场景为战斗场景
     return true;
 }
 
@@ -68,8 +71,14 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
 {
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
+    const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
+    auto playArea = Rect(screenSize.width / 2 - 0.15 * screenSize.width, screenSize.height / 2,
+        0.3 * screenSize.width, 0.3 * screenSize.height);
+    // 在场景1中执行的操作
+       // 启用拖动
 
-    // 如果触碰区域有卡牌，那么返回true
+
+        // 如果触碰区域有卡牌，那么返回true
     listener->onTouchBegan = [=](Touch* touch, Event* event) -> bool {
         auto location = touch->getLocation();
         if (cardSprite->getBoundingBox().containsPoint(location)) {
@@ -84,19 +93,18 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         cardSprite->setPosition(location);
         };
 
-    const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
+
 
 
     // 测试使用，对于设定卡牌打出区域，如果在这一区域释放卡牌，那么打出卡牌
-    auto playArea = Rect(screenSize.width / 2 - 0.15 * screenSize.width, screenSize.height / 2,
-        0.3 * screenSize.width, 0.3 * screenSize.height);
+
     listener->onTouchEnded = [=](Touch* touch, Event* event) {
         auto location = touch->getLocation();
         auto& newhand = CombatSystem::getInstance()->hand;                                      //获取手牌引用
 
         //这里的card->needTarget()是错误的，仅仅为了进行测试
         if (playArea.containsPoint(location) && card->getCanBePlayed() && 1   //对于不需要选中敌人的卡牌
-            && card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy()) 
+            && card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())
         {
             //auto& tempcard = card;
             newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());    //在手牌中移除这张卡牌
@@ -111,6 +119,7 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         //需要更新！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         //
         //
+        /*
         else if (card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())//还需要更新对于需要选中敌人的卡牌的逻辑
         {
             newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());    //在手牌中移除这张卡牌
@@ -122,16 +131,58 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
                 HandPileLayer::getInstance()->updateDiscardPileDisplay();                       //对弃牌堆进行更新
             }
         }
-        
+        */
         adjustHandPile();                                                                   //每次进行点击都调整卡牌位置
         };
-
     // 添加拖动监听
     _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, cardSprite);
 
     // 使用卡牌地址作为唯一 tag
     cardSprite->setTag(reinterpret_cast<intptr_t>(card.get()));
+     
 }
+
+
+/*
+* 函数名称:enableCardHighlight
+* 参数：卡牌精灵及相应的卡牌智能指针
+* 功能：设定卡牌可以被选择，无法被打出
+*/
+void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card> card) {
+    auto listener = EventListenerTouchOneByOne::create();
+    listener->setSwallowTouches(true);
+    //启用卡牌高亮（放大）功能
+        // 用一个自定义变量来管理卡牌是否已经上升
+    bool* isCardMoved = new bool(false);  // 为每张卡牌添加一个独立的状态变量
+
+
+
+    // 如果触碰区域有卡牌，那么返回true
+    listener->onTouchBegan = [=](Touch* touch, Event* event) -> bool {
+        auto location = touch->getLocation();
+        if (cardSprite->getBoundingBox().containsPoint(location)) {
+            if (!(*isCardMoved)) {
+                // 卡牌上移一点
+                cardSprite->runAction(MoveBy::create(0.2f, Vec2(0, 50)));  // 0.2秒内向上移动50个单位
+                *isCardMoved = true;
+            }
+            else {
+                // 恢复到原来的位置
+                cardSprite->runAction(MoveBy::create(0.2f, Vec2(0, -50)));  // 0.2秒内恢复到原来的位置
+                *isCardMoved = false;
+            }
+            return true;
+        }
+        return false;
+        };
+    // 添加触摸监听
+    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, cardSprite);
+
+    // 使用卡牌地址作为唯一 tag
+    cardSprite->setTag(reinterpret_cast<intptr_t>(card.get()));
+}
+
+
 
 void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 {
@@ -139,15 +190,50 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
     auto cardSprite = CardSpriteGenerator::createCardSprite(card);
     cardSprite->setPosition(Vec2(400, 300));                                // 初始位置，这个值没有任何影响,后续会进行更新
     this->addChild(cardSprite);
-
-    // 启用拖动
-    enableCardDrag(cardSprite, card);
-
+    
+    //根据SceneType启用不同函数
+    switch (_currentSceneType) {
+    case SceneType::SCENE_TYPE_1:
+        // 启用拖动
+        enableCardDrag(cardSprite, card);
+        break;
+    case SceneType::SCENE_TYPE_2:
+        enableCardHighlight(cardSprite, card);
+        break;
+    }
     // 对抽牌堆进行更新
     updateDrawPileDisplay();
 
     //adjustHandPile();
 }
+
+
+//切换至CardHighlight
+void HandPileLayer::switchToCardHighlight(std::shared_ptr<Card> card) {
+    auto cardSpriteNode = this->getChildByTag(reinterpret_cast<intptr_t>(card.get()));
+    Sprite* cardSprite = static_cast<Sprite*>(cardSpriteNode);
+    // 移除当前的拖动监听器
+    _eventDispatcher->removeEventListenersForTarget(cardSprite);
+
+    // 启用高亮功能
+    enableCardHighlight(cardSprite, card);
+}
+
+
+//切换至enableCardDrag
+void HandPileLayer::switchToenableCardDrag(std::shared_ptr<Card> card) {
+    auto cardSpriteNode = this->getChildByTag(reinterpret_cast<intptr_t>(card.get()));
+    Sprite* cardSprite = static_cast<Sprite*>(cardSpriteNode);
+    // 移除当前的拖动监听器
+    _eventDispatcher->removeEventListenersForTarget(cardSprite);
+
+    // 启用高亮功能
+    enableCardDrag(cardSprite, card);
+}
+
+
+
+
 
 
 /*
