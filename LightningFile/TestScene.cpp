@@ -28,3 +28,13 @@ void TestScene::switchToCombatScene(cocos2d::Ref* sender)
     auto combatScene = CombatScene::create();
     cocos2d::Director::getInstance()->pushScene(combatScene);  // 切换到 CombatScene
 }
+
+
+void TestScene::switchToSelectScene(cocos2d::Ref* sender)
+{
+
+    CombatSystem::getInstance()->init();
+    // 创建 selectScene 并使用 pushScene 进行切换
+    auto selectScene = SelectScene::create();
+    cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene
+}

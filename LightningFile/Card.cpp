@@ -58,7 +58,10 @@ public:
     void takeEffect()
     {
         int draw_num = 2;
-        int num = 0;
+        //实现前端选择卡牌并读取位数
+       // 创建 selectScene 并使用 pushScene 进行切换
+        auto selectScene = SelectScene::create();
+        cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene
         // 实现前端选择卡牌并读取位数
 
         // 目前为消耗第0张牌

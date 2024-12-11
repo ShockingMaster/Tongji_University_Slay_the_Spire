@@ -17,6 +17,7 @@
 #include "HoverButton.h"
 #include "CombatScene.h"
 #include "HandPileLayer.h"
+#include "SelectScene.h"
 #include "RandomGenerator.h"
 
 using namespace std;
