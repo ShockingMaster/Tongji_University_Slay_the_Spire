@@ -2,6 +2,8 @@
 #include "IncludeAll.h"
 #include "TestScene.h"  // 引入 TestScene 头文件
 #include "InitialScene.h"
+#include "EventScene.h"
+#include "TestEvent1.h"
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -54,6 +56,8 @@ static int register_all_packages()
     return 0; //flag for packages manager
 }
 
+
+
 bool AppDelegate::applicationDidFinishLaunching() {
     // initialize director
     auto director = Director::getInstance();
@@ -103,7 +107,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
     // 设置初始场景为 TestScene
-    auto testScene = InitialScene::create();
+    auto testScene = Event1::create();
     cocos2d::Director::getInstance()->runWithScene(testScene);
 
 
