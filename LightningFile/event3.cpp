@@ -25,7 +25,7 @@ bool event3::init() {
     this->addChild(backgroun);
     // 播放音频显示头栏
     audioPlayer("event.ogg", true);
-    shared_ptr<Player> player= Player::getInstance();
+    auto player= EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar);

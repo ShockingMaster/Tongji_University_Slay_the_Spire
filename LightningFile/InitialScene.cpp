@@ -120,11 +120,11 @@ bool InitialScene::init()
                     }, 1.0, "HideInvalidPromptLabel");
             }
             else {
-                shared_ptr<Player> player = Player::getInstance();
+                auto player = EventSystem::getInstance();
                 player->name_ = nickname;
                 player->coins_ = 100;
                 player->health_ = 50;
-                player->fullhealth_ = 100;
+                player->fullHealth_ = 100;
                 player->potions_ = { NULL,NULL };
 
                 this->scheduleOnce([](float dt) {

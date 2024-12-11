@@ -7,7 +7,7 @@
 #include "HoverButton.h"  
 #include "AudioPlayer.h"
 #include "const.h"
-#include "Player.h"
+#include "EventSystem.h"
 #include "Card.h"
 #include "HeaderBar.h"
 #include "CardLayer.h"
@@ -33,7 +33,7 @@ bool event2::init() {
     // 播放音频显示头栏
 
     audioPlayer("event.ogg", true);
-    shared_ptr<Player> player = Player::getInstance();
+    auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->updateHeader(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
@@ -59,7 +59,7 @@ bool event2::init() {
     button1->setPosition(Vec2(1600, 100));
     button1->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
-        shared_ptr<Player> player= Player::getInstance();
+        auto player= EventSystem::getInstance();
         auto cardLayer = CardLayer::create(player->cards_, 2);
         Director::getInstance()->getRunningScene()->addChild(cardLayer);
         auto returnButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");

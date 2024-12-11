@@ -5,6 +5,10 @@ bool CombatScene::init()
     // 先进行战斗系统初始化
     CombatSystem::getInstance()->init();
 
+    auto player = EventSystem::getInstance();
+    auto headbar = HeaderBar::create(player);
+    headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
+    this->addChild(headbar,100);
 
     // 创建并设置背景图像
     auto background = cocos2d::Sprite::create("combatScene.png");
