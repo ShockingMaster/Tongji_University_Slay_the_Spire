@@ -18,6 +18,7 @@ private:
     string character;           // 玩家角色
     int health;                 // 当前生命值
     int fullHealth;             // 最大生命值
+    int maxPotions;             // 药水最大数量
     int coins;                  // 金币数量
     vector<Potion*> potions;    // 药水
     vector<Relic*> relics;      // 遗物
@@ -30,7 +31,8 @@ private:
     Sprite* healthIcon;         // 生命图标
     Sprite* coinsIcon;          // 金币图标
     Sprite* potionIcon;         // 药水图标
-    vector<Card*> cards;
+    vector<Card*> cards;        // 当前卡牌
+    static HeaderBar* instance;
 
 public:
     // 构造函数和析构函数
@@ -40,6 +42,9 @@ public:
 
     // 初始化头栏
     bool init(shared_ptr<Player> player);
+
+    // 获取唯一实例
+    static HeaderBar* getInstance();
 
     // 更新头栏信息
     void updateHeader(shared_ptr<Player> player);
@@ -56,6 +61,21 @@ public:
     void setCoins(int coins);
     void setPotions(const vector<Potion*>& potions);
     void setLevel(int level);
+
+    // 获取头栏信息
+    int getCurrentHealth();
+    int getFullHealth();
+    int getCoins();
+
+    // 事件系统
+    int changeCoins(int coinChange);                   //修改金币
+    void changeHealth(int healthChange);               //修改生命值：需要判断是否死亡
+    void changeMaxHealth(int maxHealthChange);         //修改最大生命值
+    int upgradeCard(std::shared_ptr<Card> card);       //对卡牌进行永久升级
+    int deleteCard(std::shared_ptr<Card> card);        //对卡牌进行永久删除
+    int addPotion(std::shared_ptr<Potion> potion);     //添加药水
+    void addRelic(std::shared_ptr<Relic> relic);       //添加遗物
+    void climbFloor();                                 //上升楼层
 };
 
 // GlobalNode 类，用于存储常驻元素

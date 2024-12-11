@@ -1,5 +1,5 @@
-#include<HeaderBar.h>
-#include"IncludeAll.h"
+#include <HeaderBar.h>
+#include "IncludeAll.h"
 #include "cocos2d.h"
 #include "MapScene.h"
 #include "CardLayer.h"
@@ -8,6 +8,10 @@ using namespace std;
 using namespace cocos2d;
 
 extern int  currentLevel;
+
+HeaderBar* HeaderBar::instance = nullptr;  // 定义静态成员变量
+
+
 // 构造函数
 HeaderBar::HeaderBar() 
     : name(""), character(""), health(0), fullHealth(0), coins(0), level(0),
@@ -304,6 +308,16 @@ void HeaderBar::updateHeader(shared_ptr<Player> player) {
 
 }
 
+
+// 返回唯一实例
+HeaderBar* HeaderBar::getInstance()
+{
+    if (!instance) {
+        instance = new HeaderBar();
+    }
+    return instance;
+}
+
 // 静态创建函数
 
 
@@ -363,4 +377,111 @@ void HeaderBar::setLevel(int level) {
     this->level = level;
     levelLabel->setString("Level: " + to_string(level));
 }
+
+// 返回当前生命值
+int HeaderBar::getCurrentHealth()
+{
+    return health;
+}
+
+// 返回最大生命值
+int HeaderBar::getFullHealth()
+{
+    return fullHealth;
+}
+
+// 返回当前金币
+int HeaderBar::getCoins()
+{
+    return coins;
+}
+
+// 对当前金币进行修改，正数代表增加金币，负数代表减少金币
+int HeaderBar::changeCoins(int coinChange)
+{
+    // 如果当前金币不足，则返回0
+    if (coins + coinChange < 0)
+    {
+        return 0;
+    }
+    else
+    {
+        coins += coinChange;
+        return 1;
+    }
+}
+
+//对当前生命值进行修改
+void HeaderBar::changeHealth(int healthChange)
+{
+    // 触发遗物效果
+    int tempHealthChange = healthChange;
+    for (auto Relic : HeaderBar::getInstance()->relics)
+    {
+        //Relic->onHealthChange(tempHealthChange);
+    }
+
+    // 当生命值低于0时，触发遗物效果
+    if (health + tempHealthChange < 0)
+    {
+        for (auto Relic : HeaderBar::getInstance()->relics)
+        {
+            //Relic->onDeath();
+        }
+        // 如果仍然低于0，则游戏结束
+        if (health + tempHealthChange < 0)
+        {
+            //GameOver!
+        }
+    }
+
+    // 对生命值进行修改
+    health += tempHealthChange;
+}
+
+void HeaderBar::changeMaxHealth(int maxHealthChange)
+{
+    int tempMaxHealthChange = maxHealthChange;
+    for (auto Relic : HeaderBar::getInstance()->relics)
+    {
+        //Relic->onChangeMaxHealth(tempMaxHealthChange);
+    }
+    // 先进行最大生命上限的修改
+    fullHealth = fullHealth + tempMaxHealthChange;
+
+    // 如果当前生命最大上限值小于当前生命值，则修改当前生命值
+    if (fullHealth < health)
+    {
+        HeaderBar::getInstance()->changeHealth(fullHealth - health);
+    }
+
+}
+
+int HeaderBar::upgradeCard(std::shared_ptr<Card> card)
+{
+    return 0;
+}
+
+int HeaderBar::deleteCard(std::shared_ptr<Card> card)
+{
+    return 0;
+}
+
+int HeaderBar::addPotion(std::shared_ptr<Potion> potion)
+{
+    return 0;
+}
+
+void HeaderBar::addRelic(std::shared_ptr<Relic> relic)
+{
+
+}
+
+void HeaderBar::climbFloor()
+{
+
+}
+
+
+
 
