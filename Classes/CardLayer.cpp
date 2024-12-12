@@ -2,14 +2,15 @@
 #include "ui/CocosGUI.h"  
 #include "Card.h"
 #include "Player.h"
-
+#include "EventSystem.h"
+#include "SpriteGenerator.h"
 CardLayer::CardLayer() : _cards({}), _scrollView(nullptr), _background(nullptr) {
 }
 
 CardLayer::~CardLayer() {
 }
 
-CardLayer* CardLayer::create(std::vector<Card*> cards,int op) {
+CardLayer* CardLayer::create(std::vector<std::shared_ptr<Card>> cards,int op) {
     CardLayer* ret = new CardLayer();
     if (ret && ret->init(cards,op)) {
         ret->autorelease();
@@ -19,7 +20,7 @@ CardLayer* CardLayer::create(std::vector<Card*> cards,int op) {
     return nullptr;
 }
 
-bool CardLayer::init(std::vector<Card*> cards, int op) {
+bool CardLayer::init(std::vector<std::shared_ptr<Card>> cards, int op) {
     if (!Layer::init()) {
         return false;
     }
@@ -97,18 +98,20 @@ void CardLayer::displayCards() {
     // 遍历卡牌并添加到容器中
     for (size_t i = 0; i < cardCount; ++i) {
         auto card = _cards[i];
-        auto cardSprite = cocos2d::Sprite::create("hitcard.png");
+        auto cardSprite = CardSpriteGenerator::createCardSprite(card);
+
+        cardSprite->setScale(1.3f);
 
         if (i % 4 == 0 && i != 0) {
             startY -= 400;
         }
 
         cardSprite->setPosition(startX + 350 * (i % 4), startY);
-        cardSprite->setScale(0.8f);
+        
         cardContainer->addChild(cardSprite, 200);  // 初始设置
 
         // 为每个卡牌精灵设置与卡牌的关联
-        cardSprite->setUserData(static_cast<void*>(card));
+        cardSprite->setUserData(static_cast<void*>(card.get()));
 
         // 将每个卡牌的精灵添加到容器中，并存储卡牌的指针以便之后使用
         _cardSprites.push_back(cardSprite);
@@ -136,12 +139,12 @@ void CardLayer::displayCards() {
                 // 判断鼠标是否在卡牌的扩展范围内
                 if (extendedBoundingBox.containsPoint(mousePosition)) {
                     // 放大卡牌
-                    cardSprite->setScale(0.9f);
+                    cardSprite->setScale(1.5f);
                     cardSprite->setLocalZOrder(300);  // 提高 zOrder，确保它显示在上层
                 }
                 else {
                     // 恢复原尺寸
-                    cardSprite->setScale(0.8f);  // 恢复到原尺寸
+                    cardSprite->setScale(1.3f);  // 恢复到原尺寸
                     cardSprite->setLocalZOrder(200);  // 恢复初始 zOrder
                 }
             }
@@ -194,22 +197,19 @@ void CardLayer::displayCards() {
                             // 获取卡牌对象
 
                             auto card = static_cast<Card*>(cardSprite->getUserData());
-
+                            std::shared_ptr<Card> deleteCard(card);
                             // 根据操作类型进行删除或其他操作
                             if (operation == 2) {
                                 // 删除该卡牌对象
-                                auto it = std::find(_cards.begin(), _cards.end(), card);
+                                auto it = std::find(_cards.begin(), _cards.end(), deleteCard);
                                 if (it != _cards.end()) {
                                     _cards.erase(it);  // 删除卡牌
+                                    EventSystem::getInstance()->deleteCard(deleteCard);
                                     // 移除该精灵
                                     cardSprite->removeFromParent();                           
                                     _cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
                                     CCLOG("删除卡牌成功");
                                     
-
-
-                                    shared_ptr<Player> player = Player::getInstance(); 
-                                    player->cards_ = _cards;
                                 }
                             }
                             else if (operation == 3) {
@@ -253,7 +253,7 @@ void CardLayer::displayCards() {
 
     // 设置滚动视图的尺寸和位置
     _scrollView->setContentSize(cocos2d::Size(1600, 1200));
-    _scrollView->setPosition(cocos2d::Vec2(800, 600));
+    _scrollView->setPosition(cocos2d::Vec2(800, 300));
 
     // 设置滚动视图内容区域的位置
     _scrollView->setInnerContainerPosition(cocos2d::Vec2(0, 0));

@@ -35,7 +35,7 @@ bool StartScene::init() {
     }
 
     // 播放背景音乐
-    audioPlayer("../Resources/start.ogg", true);
+    audioPlayer("start.ogg", true);
 
     // 获取屏幕尺寸
     const auto screenSize = cocos2d::Director::getInstance()->getVisibleSize();
@@ -58,7 +58,7 @@ bool StartScene::init() {
     this->addChild(progressBar);
 
     // 创建加载进度文本
-    auto progressLabel = Label::createWithTTF("0%", "../Resources/Fonts/arial.ttf", 50);
+    auto progressLabel = Label::createWithTTF("0%", "Fonts/arial.ttf", 50);
     progressLabel->setPosition(Vec2(progressBar->getPosition().x, progressBar->getPosition().y));
     progressLabel->setVisible(true);
     this->addChild(progressLabel);

@@ -41,7 +41,7 @@ void MapScene::onEnter() {
     CCLOG("onEnter called!");  // 调试输出
     auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
     if (headbar) {
-        shared_ptr<Player> player= Player::getInstance();
+        auto player= EventSystem::getInstance();
         headbar->updateHeader(player);  // 使用 player 的最新数据更新 headbar
         headbar->level = currentLevel-1;
     }
@@ -55,7 +55,7 @@ bool MapScene::init() {
     if (!Scene::init()) {
         return false;
     }
-    shared_ptr<Player> player = Player::getInstance();
+    auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setName("HeaderBar");  // 设置名称
     headbar->setPosition(Vec2(50, 750));
@@ -66,7 +66,7 @@ bool MapScene::init() {
     // 播放背景音乐
     audioPlayer("menu.ogg", true);
     const auto screenSize = Director::getInstance()->getVisibleSize();
-    audioPlayer("../Resources/start.ogg", true);
+    audioPlayer("start.ogg", true);
 
     // 创建地图容器，用于存放所有地图
     auto mapContainer = Node::create();
@@ -157,13 +157,13 @@ bool MapScene::init() {
             Vec2 four = Vec2(1500, 320 - ran);
             //前五层不出现精英敌人 第一层不出现休息
             int ranNum = rand() % 6 + 1;
-            int ran1 = (ranNum == Elite || ranNum == Rest|| ranNum == Shop) ? Combat : ranNum;
+            int ran1 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
-            int ran2 = (ranNum == Elite || ranNum == Rest || ranNum == Shop) ? Combat : ranNum;
+            int ran2 = (ranNum == Elite || ranNum == Rest ) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
-            int ran3 = (ranNum == Elite || ranNum == Rest || ranNum == Shop) ? Combat : ranNum;
+            int ran3 = (ranNum == Elite || ranNum == Rest ) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
-            int ran4 = (ranNum == Elite || ranNum == Rest || ranNum == Shop) ? Combat : ranNum;
+            int ran4 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
             MapNode* Node1 = MapNode::create(one, ran1);
             Node1->level = 1;
             levelNodes.push_back(Node1);
@@ -213,7 +213,7 @@ bool MapScene::init() {
         }
         if (i == 3) {
             Vec2 one = Vec2(560, 910);
-            Vec2 two = Vec2(910, 8000 + ran);
+            Vec2 two = Vec2(910, 800 + ran);
             Vec2 three = Vec2(1100 + ran, 880);
             Vec2 four = Vec2(1450 + ran, 840);
             int ranNum = rand() % 6 + 1;

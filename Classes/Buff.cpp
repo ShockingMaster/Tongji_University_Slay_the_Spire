@@ -32,7 +32,7 @@ class Accuracy : public Buff
     void onAttack(int& numeric_value_, std::string cardName,
         std::shared_ptr<Creature> user, std::shared_ptr<Creature> target)
     {
-        if (cardName == "Blade" || cardName == "Blade+")
+        if (cardName == "Blade" || cardName =="Blade+")
         {
             numeric_value_ += 4;
         }

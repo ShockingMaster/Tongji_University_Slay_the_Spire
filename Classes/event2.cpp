@@ -7,7 +7,7 @@
 #include "HoverButton.h"  
 #include "AudioPlayer.h"
 #include "const.h"
-#include "Player.h"
+#include "EventSystem.h"
 #include "Card.h"
 #include "HeaderBar.h"
 #include "CardLayer.h"
@@ -33,7 +33,7 @@ bool event2::init() {
     // 播放音频显示头栏
 
     audioPlayer("event.ogg", true);
-    shared_ptr<Player> player = Player::getInstance();
+    auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->updateHeader(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
@@ -41,13 +41,13 @@ bool event2::init() {
 
     headbar->setLocalZOrder(100);  // 将 headbar 的 Z 顺序设置为 100，确保它位于最上层
     // 设置背景图片
-    auto background = Sprite::create("../Resources/livingWall.jpg");
+    auto background = Sprite::create("livingWall.jpg");
     background->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2 - 550,
         Director::getInstance()->getVisibleSize().height / 2 - 100));
     this->addChild(background);
 
     // 创建事件文本标签
-    auto continueLabel = Label::createWithSystemFont(u8"你走进一条死路，正准备要回头时\n四周突然有墙壁从天花板上哐地一下砸了下来！\n三张脸出现在墙壁上，开始对你说话：\n“忘记你所知道的，我就让你走。”\n“有所改变，我就让你看见新的道路。”\n“如果你想要从我这里通过，你就必须有所成长。", "../Resources/Fonts/FangZhengZhaoGeYuan.ttf", 45);
+    auto continueLabel = Label::createWithSystemFont(u8"你走进一条死路，正准备要回头时\n四周突然有墙壁从天花板上哐地一下砸了下来！\n三张脸出现在墙壁上，开始对你说话：\n“忘记你所知道的，我就让你走。”\n“有所改变，我就让你看见新的道路。”\n“如果你想要从我这里通过，你就必须有所成长。", "Fonts/FangZhengZhaoGeYuan.ttf", 45);
     continueLabel->setPosition(Vec2(1300, 600));
     continueLabel->setColor(Color3B::WHITE);
     this->addChild(continueLabel);
@@ -59,7 +59,7 @@ bool event2::init() {
     button1->setPosition(Vec2(1600, 100));
     button1->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
-        shared_ptr<Player> player= Player::getInstance();
+        auto player= EventSystem::getInstance();
         auto cardLayer = CardLayer::create(player->cards_, 2);
         Director::getInstance()->getRunningScene()->addChild(cardLayer);
         auto returnButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
@@ -78,7 +78,7 @@ bool event2::init() {
         this->addChild(continueLabel);
         });
     this->addChild(button1);
-    auto continueLabel1 = Label::createWithSystemFont(u8"      遗忘\n移除你牌组中一张牌", "../Resources/Fonts/FangZhengZhaoGeYuan.ttf", 45);
+    auto continueLabel1 = Label::createWithSystemFont(u8"      遗忘\n移除你牌组中一张牌", "Fonts/FangZhengZhaoGeYuan.ttf", 45);
     continueLabel1->setPosition(Vec2(1200, 100));
     continueLabel1->setColor(Color3B::WHITE);
     this->addChild(continueLabel1);
@@ -108,7 +108,7 @@ bool event2::init() {
         this->addChild(continueLabel);
         });
     this->addChild(button2);
-    auto continueLabel2 = Label::createWithSystemFont(u8"      成长\n升级你牌组中一张牌 ", "../Resources/Fonts/FangZhengZhaoGeYuan.ttf", 45);
+    auto continueLabel2 = Label::createWithSystemFont(u8"      成长\n升级你牌组中一张牌 ", "Fonts/FangZhengZhaoGeYuan.ttf", 45);
     continueLabel2->setPosition(Vec2(1200, 300));
     continueLabel2->setColor(Color3B::WHITE);
     this->addChild(continueLabel2);

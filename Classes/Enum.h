@@ -1,36 +1,33 @@
 #pragma once
 enum CanBePlayed
 {
-    PLAYABLE,
-    NOT_PLAYABLE
+    NOT_PLAYABLE,
+    PLAYABLE
 };
 enum YesOrNo
 {
-    YES,
-    NO
+    NO,
+    YES
 };
-//给一个TriggerType枚举，表示buff的触发时机
-enum TriggerType
+enum Enemy 
 {
-    ON_ATTACK,
-    ON_DEFENSE,
-    ON_TURN_START,
-    ON_TURN_END,
-    SHUFFLE,
-    TAKE_DAMAGE,
-    HEALTH_LOSS
+    NORMAL,
+    ELITE,
+    BOSS
 };
+
 enum CardRarity
 {
     COMMON,
     UNCOMMON,
-    RARE
+    RARE,
+    ALL
 };
 enum CardType
 {
     ABILITY,
     ATTACK,
-    SKILL
+    SKILL,
 };
 
 #define AUTO_REGISTER_CARD(className)                          \

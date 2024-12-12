@@ -16,6 +16,12 @@
 #include "SpriteGenerator.h"
 #include "HoverButton.h"
 #include "CombatScene.h"
+#include "HandPileLayer.h"
+#include "SelectScene.h"
+#include "RandomGenerator.h"
+#include "EventSystem.h"
+#include "HeaderBar.h"
+
 using namespace std;
 USING_NS_CC;
 const int kWindowSizeX = 2048;

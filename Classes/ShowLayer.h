@@ -9,6 +9,7 @@ enum ShowLayerOperation {
     SingleCard = 2,
     OneRelic = 3,
     ManyCardSelect = 4,
+    OnePotion=5
 };
 
 class ShowLayer : public cocos2d::Layer {

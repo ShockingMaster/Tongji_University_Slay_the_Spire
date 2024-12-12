@@ -24,9 +24,6 @@ public:
     }
     void energyChange(int changeValue);//对角色的能量进行修改
 
-    vector<Potion*> potions_;
-    vector<Card*> cards_ = { NULL,NULL,NULL };
-    vector<Relic*> relics_ = { NULL,NULL };
     void addPotion(Potion* potion);    //需要调用本体的addPotion()
 
     void init();                       //每场战斗开始时对角色进行初始化

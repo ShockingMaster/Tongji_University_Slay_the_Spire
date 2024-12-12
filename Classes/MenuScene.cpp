@@ -31,7 +31,7 @@ bool MenuScene::init() {
     }
 
     // ²¥·Å±³¾°ÒôÀÖ
-    audioPlayer("../Resources/start.ogg", true);
+    audioPlayer("start.ogg", true);
 
     // »ñÈ¡ÆÁÄ»³ß´ç
     const auto screenSize = cocos2d::Director::getInstance()->getVisibleSize();

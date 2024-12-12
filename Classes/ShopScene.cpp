@@ -19,10 +19,10 @@ bool ShopScene::init() {
     }
 
     // 播放背景音效
-    audioPlayer("../Resources/event.ogg", true);
+    audioPlayer("event.ogg", true);
 
 
-    shared_ptr<Player> player = Player::getInstance();
+    auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar);

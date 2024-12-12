@@ -30,9 +30,12 @@ bool ChestScene::init() {
 
     // 创建宝箱并设置位置
     auto chest = Sprite::create("largeChest.png");
-    chest->setPosition(Vec2(1100, 500));
+    chest->setPosition(Vec2(400, 500));
     this->addChild(chest);
-
+    auto Label1 = cocos2d::Label::createWithSystemFont(u8"点击获得宝藏", "Arial", 60);
+    Label1->setTextColor(cocos2d::Color4B::WHITE);
+    Label1->setPosition(cocos2d::Vec2(300, 200));  // 设置Label的位置
+    this->addChild(Label1, 103);  // Label的层级高于卡片
     // 创建鼠标事件监听器
     auto mouseListener = EventListenerMouse::create();
 
@@ -54,11 +57,11 @@ bool ChestScene::init() {
             chest->setTexture("largeChestOpened.png");  // 替换为已打开的宝箱图像
 
             // 创建 RewardLayer 并显示奖励
-            RewardLayer* rewardLayer = RewardLayer::create();
+            RewardLayer* rewardLayer = RewardLayer::create(true,true,false,false,true);
             Director::getInstance()->getRunningScene()->addChild(rewardLayer);  // 将 RewardLayer 添加到当前场景
         }
+        event->stopPropagation();
         };
-
 
     // 注册鼠标事件监听器
     _eventDispatcher->addEventListenerWithSceneGraphPriority(mouseListener, this);

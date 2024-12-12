@@ -9,7 +9,7 @@ class CombatSystem;
 class CombatDeck;
 class Creature;
 
-class CombatScene : public cocos2d::Scene
+class SelectScene : public cocos2d::Scene
 {
 private:
     //测试使用：
@@ -17,7 +17,7 @@ private:
     cocos2d::Label* energyLabel;
 public:
     bool init();
-    
+
     //测试使用
     int isMyTurn;
 
@@ -29,5 +29,5 @@ public:
     {
         return playArea;
     }
-    CREATE_FUNC(CombatScene);
+    CREATE_FUNC(SelectScene);
 };

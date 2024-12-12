@@ -1,13 +1,15 @@
-#include<HeaderBar.h>
-#include"IncludeAll.h"
+#include <HeaderBar.h>
+#include "IncludeAll.h"
 #include "cocos2d.h"
 #include "MapScene.h"
 #include "CardLayer.h"
 #include "AudioPlayer.h"
+
 using namespace std;
 using namespace cocos2d;
 
 extern int  currentLevel;
+
 // 构造函数
 HeaderBar::HeaderBar() 
     : name(""), character(""), health(0), fullHealth(0), coins(0), level(0),
@@ -18,13 +20,13 @@ HeaderBar::HeaderBar()
 HeaderBar::~HeaderBar() {}
 
 // 初始化头栏
-bool HeaderBar::init(shared_ptr<Player> player) {
+bool HeaderBar::init(EventSystem* eventSystem) {
     if (!Node::init()) {
         return false;
     }
 
     // 设置玩家初始信息
-    setPlayerInfo(player);
+    setPlayerInfo(eventSystem);
 
     // 添加底部背景
     auto backgroundBar = Sprite::create("bar.png");
@@ -52,7 +54,7 @@ bool HeaderBar::init(shared_ptr<Player> player) {
     backgroundBar->addChild(potionIcons);
 
     // 初始化标签并添加到背景
-    nameLabel = Label::createWithSystemFont(name + u8" (战士)", "Marker Felt.ttf", 40);  // 使用艺术字体
+    nameLabel = Label::createWithSystemFont(name , "Marker Felt.ttf", 40);  // 使用艺术字体
     nameLabel->setPosition(Vec2(150, 100)); // 顶部显示名称
     backgroundBar->addChild(nameLabel);
 
@@ -111,9 +113,9 @@ bool HeaderBar::init(shared_ptr<Player> player) {
                         CCLOG("Potion used!");
                         auto it = std::find(potions.begin(), potions.end(), potion);
                         potions.erase(it); // 删除对应的药水
-                        Player::getInstance()->potions_ = potions;
+                        EventSystem::getInstance()->potions_ = potions;
                         audioPlayer("SOTE_SFX_Potion_1_v2.ogg", false);
-                        this->updateHeader((Player::getInstance()));
+                        this->updateHeader(EventSystem::getInstance());
                         usePotionLayer->removeFromParent();  // 移除询问层
                     }
                 );
@@ -155,7 +157,7 @@ bool HeaderBar::init(shared_ptr<Player> player) {
         potionIcons->addChild(menu);  // 将菜单添加到场景
 
         // 关联药水对象和药水菜单项（按钮）
-        potionMenuItem->setUserData((void*)potion);
+        potionMenuItem->setUserData((void*)potion.get());
 
         index++;
     }
@@ -182,7 +184,7 @@ bool HeaderBar::init(shared_ptr<Player> player) {
         potionIcons->addChild(menu);  // 将菜单添加到场景
 
         // 关联药水对象和药水菜单项（按钮）
-        relicMenuItem->setUserData((void*)relic);
+        relicMenuItem->setUserData((void*)relic.get());
 
         i++;
     }
@@ -196,7 +198,7 @@ bool HeaderBar::init(shared_ptr<Player> player) {
 
 
 // 更新头栏信息
-void HeaderBar::updateHeader(shared_ptr<Player> player) {
+void HeaderBar::updateHeader(EventSystem* player) {
     // 更新玩家状态
     setPlayerInfo(player);
     // 更新标签内容
@@ -231,8 +233,8 @@ void HeaderBar::updateHeader(shared_ptr<Player> player) {
                         audioPlayer("SOTE_SFX_Potion_1_v2.ogg", false);
                         auto it = std::find(potions.begin(), potions.end(), potion);
                         potions.erase(it); // 删除对应的药水
-                        Player::getInstance()->potions_ = potions;
-                        this->updateHeader(Player::getInstance());
+                        EventSystem::getInstance()->potions_ = potions;
+                        this->updateHeader(EventSystem::getInstance());
                         usePotionLayer->removeFromParent();  // 移除询问层
                     }
                 );
@@ -274,7 +276,7 @@ void HeaderBar::updateHeader(shared_ptr<Player> player) {
         potionIcons->addChild(menu);  // 将菜单添加到场景
 
         // 关联药水对象和药水菜单项（按钮）
-        potionMenuItem->setUserData((void*)potion);
+        potionMenuItem->setUserData((void*)potion.get());
 
         index++;
     }
@@ -297,7 +299,7 @@ void HeaderBar::updateHeader(shared_ptr<Player> player) {
         auto menu = cocos2d::Menu::create(relicMenuItem, nullptr);
         menu->setPosition(cocos2d::Vec2::ZERO);  // Menu本身的位置不影响Item的位置
         potionIcons->addChild(menu);  // 将菜单添加到场景
-        relicMenuItem->setUserData((void*)relic);
+        relicMenuItem->setUserData((void*)relic.get());
         i++;
     }
 
@@ -305,14 +307,9 @@ void HeaderBar::updateHeader(shared_ptr<Player> player) {
 }
 
 // 静态创建函数
-
-
-
-
-
-HeaderBar* HeaderBar::create(shared_ptr<Player> player) {
+HeaderBar* HeaderBar::create(EventSystem* eventSystem) {
     HeaderBar* headerBar = new (std::nothrow) HeaderBar();
-    if (headerBar && headerBar->init(player)) {
+    if (headerBar && headerBar->init(eventSystem)) {
         headerBar->autorelease();
         return headerBar;
     }
@@ -329,10 +326,10 @@ void HeaderBar::setPlayerInfo(const string& name, const string& character, int f
 
 }
 
-void HeaderBar::setPlayerInfo(shared_ptr<Player> player) {
+void HeaderBar::setPlayerInfo(EventSystem* player) {
     this->name = player->name_;
     this->health = player->health_;
-    this->fullHealth = player->fullhealth_;
+    this->fullHealth = player->fullHealth_;
     this->coins = player->coins_;
     this->potions = player->potions_;
     this->relics = player->relics_;
@@ -353,7 +350,7 @@ void HeaderBar::setCoins(int coins) {
 }
 
 // 设置药水
-void HeaderBar::setPotions(const vector<Potion*>& potions) {
+void HeaderBar::setPotions(const vector<std::shared_ptr<Potion>>& potions) {
     this->potions = potions;
     updateHeader(nullptr); // 更新药水图标
 }
@@ -363,4 +360,25 @@ void HeaderBar::setLevel(int level) {
     this->level = level;
     levelLabel->setString("Level: " + to_string(level));
 }
+
+// 返回当前生命值
+int HeaderBar::getCurrentHealth()
+{
+    return health;
+}
+
+// 返回最大生命值
+int HeaderBar::getFullHealth()
+{
+    return fullHealth;
+}
+
+// 返回当前金币
+int HeaderBar::getCoins()
+{
+    return coins;
+}
+
+
+
 

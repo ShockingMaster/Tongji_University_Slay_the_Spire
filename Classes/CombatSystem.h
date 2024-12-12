@@ -6,7 +6,6 @@
 #include"cocos2d.h"
 #include"Creature.h"
 #include"Buff.h"
-
 class CombatDeck;
 class CombatScene;
 class HandPileLayer;
@@ -18,11 +17,8 @@ public:
 	std::queue<std::shared_ptr<Card>> drawPile;                                 // 抽牌堆
 	std::vector<std::shared_ptr<Card>> hand;                                    // 手牌
 	std::queue<std::shared_ptr<Card>> discardPile;                              // 弃牌堆
-	std::queue<std::shared_ptr<Card>> exhaustPile;                              // 被消耗的坟墓牌堆
 
 	void init();                                                                //初始化战斗系统
-
-	std::vector<std::shared_ptr<Card>>& getHandPile() { return hand; }           //返回手牌堆
 
 	void onAttack(std::shared_ptr<Creature> attacker, std::shared_ptr<Creature> target,
 		int numeric_value_, std::string cardName = "");
@@ -34,13 +30,18 @@ public:
 	void takeDamage(std::shared_ptr<Creature> target, int numeric_value_,
 		std::shared_ptr<Creature> attacker = nullptr);                         //需要考虑具体需要传入什么参数
 
+	void Addblock(std::shared_ptr<Creature> target, int numeric_value_,
+		std::string cardName = "");
+
+	void exhaustCard(int num, std::string cardName = "");
+
 	void startTurn(std::shared_ptr<Creature> creature);                        //回合开始效果
 
 	void endTurn(std::shared_ptr<Creature> creature);                          //回合结束效果
 
 	void cardPlayed(std::shared_ptr<Card> card);                               //打出卡牌效果
 
-	void exhaustCard(std::shared_ptr<Card> card);                              //消耗卡牌
+	void cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature);//对于需要目标的卡牌进行重载
 
 	void discardCard(std::shared_ptr<Card> card);                              //主动丢弃卡牌
 
@@ -52,9 +53,9 @@ public:
 
 	void addBuff();                                                             //增加Buff
 
-	void shuffle();                                                             //进行洗牌
+	void shuffleDeck();                                                             //进行洗牌
 
-	void drawCard(int num);                                                            //进行抽牌
+	void drawCard(int num);                                                     //进行抽牌
 
 	int getDrawPileNumber();                                                    //获取抽牌堆卡牌数量
 

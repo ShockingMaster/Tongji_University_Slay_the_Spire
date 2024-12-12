@@ -15,8 +15,8 @@ constexpr int WHITE_B = 255; // 白色 B 通道
 
 // 常量定义
 constexpr char START_SCENE_BACKGROUND[] = "scene1.jpg";              // 背景图片路径
-constexpr char INPUT_FONT[] = "../Resources/Fonts/FangZhengZhaoGeYuan.ttf"; // 字体文件路径
-constexpr char START_MUSIC[] = "../Resources/start.ogg";             // 背景音乐路径
+constexpr char INPUT_FONT[] = "Fonts/FangZhengZhaoGeYuan.ttf"; // 字体文件路径
+constexpr char START_MUSIC[] = "start.ogg";             // 背景音乐路径
 constexpr char CLICK_SOUND[] = "ClickSoundEffect.mp3";               // 点击音效路径
 
 using namespace std;
@@ -120,11 +120,11 @@ bool InitialScene::init()
                     }, 1.0, "HideInvalidPromptLabel");
             }
             else {
-                shared_ptr<Player> player = Player::getInstance();
+                auto player = EventSystem::getInstance();
                 player->name_ = nickname;
                 player->coins_ = 100;
                 player->health_ = 50;
-                player->fullhealth_ = 100;
+                player->fullHealth_ = 100;
                 player->potions_ = { NULL,NULL };
 
                 this->scheduleOnce([](float dt) {

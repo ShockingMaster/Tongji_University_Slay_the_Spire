@@ -38,5 +38,6 @@ void Player::init()
     health_ = 10;
     block_ = 10;
     currentEnergy_ = 0;
+    maxEnergy_ = 4;
 }
 

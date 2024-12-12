@@ -27,13 +27,13 @@ bool event1::init() {
     this->addChild(backgroun);
     // 播放音频显示头栏
     audioPlayer("event.ogg", true);
-    shared_ptr<Player> player = Player::getInstance();
+    auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
     headbar->setLocalZOrder(100);  // 将 headbar 的 Z 顺序设置为 100，确保它位于最上层
     // 设置背景图片
-    auto background = Sprite::create("../Resources/addict.jpg");
+    auto background = Sprite::create("addict.jpg");
     background->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2 -550,
         Director::getInstance()->getVisibleSize().height / 2 - 100));
     this->addChild(background);
@@ -59,7 +59,7 @@ bool event1::init() {
             this->addChild(continueLabel3);
         }
         else {
-            player->coins_ -= 85;
+            player->changeCoins(-85);
             headbar->updateHeader(player);
             audioPlayer("gold.ogg", false);
             //获得遗物逻辑待更新
