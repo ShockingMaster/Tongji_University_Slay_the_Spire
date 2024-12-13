@@ -213,7 +213,7 @@ void CardLayer::displayCards() {
 
 
                             }
-                            }
+                            
                             else if (operation == 3) {
                                 // 执行升级操作
                                 CCLOG("执行卡牌升级操作");

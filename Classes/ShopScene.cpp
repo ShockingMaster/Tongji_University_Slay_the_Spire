@@ -51,6 +51,7 @@ bool ShopScene::init() {
 
     // 创建一个回调函数，在延迟时间后执行
     auto showLayerCallback = CallFunc::create([this]() {
+        static int deleteprice = 75;
         // 创建新层，并设置背景图
         auto newLayer = Sprite::create("fin.png");
         newLayer->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 2,
@@ -119,7 +120,7 @@ bool ShopScene::init() {
         deleteCardService->setPosition(Vec2(1400, 200));
         deleteCardService->setScale(0.8f);
         this->addChild(deleteCardService, 2000);
-        auto label7 = Label::createWithSystemFont("75", "Fonts/Kreon-Bold.ttf", 45);
+        auto label7 = Label::createWithSystemFont(to_string(deleteprice), "Fonts/Kreon-Bold.ttf", 45);
         label7->setPosition(Vec2(1400, 20));
         this->addChild(label7, 2000);
 
@@ -200,6 +201,8 @@ bool ShopScene::init() {
                 CCLOG("Delete Card Service clicked!");
                 // 执行删除卡片服务按钮的相关逻辑
                 auto player = EventSystem::getInstance();
+                EventSystem::getInstance()->changeCoins(-deleteprice);
+                deleteprice += 25;
                 auto cardLayer = CardLayer::create(player->cards_, 2);
                 Director::getInstance()->getRunningScene()->addChild(cardLayer);
                 return true;
