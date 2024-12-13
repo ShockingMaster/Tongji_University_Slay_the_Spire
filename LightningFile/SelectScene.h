@@ -15,6 +15,7 @@ private:
     //测试使用：
     cocos2d::Rect playArea;
     cocos2d::Label* energyLabel;
+    std::function<void()> callback_;
 public:
     bool init();
 
@@ -24,6 +25,8 @@ public:
     static void onEndTurnClicked(cocos2d::Ref* sender);//当回合结束按钮被点击时
 
     void updateEnergyDisplay();//更新能量显示
+
+    void setCallback(std::function<void()> callback);
 
     cocos2d::Rect getplayArea()
     {

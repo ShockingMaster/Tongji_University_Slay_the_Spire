@@ -56,12 +56,14 @@ bool SelectScene::init()
     switchSceneButton->setScale(1.5f);
     switchSceneButton->setTitleFontSize(20);
     switchSceneButton->setPosition(Vec2(0.906525 * screenSize.width, 0.15625 * screenSize.height)); // 设置按钮位置
+    
 
     // 切换场景按钮事件
     switchSceneButton->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
         if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
             CCLOG("Switch Scene clicked!");  // 打印日志
 
+            
             // 在此处执行切换场景的操作
             //切回原来卡牌的监听
             auto combatsystem = CombatSystem::getInstance();
@@ -70,7 +72,26 @@ bool SelectScene::init()
             }
             
             HandPileLayer::getInstance() ->setSceneType(HandPileLayer::SceneType::SCENE_TYPE_1);
-            Director::getInstance()->popScene(); //切回原来场景
+            /*
+            // 获取当前场景并销毁
+            Scene* currentScene = Director::getInstance()->getRunningScene();
+            if (currentScene) {
+                currentScene->release();  // 释放当前场景的引用
+            }
+            */
+            std::shared_ptr<Card> card = CombatSystem::getInstance()->tem_card;
+            card->tag = 1;
+            CombatSystem::getInstance()->cardPlayed(card);
+  
+           
+            // 创建一个延迟执行的动作
+            auto delay = DelayTime::create(0.3f);  // 延迟 0.3 秒
+            auto popSceneAction = CallFunc::create([=]() {
+                Director::getInstance()->popScene();  // 切回原来场景
+                });
+
+            // 执行动作
+            this->runAction(Sequence::create(delay, popSceneAction, nullptr));
         }
         });
 
@@ -94,6 +115,12 @@ bool SelectScene::init()
     
     return true;
     
+}
+
+
+void SelectScene::setCallback(std::function<void()> callback)
+{
+    callback_ = callback;  // 保存回调函数
 }
 
 

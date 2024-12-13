@@ -38,6 +38,8 @@ public:
     void switchToCardHighlight( std::shared_ptr<Card> card);
 
     void switchToenableCardDrag(std::shared_ptr<Card> card);
+
+    void adjustfunction();
     
 
     // ≥È“ª’≈≈∆

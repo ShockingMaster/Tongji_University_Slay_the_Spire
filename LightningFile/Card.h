@@ -71,6 +71,8 @@ public:
     }
 
     virtual ~Card() {}                                              //Îö¹¹º¯Êý
+
+    int tag = 0;
     
 protected:
     std::string name_;                                                //¿¨ÅÆÃû³Æ

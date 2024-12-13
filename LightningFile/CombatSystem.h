@@ -17,6 +17,7 @@ public:
 	std::queue<std::shared_ptr<Card>> drawPile;                                 // 抽牌堆
 	std::vector<std::shared_ptr<Card>> hand;                                    // 手牌
 	std::queue<std::shared_ptr<Card>> discardPile;                              // 弃牌堆
+	std::shared_ptr<Card> tem_card;
 
 	void init();                                                                //初始化战斗系统
 

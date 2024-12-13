@@ -370,6 +370,7 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
  */
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 {
+	tem_card = card; //¸³´æÁÙÊ±¿¨ÅÆ
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
 		if (Buff != nullptr)
@@ -404,6 +405,7 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creatu
 	}
 	card->takeEffect(creature);
 }
+
 
 
 /*

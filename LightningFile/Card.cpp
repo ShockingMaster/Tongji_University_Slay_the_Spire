@@ -87,15 +87,20 @@ public:
         {
             draw_num += 1;
         }
-        // 实现前端选择卡牌并读取位数
-        // 创建 selectScene 并使用 pushScene 进行切换
-        //Scene* selectScene = SelectScene::create();
-        //cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene
-        // 实现前端选择卡牌并读取位数
-
-        // 目前为消耗第0张牌
-        // CombatSystem::getInstance()->exhaustCard(num, "BurningContract"); //消耗选择的卡牌
-        CombatSystem::getInstance()->drawCard(draw_num); //抽取卡牌
+        if (tag == 0) {
+            // 创建 selectScene 并使用 pushScene 进行切换
+            Scene* selectScene = SelectScene::create();
+            cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene
+            // 实现前端选择卡牌并读取位数
+       
+        }
+        if(tag==1){
+            // 目前为消耗第0张牌
+            // CombatSystem::getInstance()->exhaustCard(num, "BurningContract"); //消耗选择的卡牌
+            CombatSystem::getInstance()->drawCard(draw_num); //抽取卡牌
+            HandPileLayer::getInstance()->adjustHandPile();
+        }
+        
     }
 };
 //进行卡牌注册

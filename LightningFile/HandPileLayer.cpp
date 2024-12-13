@@ -184,6 +184,8 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
 
 
 
+
+
 void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 {
     // 创建精灵
@@ -204,7 +206,7 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
     // 对抽牌堆进行更新
     updateDrawPileDisplay();
 
-    //adjustHandPile();
+    adjustHandPile();
 }
 
 
