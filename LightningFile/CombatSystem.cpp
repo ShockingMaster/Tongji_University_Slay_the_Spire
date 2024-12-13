@@ -279,6 +279,12 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creatu
 	card->takeEffect(creature);
 }
 
+
+/*
+* 
+* 
+* 
+*/
 void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 {
 	int tempEnergy = numeric_value_;
@@ -388,4 +394,24 @@ int CombatSystem::getHandNumber()
 int CombatSystem::getDiscardPileNumber()
 {
 	return discardPile.size();
+}
+
+void CombatSystem::upgradeCard(std::shared_ptr<Card> card)
+{
+	// 如果卡牌没有进行过升级，那么对卡牌进行升级
+	if (!card->isUpgraded())
+	{
+		card->upgrade();
+
+		// 查看卡牌是否在手牌中，如果在手牌中需要更新显示
+		for (int i=0; i < hand.size();i++)
+		{
+			// 如果找到
+			if (hand[i] == card)
+			{
+				auto cardSprite = HandPileLayer::getInstance()->getChildByTag(reinterpret_cast<intptr_t>(hand[i].get()));
+				CardSpriteGenerator::updateCardSprite(card, cardSprite);
+			}
+		}
+	}
 }

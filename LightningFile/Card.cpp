@@ -12,10 +12,19 @@
 class Attack : public Card
 {
 public:
-    Attack() : Card("Attack", "Deal 6 damage", 1, 20, COMMON, PLAYABLE, ATTACK, YES, NO) {}
+    Attack() : Card("Attack", "Deal 6 damage", 1, 20, COMMON, PLAYABLE, ATTACK, YES, NO, NO) {}
+    void upgrade() {
+        is_upgraded_ = 1;
+        name_ += '+';
+        description_ = "Deal 9 damage";
+    }
     void takeEffect(std::shared_ptr<Creature> target)
     {
         int temp_attack = 6;
+        if (is_upgraded_)
+        {
+            temp_attack += 3;
+        }
         CombatSystem::getInstance()->onAttack(Player::getInstance(), target, 
             temp_attack, "Attack");
     }
@@ -26,10 +35,20 @@ AUTO_REGISTER_CARD(Attack)
 class Second_wind : public Card
 {
 public:
-    Second_wind() : Card("Second_wind", "Consume all non attack cards and receive 5 grid blocks per card", 1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO) {}
+    Second_wind() : Card("Second_wind", "Consume all non attack cards and receive 5 grid blocks per card", 
+        1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO, NO) {}
+    void upgrade() {
+        is_upgraded_ = 1;
+        name_ += '+';
+        description_ = "Consume all non attack cards and receive 7 grid blocks per card";
+    }
     void takeEffect()
     {
         int temp_block = 5;
+        if (is_upgraded_)
+        {
+            temp_block += 2;
+        }
         int num = 0;
         for (size_t i = 0; i < CombatSystem::getInstance()->hand.size(); ++i) 
         {
@@ -51,17 +70,27 @@ AUTO_REGISTER_CARD(Second_wind)
 * 卡牌名称：BurningContract
 * 效果：消耗一张手牌，抽两张牌
  */
-    class BurningContract : public Card
+class BurningContract : public Card
 {
 public:
-    BurningContract() : Card("BurningContract", "Consume one card and draw two cards", 1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO) {}
+    BurningContract() : Card("BurningContract", "Consume one card and draw two cards", 
+        1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO, NO) {}
+    void upgrade() {
+        is_upgraded_ = 1;
+        name_ += '+';
+        description_ = "Consume one card and draw three cards";
+    }
     void takeEffect()
     {
         int draw_num = 2;
-        //实现前端选择卡牌并读取位数
-       // 创建 selectScene 并使用 pushScene 进行切换
-        Scene* selectScene = SelectScene::create();
-        cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene
+        if (is_upgraded_)
+        {
+            draw_num += 1;
+        }
+        // 实现前端选择卡牌并读取位数
+        // 创建 selectScene 并使用 pushScene 进行切换
+        //Scene* selectScene = SelectScene::create();
+        //cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene
         // 实现前端选择卡牌并读取位数
 
         // 目前为消耗第0张牌
@@ -72,27 +101,47 @@ public:
 //进行卡牌注册
 AUTO_REGISTER_CARD(BurningContract)
 
-/*
-* 卡牌名称：Revival
-* 效果：
- */
-//class Revival : public Card
-//{
-//public:
-//    Revival() : Card("Revival", "Exhaust all cards that are not attack cards in hand", 1,
-//        50, UNCOMMON, PLAYABLE, SKILL, NO) {}
-//    void takeEffect()
-//    {
-//        /* 遍历手中卡牌
-//         * 卡牌getType()不为Attack，则
-//         * 消耗该卡牌，获得5点格挡(如何完成消耗这个行为，这个行为是如何进行实现的)
-//         */
-//    }
-//};
-//AUTO_REGISTER_CARD(Revival);
 
 /*
- *
- * 
- * 
- */
+* 卡牌名称：神话
+* 效果：临时升级当前战斗中的所有牌
+*/
+class Apotheosis :public Card
+{
+public:
+    Apotheosis() : Card("Apotheosis", "Upgrade ALL of your cards for the rest of combat.Exhaust.",
+        2, 180, RARE, PLAYABLE, SKILL, NO, YES, NO) {};
+    void upgrade() {
+        is_upgraded_ = 1;
+        name_ += '+';
+        energy_cost_ -= 1;
+    }
+    void takeEffect()
+    {
+        
+        auto combatSystem = CombatSystem::getInstance();
+        // 对手牌进行升级
+        for (auto card:combatSystem->hand)
+        {
+            combatSystem->upgradeCard(card);
+        }
+        
+        // 对弃牌堆进行升级
+        for (int i = 0;i < combatSystem->getDiscardPileNumber();i++)
+        {
+            auto card = combatSystem->discardPile.front();
+            combatSystem->upgradeCard(card);
+            combatSystem->discardPile.push(card);// 放入队列尾部
+            combatSystem->discardPile.pop();// 将队列头弹出，不修改队列顺序
+        }
+        // 对抽牌堆进行升级 
+        for (int i = 0;i < combatSystem->getDrawPileNumber();i++)
+        {
+            auto card = combatSystem->drawPile.front();
+            combatSystem->upgradeCard(card);
+            combatSystem->drawPile.push(card);
+            combatSystem->drawPile.pop();
+        }
+    }
+};
+AUTO_REGISTER_CARD(Apotheosis)

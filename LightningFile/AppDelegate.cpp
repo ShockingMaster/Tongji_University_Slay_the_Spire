@@ -107,7 +107,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
     // 设置初始场景为 TestScene
-    auto testScene = Event1::create();
+    auto testScene = InitialScene::create();
     cocos2d::Director::getInstance()->runWithScene(testScene);
 
 

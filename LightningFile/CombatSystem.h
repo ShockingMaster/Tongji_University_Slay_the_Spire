@@ -47,13 +47,13 @@ public:
 
 	void upgradeCard(std::shared_ptr<Card> card);                               //战斗临时升级
 
-	void addEnergy(std::shared_ptr<Creature> user, int numeric_value_);        //增加能量
+	void addEnergy(std::shared_ptr<Creature> user, int numeric_value_);         //增加能量
 
 	void addDebuff();                                                           //增加Debuff
 
 	void addBuff();                                                             //增加Buff
 
-	void shuffleDeck();                                                             //进行洗牌
+	void shuffleDeck();                                                         //进行洗牌
 
 	void drawCard(int num);                                                     //进行抽牌
 
@@ -75,6 +75,7 @@ public:
 	int getRoundNumber() const {                                                //返回当前回合数
 		return round_;
 	}
+
 	~CombatSystem() {};
 
 private:
