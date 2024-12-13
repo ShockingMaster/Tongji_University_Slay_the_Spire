@@ -78,6 +78,29 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
 			Buff->onAttacked(numeric_value_, user, target);
 	}
 
+	// 如果是玩家发起攻击，则触发遗物的onAttack效果
+	if (user == Player::getInstance())
+	{
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+			{
+				Relic->onAttack(numeric_value_, cardName, user, target);
+			}
+		}
+	}
+
+	if (target == Player::getInstance())
+	{
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+			{
+				Relic->onAttacked(numeric_value_, user, target);
+			}
+		}
+	}
+
 	//防止被减至负数
 	numeric_value_ = max(numeric_value_, 0);
 
@@ -105,6 +128,14 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 			if (Buff != nullptr)
 				Buff->onLoseBlock(numeric_value_);
 		}
+		if (target == Player::getInstance())
+		{
+			for (auto Relic : EventSystem::getInstance()->relics_)
+			{
+				if (Relic != nullptr)
+					Relic->onLoseBlock(numeric_value_);
+			}
+		}
 		target->loseBlock(numeric_value_);
 	}
 
@@ -116,12 +147,28 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 			if (Buff != nullptr)
 				Buff->onLoseBlock(numeric_value_);
 		}
+		if (target == Player::getInstance())
+		{
+			for (auto Relic : EventSystem::getInstance()->relics_)
+			{
+				if (Relic != nullptr)
+					Relic->onLoseBlock(numeric_value_);
+			}
+		}
 		target->loseBlock(target->getBlockValue());
 		int healthLoss = numeric_value_ - target->getBlockValue();
 		for (auto Buff : target->buffs_)
 		{
 			if (Buff != nullptr)
 				Buff->onLoseHealth(healthLoss);
+		}
+		if (target == Player::getInstance())
+		{
+			for (auto Relic : EventSystem::getInstance()->relics_)
+			{
+				if (Relic != nullptr)
+					Relic-> onLoseHealth(healthLoss);
+			}
 		}
 		target->loseHealth(healthLoss);
 	}
@@ -135,6 +182,14 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 			if (Buff != nullptr)
 				Buff->onLoseHealth(healthLoss);
 		}
+		if (target == Player::getInstance())
+		{
+			for (auto Relic : EventSystem::getInstance()->relics_)
+			{
+				if (Relic != nullptr)
+					Relic->onLoseHealth(healthLoss);
+			}
+		}
 		target->loseHealth(healthLoss);
 	}
 }
@@ -147,10 +202,19 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 
 void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_, std::string cardName) {
 	//遍历使用者的buff列表，触发所有buff的Addblock效果
+	int tempBlock = numeric_value_;
 	for (auto Buff : target->buffs_)
 	{
 		if (Buff != nullptr)
-			Buff->onGetBlock(numeric_value_);
+			Buff->onGetBlock(tempBlock);
+	}
+	if (target == Player::getInstance())
+	{
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+				Relic->onGetBlock(tempBlock);
+		}
 	}
 	//防止被减至负数
 	numeric_value_ = max(numeric_value_, 0);
@@ -166,6 +230,11 @@ void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_
 
 void CombatSystem::exhaustCard(int num, std::string cardName) 
 {
+	if (num < 0 || num >= hand.size()) {
+		CCLOG("Error: Invalid card index %d", num);
+		return;  // 如果 num 无效，直接返回
+	}
+
 	//遍历使用者的buff列表，触发所有buff的deleteCard效果
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
@@ -174,9 +243,12 @@ void CombatSystem::exhaustCard(int num, std::string cardName)
 			Buff->onExhaustCard();
 		}
 	}
-	if (num < 0 || num >= hand.size()) {
-		CCLOG("Error: Invalid card index %d", num);
-		return;  // 如果 num 无效，直接返回
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+		{
+			Relic->onExhaustCard();
+		}
 	}
 
 	// 触发卡牌被消耗的效果
@@ -189,6 +261,30 @@ void CombatSystem::exhaustCard(int num, std::string cardName)
 	// 消耗相应位置卡牌
 	hand.erase(hand.begin() + num);
 	CCLOG("Card '%s' at index %d has been exhuasted", cardName.c_str(), num);
+}
+
+/*
+* 函数名称：upgradeCard
+* 参数：需要升级的卡牌的指针
+* 功能：将对应卡牌进行升级，同时如果卡牌在手牌中，更新显示
+*/
+void CombatSystem::upgradeCard(std::shared_ptr<Card> card)
+{
+	// 如果卡牌没有进行过升级，那么对卡牌进行升级
+	if (!card->isUpgraded())
+	{
+		card->upgrade();
+
+		// 查看卡牌是否在手牌中，如果在手牌中需要更新显示
+		for (int i = 0; i < hand.size();i++)
+		{
+			if (hand[i] == card)
+			{
+				auto cardSprite = HandPileLayer::getInstance()->getChildByTag(reinterpret_cast<intptr_t>(hand[i].get()));
+				CardSpriteGenerator::updateCardSprite(card, cardSprite);
+			}
+		}
+	}
 }
 
 
@@ -207,12 +303,21 @@ void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 			Buff->onTurnStart();
 		}
 	}
+
+	
 	// 判断是否为玩家，如果是玩家，那么需要进行操作
 	// 1.失去所有格挡
 	// 2.获得能量上限的能量
 	// 3.抽5张牌
 	if (creature == Player::getInstance())
 	{
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+			{
+				Relic->onTurnStart();
+			}
+		}
 		const int energy = Player::getInstance()->getMaxEnergy();//获取玩家的最大能量上限
 		addEnergy(Player::getInstance(), energy);
 		drawCard(5);
@@ -235,6 +340,13 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
 	}
 	if (creature == Player::getInstance())
 	{
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+			{
+				Relic->onTurnEnd();
+			}
+		}
 		const int energy = Player::getInstance()->getCurrentEnergy();//将能量清空
 		addEnergy(Player::getInstance(), -energy);
 		for (size_t i = 0; i < hand.size();)
@@ -265,6 +377,13 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 			Buff->onCardPlayed(card);
 		}
 	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+		{
+			Relic->onCardPlayed(card);
+		}
+	}
 	card->takeEffect();
 }
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature)
@@ -276,9 +395,22 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creatu
 			Buff->onCardPlayed(card);
 		}
 	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+		{
+			Relic->onCardPlayed(card);
+		}
+	}
 	card->takeEffect(creature);
 }
 
+
+/*
+* 
+* 
+* 
+*/
 void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 {
 	int tempEnergy = numeric_value_;
@@ -292,6 +424,13 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 	if (user == Player::getInstance())
 	{
 		Player::getInstance()->energyChange(tempEnergy);
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+			{
+				Relic->onGetEnergy(tempEnergy);
+			}
+		}
 	}
 	// 调用前端能量变化方法,对能量进行更新
 	auto currentScene = Director::getInstance()->getRunningScene();
@@ -299,6 +438,15 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 		CombatScene* combatScene = static_cast<CombatScene*>(currentScene);
 		combatScene->updateEnergyDisplay();
 	}
+}
+
+/*
+* 函数名称：addBuff
+* 参数：增加的Buff种类，
+*/
+void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value)
+{
+
 }
 
 
@@ -315,6 +463,13 @@ void CombatSystem::drawCard(int num)
 		if (Buff != nullptr)
 		{
 			Buff->onDrawCard(tempNum);
+		}
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+		{
+			Relic->onDrawCard(tempNum);
 		}
 	}
 	for (int i = 0;i < tempNum;i++)
@@ -350,9 +505,24 @@ void CombatSystem::drawCard(int num)
 	HandPileLayer::getInstance()->adjustHandPile();
 }
 
-void CombatSystem::shuffleDeck() {
+void CombatSystem::shuffleDeck() 
+{
 	// 临时容器：存储弃牌堆的卡牌
 	std::vector<std::shared_ptr<Card>> discardCards;
+	for (auto Buff : Player::getInstance()->buffs_)
+	{
+		if (Buff != nullptr)
+		{
+			Buff->onShuffleDeck();
+		}
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+		{
+			Relic->onShuffleDeck();
+		}
+	}
 	// 将弃牌堆中的卡牌取出并存储到临时容器中
 	while (!discardPile.empty())
 	{
@@ -360,8 +530,7 @@ void CombatSystem::shuffleDeck() {
 		discardPile.pop();
 	}
 	// 打乱临时容器中的卡牌顺序
-	auto rng = std::default_random_engine(std::chrono::system_clock::now().time_since_epoch().count());
-	std::shuffle(discardCards.begin(), discardCards.end(), rng);
+	RandomGenerator::getInstance()->shuffleVector(discardCards);
 
 	// 将打乱后的卡牌放入抽牌堆
 	for (const auto& card : discardCards)
@@ -389,3 +558,5 @@ int CombatSystem::getDiscardPileNumber()
 {
 	return discardPile.size();
 }
+
+

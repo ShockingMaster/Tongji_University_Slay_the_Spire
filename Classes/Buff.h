@@ -1,5 +1,6 @@
 #pragma once
-#include<iostream>
+#include <iostream>
+#include "Enum.h"
 using namespace std;
 class CombatSystem;
 class Creature;
@@ -7,25 +8,26 @@ class Card;
 class Buff
 {
 public:
-    Buff(string name, string description, int trigger_type, int duration, int priotity);
+    Buff(string name, string description, int duration, int priority, bool is_positive, 
+        bool is_stackable = YES, int stack_type = DURATION)
+        :name_(name),
+        description_(description),
+        priority_(priority) ,
+        is_positive_(is_positive),
+        is_stackable_(is_stackable),
+        stack_type_(stack_type){};
 
     string name_;
-
     string description_;
-
+    int stack_type_;                                                   //叠加方式：持续时间或是效果层数
     int duration_;                                                     //buff持续时间
-
     int trigger_type_;                                                 //buff触发方式
-
-    int priotity_;                                                     //buff触发优先级 
-
-    bool is_stackable_;                                                //有的buff可以叠加
-
+    int priority_;                                                     //buff触发优先级
+    bool is_stackable_;                                                //buff是否能被叠加
     bool is_positive_;                                                 //区分正负面buff
-
-    int numeric_value_;                                                //buff的数值，比如力量的数值，精准的数值，无实体的数值
+    int numeric_value_;                                                //buff的效果层数
     
-    virtual void onCardPlayed(std::shared_ptr<Card> card) {};                          //在打出一张牌时触发
+    virtual void onCardPlayed(std::shared_ptr<Card> card) {};          //在打出一张牌时触发
     
     virtual void onTurnStart() {};                                     //在回合开始时触发
     
@@ -47,6 +49,8 @@ public:
     virtual void onLoseHealth(int& numeric_value_) {};
     
     virtual void getBuff() {};
+
+    virtual void onShuffleDeck() {};
 
     virtual void onDrawCard(int& num) {};
     

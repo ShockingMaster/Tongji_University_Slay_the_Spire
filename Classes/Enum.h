@@ -9,6 +9,11 @@ enum YesOrNo
     NO,
     YES
 };
+enum stackType
+{
+    DURATION,
+    NUMERIC_VALUE
+};
 enum Enemy 
 {
     NORMAL,

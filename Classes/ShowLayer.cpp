@@ -60,15 +60,12 @@ bool ShowLayer::init( int op) {
     this->addChild(returnLabel, 6000);  // Label的层级高于按钮
     if (op == 1) {
         // 创建返回Label
-        std::random_device rd;  // 随机数种子
-        std::mt19937 gen(rd()); // Mersenne Twister 随机数生成器
-        std::uniform_int_distribution<> distrib(100, 200); 
-        auto background4 = Sprite::create("gold.png");
+       auto background4 = Sprite::create("gold.png");
         background4->setScale(6.0f);
         background4->setPosition(Vec2(1000,400));
         this->addChild(background4, 2000);
         // 生成随机数
-        int random_number = distrib(gen);
+        int random_number = RandomGenerator::getInstance()->getRandomNumber(10, 20);
         auto Label1 = cocos2d::Label::createWithSystemFont(u8"恭喜获得金币"+to_string(random_number)+u8"枚", "Arial", 60);
         Label1->setTextColor(cocos2d::Color4B::WHITE);
         Label1->setPosition(cocos2d::Vec2(1000, 60));  // 设置Label的位置，使其在按钮上方
@@ -79,16 +76,11 @@ bool ShowLayer::init( int op) {
     }
     if (op == 2) {
         // 创建返回Label
-        std::random_device rd;  // 随机数种子
-        std::mt19937 gen(rd()); // Mersenne Twister 随机数生成器
-        std::uniform_int_distribution<> distrib(100, 200);
         auto randomCard = RandomGenerator::getInstance()->getRandomCard();
         auto background4=CardSpriteGenerator::createCardSprite(randomCard);
         background4->setScale(1.2f);
         background4->setPosition(Vec2(1000, 400));
         this->addChild(background4, 2000);
-        // 生成随机数
-        int random_number = distrib(gen);
         auto Label1 = cocos2d::Label::createWithSystemFont(u8"恭喜获得新卡牌", "Arial", 60);
         Label1->setTextColor(cocos2d::Color4B::WHITE);
         Label1->setPosition(cocos2d::Vec2(1000, 60));  // 设置Label的位置，使其在按钮上方
@@ -114,10 +106,6 @@ bool ShowLayer::init( int op) {
         headbar->updateHeader(EventSystem::getInstance());
     }
     if (op == 4) {
-        // 随机数种子
-        std::random_device rd;
-        std::mt19937 gen(rd()); // Mersenne Twister 随机数生成器
-        std::uniform_int_distribution<> distrib(100, 200);
 
         // 创建三张卡片
         auto randomCard1 = RandomGenerator::getInstance()->getRandomCard();
@@ -158,21 +146,21 @@ bool ShowLayer::init( int op) {
                 // 执行选中的卡片的操作
                 audioPlayer("gold.ogg", false);
                 Label1->setString(u8"选择成功，请点击返回");
-                EventSystem::getInstance()->cards_.push_back(randomCard1);
+                EventSystem::getInstance()->addCard(randomCard1);
                 headbar->updateHeader(EventSystem::getInstance());
                 return true;  // 返回true表示触摸事件已处理
             }
             else if (card2->getBoundingBox().containsPoint(touchPos)) {
                 audioPlayer("gold.ogg", false);
                 Label1->setString(u8"选择成功，请点击返回");
-                EventSystem::getInstance()->cards_.push_back(randomCard2);
+                EventSystem::getInstance()->addCard(randomCard2);
                 headbar->updateHeader(EventSystem::getInstance());
                 return true;
             }
             else if (card3->getBoundingBox().containsPoint(touchPos)) {
                 audioPlayer("gold.ogg", false);
                 Label1->setString(u8"选择成功，请点击返回");
-                EventSystem::getInstance()->cards_.push_back(randomCard3);
+                EventSystem::getInstance()->addCard(randomCard3);
                 headbar->updateHeader(EventSystem::getInstance());
                 return true;
             }
@@ -198,7 +186,7 @@ bool ShowLayer::init( int op) {
         Label1->setPosition(cocos2d::Vec2(1000, 60));  // 设置Label的位置，使其在按钮上方
         this->addChild(Label1, 103);  // Label的层级高于按钮
         audioPlayer("gold.ogg", false);
-        EventSystem::getInstance()->potions_.push_back(randomPotion);
+        EventSystem::getInstance()->addPotion(randomPotion);
         headbar->updateHeader(EventSystem::getInstance());
     }
     return true;

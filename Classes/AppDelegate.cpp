@@ -1,8 +1,8 @@
 #include "AppDelegate.h"
 #include "IncludeAll.h"
-#include "TestScene.h"  // 引入 TestScene 头文件
-#include "StartScene.h"
-#include "ChestScene.h"
+#include "MapScene.h"  // 引入 TestScene 头文件
+#include "InitialScene.h"
+#include "ShopScene.h"
 #include "TestEvent1.h"
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
@@ -107,7 +107,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
     // 设置初始场景为 TestScene
-    auto testScene = StartScene::create();
+    auto testScene = InitialScene::create();
     cocos2d::Director::getInstance()->runWithScene(testScene);
 
 

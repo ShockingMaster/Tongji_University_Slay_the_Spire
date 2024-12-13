@@ -1,8 +1,5 @@
 #include "IncludeAll.h"
 #include "Enum.h"
-Buff::Buff(string name, string description, int trigger_type, int duration, int priotity)
-{
-}
 
 
 Buff::~Buff()
@@ -23,7 +20,6 @@ class StrengthBuff : public Buff
         numeric_value_ += 2;
     }
 };
-
 
 
 //精准Buff，效果为当卡牌名称为小刀时，造成更多伤害

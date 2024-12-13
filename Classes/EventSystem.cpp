@@ -89,6 +89,11 @@ int EventSystem::getCoins()
 // 对当前金币进行修改，正数代表增加金币，负数代表减少金币
 int EventSystem::changeCoins(int coinChange)
 {
+    int tempCoinChange = coinChange;
+    for (auto Relic : EventSystem::getInstance()->relics_)
+    {
+        Relic->onCoinChange(tempCoinChange);
+    }
     // 如果当前金币不足，则返回0
     if (coins_ + coinChange < 0)
     {
@@ -108,7 +113,7 @@ void EventSystem::changeHealth(int healthChange)
     int tempHealthChange = healthChange;
     for (auto Relic : EventSystem::getInstance()->relics_)
     {
-        //Relic->onHealthChange(tempHealthChange);
+        Relic->onHealthChange(tempHealthChange);
     }
 
     // 当生命值低于0时，触发遗物效果
@@ -116,7 +121,7 @@ void EventSystem::changeHealth(int healthChange)
     {
         for (auto Relic : EventSystem::getInstance()->relics_)
         {
-            //Relic->onDeath();
+            Relic->onDeath();
         }
         // 如果仍然低于0，则游戏结束
         if (health_ + tempHealthChange < 0)
@@ -129,6 +134,7 @@ void EventSystem::changeHealth(int healthChange)
     health_ = min(fullHealth_, health_ + tempHealthChange);
 }
 
+// 对最大生命上限进行修改
 void EventSystem::changeMaxHealth(int maxHealthChange)
 {
     int tempMaxHealthChange = maxHealthChange;
@@ -147,41 +153,130 @@ void EventSystem::changeMaxHealth(int maxHealthChange)
 
 }
 
+// 对卡牌进行永久升级
 int EventSystem::upgradeCard(std::shared_ptr<Card> card)
 {
-
+    for (int i = 0;i < EventSystem::getInstance()->cards_.size();i++)
+    {
+        // 如果找到了卡牌
+        if (card == EventSystem::getInstance()->cards_[i])
+        {
+            // 如果卡牌已经被升级过，那么返回0
+            if (card->isUpgraded())
+            {
+                return 0;
+            }
+            else
+            {
+                card->upgrade();
+                return 1;
+            }
+        }
+    }
+    // 没有找到卡牌同样返回0
     return 0;
 }
 
+
+// 对卡牌进行永久升级
 int EventSystem::upgradeCard(Card* card)
 {
+    for (int i = 0;i < EventSystem::getInstance()->cards_.size();i++)
+    {
+        // 如果找到了卡牌
+        if (card == EventSystem::getInstance()->cards_[i].get())
+        {
+            // 如果卡牌已经被升级过
+            if (EventSystem::getInstance()->cards_[i]->isUpgraded())
+            {
+                return 0;
+            }
+            // 如果卡牌没有被升级过，那么进行升级，同时返回1
+            else
+            {
+                EventSystem::getInstance()->cards_[i]->upgrade();
+                return 1;
+            }
+        }
+    }
+    // 没有找到返回0
     return 0;
 }
 
+// 对卡牌进行永久删除
 int EventSystem::deleteCard(std::shared_ptr<Card> card)
 {
-    return 1;
-}
-
-
-int EventSystem::deleteCard(Card* card)
-{
-    return 1;
-}
-
-
-int EventSystem::addPotion(std::shared_ptr<Potion> potion)
-{
+    for (int i = 0;i < EventSystem::getInstance()->cards_.size();i++)
+    {
+        // 如果找到了卡牌，对卡牌进行删除
+        if (card == EventSystem::getInstance()->cards_[i])
+        {
+            auto it = cards_.begin() + i;
+            cards_.erase(it);
+            return 1;
+        }
+    }
     return 0;
 }
 
-void EventSystem::addRelic(std::shared_ptr<Relic> relic)
+// 对卡牌进行永久删除
+int EventSystem::deleteCard(Card* card)
 {
-
+    for (int i = 0;i < EventSystem::getInstance()->cards_.size();i++)
+    {
+        //如果找到了卡牌，对卡牌进行删除
+        if (card == EventSystem::getInstance()->cards_[i].get())
+        {
+            auto it = cards_.begin() + i;
+            cards_.erase(it);
+            return 1;
+        }
+    }
+    return 0;
 }
 
-void EventSystem::climbFloor()
+// 添加卡牌
+void EventSystem::addCard(std::shared_ptr<Card> card)
 {
+    for (auto Relic : EventSystem::getInstance()->relics_)
+    {
+        Relic->onAddCard(card);
+    }
+    if (card)
+    {
+        EventSystem::getInstance()->cards_.push_back(card);
+    }
+}
 
+// 添加药水
+int EventSystem::addPotion(std::shared_ptr<Potion> potion)
+{
+    // 查看当前的药水数量是否达到上限
+    if (EventSystem::getInstance()->potions_.size() >= 2)
+    {
+        return 0;
+    }
+    for (auto Relic : EventSystem::getInstance()->relics_)
+    {
+        Relic->onAddPotion(potion);
+    }
+    if (potion)
+    {
+        EventSystem::getInstance()->potions_.push_back(potion);
+    }
+    return 1;
+}
+
+// 添加遗物
+void EventSystem::addRelic(std::shared_ptr<Relic> relic)
+{
+    for (auto Relic : EventSystem::getInstance()->relics_)
+    {
+        Relic->onAddRelic(relic);
+    }
+    if (relic)
+    {
+        EventSystem::getInstance()->relics_.push_back(relic);
+    }
 }
 

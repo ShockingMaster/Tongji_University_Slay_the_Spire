@@ -54,7 +54,7 @@ bool HeaderBar::init(EventSystem* eventSystem) {
     backgroundBar->addChild(potionIcons);
 
     // 初始化标签并添加到背景
-    nameLabel = Label::createWithSystemFont(name , "Marker Felt.ttf", 40);  // 使用艺术字体
+    nameLabel = Label::createWithSystemFont(name + u8" (战士)", "Marker Felt.ttf", 40);  // 使用艺术字体
     nameLabel->setPosition(Vec2(150, 100)); // 顶部显示名称
     backgroundBar->addChild(nameLabel);
 

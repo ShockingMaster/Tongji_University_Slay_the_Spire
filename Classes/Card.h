@@ -7,8 +7,9 @@ class Card
 {
 public:
     Card() {};
-    Card(std::string temp_name, std::string temp_description, int temp_energy_cost,int temp_money_cost, 
-        int temp_rarity, bool temp_can_be_played, int temp_type, int temp_need_target_,int temp_is_exhaust_ = 0)
+    Card(std::string temp_name, std::string temp_description, int temp_energy_cost, int temp_money_cost,
+        int temp_rarity, bool temp_can_be_played, int temp_type, bool temp_need_target_, bool temp_is_exhaust_ = 0,
+        bool temp_is_upgraded_ = 0)
         :name_(temp_name),
         description_(temp_description),
         energy_cost_(temp_energy_cost),
@@ -16,16 +17,21 @@ public:
         rarity_(temp_rarity),
         can_be_played_(temp_can_be_played),
         type_(temp_type),
-        need_target_(temp_need_target_) ,
-        is_exhaust_(temp_is_exhaust_){};
+        need_target_(temp_need_target_),
+        is_exhaust_(temp_is_exhaust_) ,
+        is_upgraded_(temp_is_upgraded_){};
 
     virtual void takeEffect() {};                    /*打出卡牌时触发效果，不需要选中敌人(对全体敌人造成效果、
                                                        对于自身造成效果、对于随机目标造成效果)*/
     virtual void takeEffect(std::shared_ptr<Creature> target) {};    //打出卡牌时触发效果，需要选中敌人
-    
+
     virtual void takeEffectOnDiscard() {};                           //被弃置时产生效果
-    
+
     virtual void takeEffectOnExhaust() {};                           //被消耗时产生效果
+
+    virtual void takeEffectOnTurnEnd() {};                           //在回合结束时产生效果 
+
+    virtual void upgrade() {};                                       //对卡牌进行升级
     
     std::string getName() const                                      //返回卡牌名称
     {
@@ -59,10 +65,14 @@ public:
     bool isExhaust() const {
         return is_exhaust_;
     }
-    virtual ~Card() {                                                //析构函数
 
+    bool isUpgraded() const {
+        return is_upgraded_;
     }
-private:
+
+    virtual ~Card() {}                                              //析构函数
+    
+protected:
     std::string name_;                                                //卡牌名称
     std::string description_;                                         //卡牌描述
     int energy_cost_;                                                 //卡牌消耗能量
@@ -71,5 +81,6 @@ private:
     bool can_be_played_;                                              //卡牌是否能被打出
     int type_;                                                        //卡牌类型
     bool need_target_;                                                //是否需要选中目标才能打出
-    bool is_exhaust_;                                                //是否为消耗牌
+    bool is_exhaust_;                                                 //是否为消耗牌
+    bool is_upgraded_;                                                //是否是升级的卡牌
 };

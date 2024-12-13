@@ -43,17 +43,15 @@ public:
 
 	void cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature);//对于需要目标的卡牌进行重载
 
-	void discardCard(std::shared_ptr<Card> card);                              //主动丢弃卡牌
+	void discardCard(std::shared_ptr<Card> card);                               //主动丢弃卡牌
 
 	void upgradeCard(std::shared_ptr<Card> card);                               //战斗临时升级
 
-	void addEnergy(std::shared_ptr<Creature> user, int numeric_value_);        //增加能量
+	void addEnergy(std::shared_ptr<Creature> user, int numeric_value_);         //增加能量
 
-	void addDebuff();                                                           //增加Debuff
+	void addBuff(std::shared_ptr<Buff> buff, int numeric_value);                //增加Buff
 
-	void addBuff();                                                             //增加Buff
-
-	void shuffleDeck();                                                             //进行洗牌
+	void shuffleDeck();                                                         //进行洗牌
 
 	void drawCard(int num);                                                     //进行抽牌
 
@@ -75,6 +73,7 @@ public:
 	int getRoundNumber() const {                                                //返回当前回合数
 		return round_;
 	}
+
 	~CombatSystem() {};
 
 private:

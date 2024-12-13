@@ -24,6 +24,9 @@ bool CardLayer::init(std::vector<std::shared_ptr<Card>> cards, int op) {
     if (!Layer::init()) {
         return false;
     }
+
+    _cards = cards;
+
     operation = op;
     // 加载背景
     _background = cocos2d::Sprite::create("cardlayer.png");
@@ -35,8 +38,6 @@ bool CardLayer::init(std::vector<std::shared_ptr<Card>> cards, int op) {
         this->addChild(_background, 100);
     }
 
-    // 初始化卡牌
-    _cards = cards;
 
     // 创建 ScrollView
     _scrollView = cocos2d::ui::ScrollView::create();
@@ -174,11 +175,9 @@ void CardLayer::displayCards() {
                         popupLayer->setPosition(cocos2d::Vec2(0, -140)); // 设置弹出层位置
                         this->addChild(popupLayer, 500); // 添加到场景，确保它在最上层
 
-                        // 创建并添加卡牌到弹出层左边
-                        auto selectedCard = cocos2d::Sprite::create("hitcard.png");
-                        selectedCard->setPosition(500, 500); // 设置卡牌显示位置
-                        selectedCard->setScale(1.2f); // 放大卡牌
-                        popupLayer->addChild(selectedCard);
+                        /*cardSprite->setPosition(500, 500); // 设置卡牌显示位置
+                        cardSprite->setScale(1.2f); // 放大卡牌
+                        popupLayer->addChild(cardSprite);*/
 
                         // 创建右边的文本说明，使用默认字体
                         auto label = cocos2d::Label::createWithSystemFont(u8"是否确定选中", "fonts/Marker Felt", 70);
@@ -196,18 +195,18 @@ void CardLayer::displayCards() {
                         confirmButton->addClickEventListener([this, popupLayer, cardSprite](cocos2d::Ref* sender) {
                             // 获取卡牌对象
 
-                            auto card = static_cast<Card*>(cardSprite->getUserData());
-                            std::shared_ptr<Card> deleteCard(card);
                             // 根据操作类型进行删除或其他操作
                             if (operation == 2) {
-                                // 删除该卡牌对象
+                                // 删除该卡牌
+                                auto card = static_cast<Card*>(cardSprite->getUserData());
+                                shared_ptr<Card> deleteCard = static_cast<shared_ptr<Card>>(card);
                                 auto it = std::find(_cards.begin(), _cards.end(), deleteCard);
                                 if (it != _cards.end()) {
-                                    _cards.erase(it);  // 删除卡牌
-                                    EventSystem::getInstance()->deleteCard(deleteCard);
+                                    //_cards.erase(it);  // 删除卡牌
+                                    // EventSystem::getInstance()->deleteCard(deleteCard);
                                     // 移除该精灵
-                                    cardSprite->removeFromParent();                           
-                                    _cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
+                                    //cardSprite->removeFromParent();                           
+                                    //_cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
                                     CCLOG("删除卡牌成功");
                                     
                                 }
