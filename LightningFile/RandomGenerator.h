@@ -1,12 +1,9 @@
 #pragma once
 #pragma once
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <random>
 #include <string>
 #include <memory>
-#include <mutex>
 #include <vector>
 #include <time.h>
 #include <functional>
@@ -28,9 +25,10 @@
 */
 enum RandomType {
     CARD = 0,
-    BATTLE = 1,
+    COMBAT = 1,
     OTHER = 2
 };
+
 class Card;
 
 class RandomGenerator
@@ -66,7 +64,7 @@ public:
 
     // 对数组进行打乱
     template<typename Elemtype>
-    void shuffleVector(std::vector<Elemtype>&);
+    void shuffleVector(std::vector<Elemtype>& vec);
 
     // 保存生成器状态到文件
     // void saveStateToFile(const std::string& filename);

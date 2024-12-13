@@ -3,7 +3,7 @@
 #include "Card.h"
 #include "Player.h"
 #include "EventSystem.h"
-
+#include "SpriteGenerator.h"
 CardLayer::CardLayer() : _cards({}), _scrollView(nullptr), _background(nullptr) {
 }
 
@@ -98,14 +98,16 @@ void CardLayer::displayCards() {
     // 遍历卡牌并添加到容器中
     for (size_t i = 0; i < cardCount; ++i) {
         auto card = _cards[i];
-        auto cardSprite = cocos2d::Sprite::create("hitcard.png");
+        auto cardSprite = CardSpriteGenerator::createCardSprite(card);
+
+        cardSprite->setScale(1.3f);
 
         if (i % 4 == 0 && i != 0) {
             startY -= 400;
         }
 
         cardSprite->setPosition(startX + 350 * (i % 4), startY);
-        cardSprite->setScale(0.8f);
+        
         cardContainer->addChild(cardSprite, 200);  // 初始设置
 
         // 为每个卡牌精灵设置与卡牌的关联
@@ -137,12 +139,12 @@ void CardLayer::displayCards() {
                 // 判断鼠标是否在卡牌的扩展范围内
                 if (extendedBoundingBox.containsPoint(mousePosition)) {
                     // 放大卡牌
-                    cardSprite->setScale(0.9f);
+                    cardSprite->setScale(1.5f);
                     cardSprite->setLocalZOrder(300);  // 提高 zOrder，确保它显示在上层
                 }
                 else {
                     // 恢复原尺寸
-                    cardSprite->setScale(0.8f);  // 恢复到原尺寸
+                    cardSprite->setScale(1.3f);  // 恢复到原尺寸
                     cardSprite->setLocalZOrder(200);  // 恢复初始 zOrder
                 }
             }
@@ -251,7 +253,7 @@ void CardLayer::displayCards() {
 
     // 设置滚动视图的尺寸和位置
     _scrollView->setContentSize(cocos2d::Size(1600, 1200));
-    _scrollView->setPosition(cocos2d::Vec2(800, 600));
+    _scrollView->setPosition(cocos2d::Vec2(800, 300));
 
     // 设置滚动视图内容区域的位置
     _scrollView->setInnerContainerPosition(cocos2d::Vec2(0, 0));

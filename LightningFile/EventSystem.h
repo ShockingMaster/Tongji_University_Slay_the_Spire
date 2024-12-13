@@ -58,7 +58,7 @@ public:
     int upgradeCard(Card* card);
     int deleteCard(std::shared_ptr<Card> card);        //对卡牌进行永久删除
     int deleteCard(Card* card);
+    void addCard(std::shared_ptr<Card> card);          //添加卡牌
     int addPotion(std::shared_ptr<Potion> potion);     //添加药水
     void addRelic(std::shared_ptr<Relic> relic);       //添加遗物
-    void climbFloor();                                 //上升楼层
 };

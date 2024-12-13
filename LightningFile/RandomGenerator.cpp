@@ -108,7 +108,7 @@ std::shared_ptr<Potion> RandomGenerator::getRandomPotion()
 * 功能：将给定的vector打乱顺序
 */
 template<typename Elemtype>
-void RandomGenerator::shuffleVector(std::vector<Elemtype>&)
+void RandomGenerator::shuffleVector(std::vector<Elemtype>& vec)
 {
 	for (int i = vec.size() - 1;i > 0;i--)
 	{
@@ -117,3 +117,4 @@ void RandomGenerator::shuffleVector(std::vector<Elemtype>&)
 		std::swap(vec[i], vec[j]);
 	}
 }
+template void RandomGenerator::shuffleVector<std::shared_ptr<Card>>(std::vector<std::shared_ptr<Card>>& vec);

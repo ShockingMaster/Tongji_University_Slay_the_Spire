@@ -157,13 +157,13 @@ bool MapScene::init() {
             Vec2 four = Vec2(1500, 320 - ran);
             //前五层不出现精英敌人 第一层不出现休息
             int ranNum = rand() % 6 + 1;
-            int ran1 = (ranNum == Elite || ranNum == Rest|| ranNum == Shop) ? Combat : ranNum;
+            int ran1 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
-            int ran2 = (ranNum == Elite || ranNum == Rest || ranNum == Shop) ? Combat : ranNum;
+            int ran2 = (ranNum == Elite || ranNum == Rest ) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
-            int ran3 = (ranNum == Elite || ranNum == Rest || ranNum == Shop) ? Combat : ranNum;
+            int ran3 = (ranNum == Elite || ranNum == Rest ) ? Combat : ranNum;
             ranNum = rand() % 6 + 1;
-            int ran4 = (ranNum == Elite || ranNum == Rest || ranNum == Shop) ? Combat : ranNum;
+            int ran4 = (ranNum == Elite || ranNum == Rest) ? Combat : ranNum;
             MapNode* Node1 = MapNode::create(one, ran1);
             Node1->level = 1;
             levelNodes.push_back(Node1);
@@ -213,7 +213,7 @@ bool MapScene::init() {
         }
         if (i == 3) {
             Vec2 one = Vec2(560, 910);
-            Vec2 two = Vec2(910, 8000 + ran);
+            Vec2 two = Vec2(910, 800 + ran);
             Vec2 three = Vec2(1100 + ran, 880);
             Vec2 four = Vec2(1450 + ran, 840);
             int ranNum = rand() % 6 + 1;
