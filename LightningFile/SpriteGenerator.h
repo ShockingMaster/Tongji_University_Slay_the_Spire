@@ -48,7 +48,14 @@ public:
         // Ìí¼Ó¿¨ÅÆÃû³Æ
         auto nameLabel = Label::createWithSystemFont(card->getName(), "Arial", 24);
         nameLabel->setPosition(Vec2(background->getContentSize().width / 2, background->getContentSize().height - 30));
-        nameLabel->setColor(Color3B::WHITE);
+        if (!card->isUpgraded())
+        {
+            nameLabel->setColor(Color3B::WHITE);
+        }
+        else
+        {
+            nameLabel->setColor(Color3B::YELLOW);
+        }
         nameLabel->setName("nameLabel");
         background->addChild(nameLabel);
 
