@@ -174,10 +174,11 @@ void CardLayer::displayCards() {
                         popupLayer->setContentSize(cocos2d::Size(2100, 1200)); // 设置弹出层大小
                         popupLayer->setPosition(cocos2d::Vec2(0, -140)); // 设置弹出层位置
                         this->addChild(popupLayer, 500); // 添加到场景，确保它在最上层
-
-                        /*cardSprite->setPosition(500, 500); // 设置卡牌显示位置
-                        cardSprite->setScale(1.2f); // 放大卡牌
-                        popupLayer->addChild(cardSprite);*/
+                        /*auto card = static_cast<Card*>(cardSprite->getUserData());
+                        auto selected = CardSpriteGenerator::createCardSprite(card);
+                        selected->setPosition(500, 500); // 设置卡牌显示位置
+                        selected->setScale(1.2f); // 放大卡牌
+                        popupLayer->addChild(selected);*/
 
                         // 创建右边的文本说明，使用默认字体
                         auto label = cocos2d::Label::createWithSystemFont(u8"是否确定选中", "fonts/Marker Felt", 70);
@@ -195,21 +196,23 @@ void CardLayer::displayCards() {
                         confirmButton->addClickEventListener([this, popupLayer, cardSprite](cocos2d::Ref* sender) {
                             // 获取卡牌对象
 
-                            // 根据操作类型进行删除或其他操作
+                            
+                            // std::shared_ptr<Card> deleteCard(card);  
+                            auto card = static_cast<Card*>(cardSprite->getUserData());
+
+                             // 根据操作类型进行删除或其他操作
                             if (operation == 2) {
-                                // 删除该卡牌
-                                auto card = static_cast<Card*>(cardSprite->getUserData());
-                                shared_ptr<Card> deleteCard = static_cast<shared_ptr<Card>>(card);
-                                auto it = std::find(_cards.begin(), _cards.end(), deleteCard);
-                                if (it != _cards.end()) {
-                                    //_cards.erase(it);  // 删除卡牌
-                                    // EventSystem::getInstance()->deleteCard(deleteCard);
-                                    // 移除该精灵
-                                    //cardSprite->removeFromParent();                           
-                                    //_cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
-                                    CCLOG("删除卡牌成功");
-                                    
-                                }
+                                // 删除该卡牌对象
+                                EventSystem::getInstance()->deleteCard(card);
+                                // _cards.erase(it);  // 删除卡牌
+                                 // 移除该精灵
+                                cardSprite->removeFromParent();
+                                _cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
+                                CCLOG("删除卡牌成功");
+
+
+
+                            }
                             }
                             else if (operation == 3) {
                                 // 执行升级操作
