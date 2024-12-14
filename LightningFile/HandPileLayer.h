@@ -14,6 +14,11 @@ class HandPileLayer : public cocos2d::Layer
 
 
 public:
+    int card_num_select = 0;
+    int card_num_select_target = 0;
+    bool canSwitchScene = false; // 根据你的条件动态设置
+    std::vector<std::shared_ptr<Card>> select_card_list;
+
     HandPileLayer():_currentSceneType(SceneType::SCENE_TYPE_1) {}
     enum class SceneType {
         SCENE_TYPE_1,
@@ -25,6 +30,16 @@ public:
     }
 
     bool init() override;
+
+    void  exhaustCard();
+
+    bool judge_select_num() {
+        if (card_num_select_target == card_num_select) {
+            return true;
+        }
+        else
+            return false;
+    }
 
     // 返回单例
     static HandPileLayer* HandPileLayer::getInstance();
@@ -38,6 +53,8 @@ public:
     void switchToCardHighlight( std::shared_ptr<Card> card);
 
     void switchToenableCardDrag(std::shared_ptr<Card> card);
+
+    void switchToblank(std::shared_ptr<Card> card);
 
     void adjustfunction();
     

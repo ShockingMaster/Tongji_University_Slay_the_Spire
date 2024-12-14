@@ -263,6 +263,35 @@ void CombatSystem::exhaustCard(int num, std::string cardName)
 	CCLOG("Card '%s' at index %d has been exhuasted", cardName.c_str(), num);
 }
 
+void CombatSystem::exhaustCard()
+{
+	
+	for (auto& card : HandPileLayer::getInstance()->select_card_list) {
+		for (auto Buff : Player::getInstance()->buffs_)
+		{
+			if (Buff != nullptr)
+			{
+				Buff->onExhaustCard();
+			}
+		}
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+			{
+				Relic->onExhaustCard();
+			}
+		}
+
+		// 触发卡牌被消耗的效果
+		card->takeEffectOnExhaust();
+
+		// 调用前端效果对卡牌进行移除
+		HandPileLayer::getInstance()->removeCard(card);
+		
+	}
+	
+}
+
 /*
 * 函数名称：upgradeCard
 * 参数：需要升级的卡牌的指针
