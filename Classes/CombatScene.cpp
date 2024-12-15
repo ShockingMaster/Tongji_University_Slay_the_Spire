@@ -1,11 +1,48 @@
 #include "IncludeAll.h"
 
-void CombatScene::onEnter() {
-    Scene::onEnter();  // 保证父类的 onEnter 被调用
 
-    // 在 onEnter 中调用 updateDisplay 确保 creatureLayer 已经初始化完毕
-    if (creatureLayer) {
-        creatureLayer->updateDisplay();
+cocos2d::Scene* CombatScene::createScene()
+{
+    auto scene = Scene::create();          // 创建一个空白场景
+    auto layer = CombatScene::create();     
+    scene->addChild(layer);                // 将层添加到场景
+    return scene;
+}
+
+void CombatScene::onEnter() {
+    Scene::onEnter();
+
+    // 初始检查
+    this->scheduleOnce([this](float dt) {
+        checkScene(); // 调用检查函数
+        }, 0.5f, "CheckSceneAfterDelay");
+}
+
+void CombatScene::checkScene() {
+    auto currentScene = Director::getInstance()->getRunningScene();
+
+    if (currentScene) {
+        CCLOG("Current running scene: %s", typeid(*currentScene).name());
+    }
+    else {
+        CCLOG("No running scene.");
+    }
+
+    // 尝试将当前场景转换为 CombatScene
+    CombatScene* scene = dynamic_cast<CombatScene*>(currentScene);
+    if (scene) {
+        CCLOG("Successfully cast to CombatScene.");
+        // 调用 updateDisplay
+        if (creatureLayer) {
+            creatureLayer->updateDisplay();
+        }
+    }
+    else {
+        CCLOG("Failed to cast to CombatScene. Retrying...");
+        // 如果失败了，隔一段时间再尝试
+        this->scheduleOnce([this](float dt) {
+            checkScene(); // 递归调用自己继续检查
+            }, 0.05f, "RetryCheckScene");
     }
 }
 
@@ -149,6 +186,7 @@ bool CombatScene::init()
 
     this->addChild(HandPileLayer::getInstance());
 
+    // 创建
     creatureLayer = CreatureLayer::create(CombatSystem::getInstance()->Monsters_);
     this->addChild(creatureLayer);
     

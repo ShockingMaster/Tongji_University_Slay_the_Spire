@@ -33,7 +33,14 @@ void RandomGenerator::initializeGenerators(std::string seeds)
 	rng[1].seed(initialSeed_);
 	rng[2].seed(initialSeed_);
 }
-
+void RandomGenerator::initializeGenerators()
+{
+	srand(time(nullptr));
+	initialSeed_ = rand() % INT_MAX;
+	rng[0].seed(initialSeed_);
+	rng[1].seed(initialSeed_);
+	rng[2].seed(initialSeed_);
+}
 /*
 * 函数名称：getInitialSeed
 * 功能：返回设定的种子

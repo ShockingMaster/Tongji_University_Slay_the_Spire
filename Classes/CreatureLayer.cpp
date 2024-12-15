@@ -130,11 +130,30 @@ void CreatureLayer::updateDisplay()
     const int playerFullHealth = Player::getInstance()->getMaxHealth();
     const int block = Player::getInstance()->getBlockValue();
 
+    CreatureLayer* layer;
+    HeaderBar* headBar;
     // 获取场景和头栏信息
-    CombatScene* scene = reinterpret_cast<CombatScene*>(Director::getInstance()->getRunningScene());
-    auto layer = scene->creatureLayer;
-    auto headBar = scene->headbar;
+    
+    CombatScene* scene = dynamic_cast<CombatScene*>(Director::getInstance()->getRunningScene());
 
+    auto currentScene = Director::getInstance()->getRunningScene();
+    if (currentScene) {
+        CCLOG("Current running scene: %s", typeid(*currentScene).name());
+    }
+    else {
+        CCLOG("No running scene.");
+    }
+
+    if (scene) {
+        CCLOG("Successfully cast to CombatScene.");
+        layer = scene->creatureLayer;
+        headBar = scene->headbar;
+    }
+    else {
+        CCLOG("Failed to cast to CombatScene.");
+    }
+    
+    
     // 对于头栏进行更新
     if (playerHealth != EventSystem::getInstance()->getCurrentHealth())
     {
@@ -168,7 +187,7 @@ void CreatureLayer::updateDisplay()
         PlayerBlockLabel->setString(std::to_string(block));  // 更新标签内容
     }
 
-
+    
     for (int i = 0;i < CombatSystem::getInstance()->Monsters_.size();i++)
     {
         // 首先通过 Monster 获取玩家信息
@@ -199,5 +218,6 @@ void CreatureLayer::updateDisplay()
             monsterBlockLabel->setString(std::to_string(monsterblock));  // 更新标签内容
         }
     }
+    
 }
 

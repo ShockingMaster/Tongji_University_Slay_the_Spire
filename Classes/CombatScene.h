@@ -17,7 +17,9 @@ private:
     cocos2d::Rect playArea;
     cocos2d::Label* energyLabel;
 public:
+    static cocos2d::Scene* createScene();
     void onEnter();
+    void checkScene();
     bool init();
 
     CreatureLayer* creatureLayer;

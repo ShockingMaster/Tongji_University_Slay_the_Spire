@@ -44,6 +44,7 @@ public:
 
     // 初始化随机数生成器,可以考虑直接用名字进行初始化
     void initializeGenerators(std::string seeds);
+    void initializeGenerators();
 
     // 返回随机数种子
     unsigned int getInitialSeed();
