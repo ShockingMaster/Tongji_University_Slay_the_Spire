@@ -1,5 +1,4 @@
 #pragma once
-#pragma once
 #include <iostream>
 #include <random>
 #include <string>
@@ -30,7 +29,9 @@ enum RandomType {
 };
 
 class Card;
-
+class Relic;
+class Potion;
+class Monster;
 class RandomGenerator
 {
 public:
@@ -54,7 +55,7 @@ public:
     std::shared_ptr<Card> getRandomCard(int type = ALL, int rarity = ALL);
 
     // 获取一个随机怪物,可以指定怪物强度（小怪，精英，Boss）
-    std::shared_ptr<Creature> getRandomMonster(int type = NORMAL);
+    std::shared_ptr<Monster> getRandomMonster(int type = NORMAL);
 
     // 获取一个随机遗物，可以指定稀有度
     std::shared_ptr<Relic> getRandomRelic(int rarity = ALL);

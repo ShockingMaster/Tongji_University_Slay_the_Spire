@@ -88,19 +88,82 @@ std::shared_ptr<Card> RandomGenerator::getRandomCard(int type, int rarity)
 	}
 }
 
-std::shared_ptr<Creature> RandomGenerator::getRandomMonster(int type)
+std::shared_ptr<Monster> RandomGenerator::getRandomMonster(int type)
 {
-	return std::shared_ptr<Creature>();
+	// 使用CARD随机生成器
+	std::vector<std::string> allMonsterNames = MonsterRegistry::getAllMonsterNames();
+
+	if (allMonsterNames.empty()) {
+		throw std::runtime_error("No Monster registered");
+	}
+	while (1)
+	{
+		// 使用均匀分布来生成一个随机索引
+		std::uniform_int_distribution<> dist(0, allMonsterNames.size() - 1);
+		int randomIndex = dist(rng[OTHER]);
+
+		// 获取随机卡牌名称
+		std::string randomMonsterName = allMonsterNames[randomIndex];
+
+		// 创建对应的卡牌对象
+		auto monster = MonsterRegistry::createMonster(randomMonsterName);
+
+		//如果满足要求则进行返回
+		if ((type == ALL || type == monster->getType()))
+		{
+			return monster;
+		}
+	}
 }
 
 std::shared_ptr<Relic> RandomGenerator::getRandomRelic(int rarity)
 {
-	return std::shared_ptr<Relic>();
+	// 使用OTHER随机生成器
+	std::vector<std::string> allRelicNames = RelicRegistry::getAllRelicNames();
+
+	if (allRelicNames.empty()) {
+		throw std::runtime_error("No cards registered");
+	}
+	while (1)
+	{
+		// 使用均匀分布来生成一个随机索引
+		std::uniform_int_distribution<> dist(0, allRelicNames.size() - 1);
+		int randomIndex = dist(rng[OTHER]);
+
+		// 获取随机遗物名称
+		std::string randomRelicName = allRelicNames[randomIndex];
+
+		// 创建对应的遗物对象
+		auto relic = RelicRegistry::createRelic(randomRelicName);
+
+		// 如果满足要求则进行返回
+		if ((rarity == ALL || rarity == relic->getRarity()))
+		{
+			return relic;
+		}
+	}
 }
 
 std::shared_ptr<Potion> RandomGenerator::getRandomPotion()
 {
-	return std::shared_ptr<Potion>();
+	std::vector<std::string> allPotionNames = PotionRegistry::getAllPotionNames();
+
+	if (allPotionNames.empty()) {
+		throw std::runtime_error("No Potion registered");
+	}
+	
+	// 使用均匀分布来生成一个随机索引
+	std::uniform_int_distribution<> dist(0, allPotionNames.size() - 1);
+	int randomIndex = dist(rng[OTHER]);
+
+	// 获取随机药水名称
+	std::string randomPotionName = allPotionNames[randomIndex];
+
+	// 创建对应的药水对象
+	auto relic = PotionRegistry::createPotion(randomPotionName);
+
+	return relic;
+	
 }
 
 /*

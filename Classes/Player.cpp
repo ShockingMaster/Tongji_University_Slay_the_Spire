@@ -34,9 +34,12 @@ void Player::addPotion(Potion* potion)
 */
 void Player::init()
 {
-    //初始化血量
-    health_ = 10;
-    block_ = 10;
+    // 初始化当前血量，当前生命值，当前格挡，当前能量值，最大能量值
+    // health_ = EventSystem::getInstance()->health_;
+    // max_health_ = EventSystem::getInstance()->fullHealth_;
+    health_ = 50;
+    max_health_ = 100;
+    block_ = 0;
     currentEnergy_ = 0;
     maxEnergy_ = 4;
 }

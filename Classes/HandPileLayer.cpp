@@ -101,9 +101,8 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
     listener->onTouchEnded = [=](Touch* touch, Event* event) {
         auto location = touch->getLocation();
         auto& newhand = CombatSystem::getInstance()->hand;                                      //获取手牌引用
-
-        //这里的card->needTarget()是错误的，仅仅为了进行测试
-        if (playArea.containsPoint(location) && card->getCanBePlayed() && 1   //对于不需要选中敌人的卡牌
+        auto& monsters = CombatSystem::getInstance()->Monsters_;
+        if (playArea.containsPoint(location) && card->getCanBePlayed() && !card->needTarget()   //对于不需要选中敌人的卡牌
             && card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())
         {
             //auto& tempcard = card;
@@ -119,19 +118,28 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         //需要更新！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         //
         //
-        /*
-        else if (card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())//还需要更新对于需要选中敌人的卡牌的逻辑
+        
+        else if (card->getCanBePlayed() && card->needTarget()   //对于需要选中敌人的卡牌
+            && card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())//还需要更新对于需要选中敌人的卡牌的逻辑
         {
-            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());    //在手牌中移除这张卡牌
-            CombatSystem::getInstance()->cardPlayed(card);                                      //告诉战斗系统打出这张牌
-            cardSprite->removeFromParent();                                                     //将卡牌移除出屏幕
+            for (int i = 0;i < monsters.size();i++)
+            {
+                shared_ptr<Monster> target = static_pointer_cast<Monster>(monsters[i]);
+                if (target->area.containsPoint(location))
+                {
+                    //auto& tempcard = card;
+                    newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());    //在手牌中移除这张卡牌
+                    CombatSystem::getInstance()->cardPlayed(card, target);                              //告诉战斗系统打出这张牌
+                    cardSprite->removeFromParent();                                                     //将卡牌移除出屏幕
 
-            if (!card->isExhaust()) {                                                           //如果卡牌不是消耗类型
-                CombatSystem::getInstance()->discardPile.push(card);                            //向弃牌堆中加入这张卡牌
-                HandPileLayer::getInstance()->updateDiscardPileDisplay();                       //对弃牌堆进行更新
+                    if (!card->isExhaust()) {                                                           //如果卡牌不是消耗类型
+                        CombatSystem::getInstance()->discardPile.push(card);                            //向弃牌堆中加入这张卡牌
+                        HandPileLayer::getInstance()->updateDiscardPileDisplay();                       //对弃牌堆进行更新
+                    }
+                }
             }
         }
-        */
+        
         adjustHandPile();                                                                   //每次进行点击都调整卡牌位置
         };
     // 添加拖动监听

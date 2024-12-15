@@ -8,7 +8,8 @@ class Card;
 class CombatSystem;
 class CombatDeck;
 class Creature;
-
+class CreatureLayer;
+class HeaderBar;
 class CombatScene : public cocos2d::Scene
 {
 private:
@@ -16,8 +17,12 @@ private:
     cocos2d::Rect playArea;
     cocos2d::Label* energyLabel;
 public:
+    void onEnter();
     bool init();
-    
+
+    CreatureLayer* creatureLayer;
+    HeaderBar* headbar;
+
     //≤‚ ‘ π”√
     int isMyTurn;
 
