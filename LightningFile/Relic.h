@@ -21,6 +21,8 @@ public:
 
     int rarity_;
 
+    int getRarity() const;
+
     virtual void onCardPlayed(std::shared_ptr<Card> card) {};          //在打出一张牌时触发
 
     virtual void onTurnStart() {};                                     //在回合开始时触发
@@ -42,6 +44,8 @@ public:
 
     virtual void onLoseHealth(int& numeric_value_) {};
 
+    virtual void onAddHealth(int& numeric_value_) {};
+
     virtual void getBuff() {};
 
     virtual void onDrawCard(int& num) {};
@@ -62,7 +66,7 @@ public:
 
     virtual void onHealthChange(int& healthChange) {};
 
-    virtual ~Relic();
+    virtual ~Relic() {};
 
 private:
 

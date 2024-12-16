@@ -31,8 +31,7 @@ public:
 	void takeDamage(std::shared_ptr<Creature> target, int numeric_value_,
 		std::shared_ptr<Creature> attacker = nullptr);                         //需要考虑具体需要传入什么参数
 
-	void Addblock(std::shared_ptr<Creature> target, int numeric_value_,
-		std::string cardName = "");
+	void Addblock(std::shared_ptr<Creature> target, int numeric_value_);
 
 	void exhaustCard(int num, std::string cardName = "");
 
@@ -54,6 +53,8 @@ public:
 
 	void addBuff(std::shared_ptr<Buff> buff, int numeric_value);                //增加Buff
 
+	void addHealth(std::shared_ptr<Creature> target, int numeric_value);       //生命回复
+
 	void shuffleDeck();                                                         //进行洗牌
 
 	void drawCard(int num);                                                     //进行抽牌
@@ -70,15 +71,15 @@ public:
 
 	void addToDiscardPile(std::shared_ptr<Card> card, int num = 1);             //将卡牌放入弃牌堆
 
-	template<typename operation_type>
-	void chooseTarget(const int num, operation_type operation);                 //选择目标卡牌，进行升级或消耗或丢弃的操作
-
 	int getRoundNumber() const {                                                //返回当前回合数
 		return round_;
 	}
 
+	void tem_cardPlayed(std::shared_ptr<Card> card);
+
 	~CombatSystem() {};
 
+	void use_tem_card();
 private:
 	static CombatSystem* instance_;
 	int round_;

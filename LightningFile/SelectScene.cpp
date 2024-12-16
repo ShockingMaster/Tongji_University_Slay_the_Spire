@@ -6,7 +6,7 @@ SelectScene* SelectScene::getInstance()
 {
     if (instance_ == nullptr)
     {
-        instance_ = new SelectScene(); // 创建唯一实例  
+        instance_ = new SelectScene();
     }
     return instance_;
 }
@@ -67,7 +67,7 @@ bool SelectScene::init()
     switchSceneButton->setScale(1.5f);
     switchSceneButton->setTitleFontSize(20);
     switchSceneButton->setPosition(Vec2(0.906525 * screenSize.width, 0.15625 * screenSize.height)); // 设置按钮位置
-   
+
     SelectScene::getInstance()->switchSceneButton = switchSceneButton;
     switchSceneButton->setEnabled(HandPileLayer::getInstance()->canSwitchScene);
     switchSceneButton->setTouchEnabled(HandPileLayer::getInstance()->canSwitchScene);
@@ -76,50 +76,35 @@ bool SelectScene::init()
     switchSceneButton->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
         if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
             CCLOG("Switch Scene clicked!");  // 打印日志
+
             HandPileLayer::getInstance()->card_num_select = 0;
             HandPileLayer::getInstance()->canSwitchScene = false;
-            
-            
+
             // 在此处执行切换场景的操作
             //切回原来卡牌的监听
             auto combatsystem = CombatSystem::getInstance();
             for (auto& card : combatsystem->hand) {
                 HandPileLayer::getInstance()->switchToenableCardDrag(card);
             }
-            
             HandPileLayer::getInstance() ->setSceneType(HandPileLayer::SceneType::SCENE_TYPE_1);
-            /*
-            // 获取当前场景并销毁
-            Scene* currentScene = Director::getInstance()->getRunningScene();
-            if (currentScene) {
-                currentScene->release();  // 释放当前场景的引用
-            }
-            */
             CombatSystem::getInstance()->exhaustCard();
             HandPileLayer::getInstance()->exhaustCard();
             HandPileLayer::getInstance()->select_card_list.clear();
-
-
-            std::shared_ptr<Card> card = CombatSystem::getInstance()->tem_card;
-            card->tag = 1;
-            CombatSystem::getInstance()->cardPlayed(card);
-  
-           
-            // 创建一个延迟执行的动作
-            auto delay = DelayTime::create(0.3f);  // 延迟 0.3 秒
+            CCLOG("1111111111111111111111");  // 打印日
+            CombatSystem::getInstance()->use_tem_card();
+            CCLOG("222222222222222222222");  // 打印日
+            auto delay = DelayTime::create(0.3f); 
             auto popSceneAction = CallFunc::create([=]() {
-                Director::getInstance()->popScene();  // 切回原来场景
+                Director::getInstance()->popScene();  
                 });
-
-            // 执行动作
+            
             this->runAction(Sequence::create(delay, popSceneAction, nullptr));
+            
         }
         });
 
     // 添加按钮到当前场景
     this->addChild(switchSceneButton);
-
-    
 
 
 
@@ -134,24 +119,17 @@ bool SelectScene::init()
         HandPileLayer::getInstance()->switchToCardHighlight(card);
     }
     HandPileLayer::getInstance()->adjustHandPile();
-    
     this->addChild(handPileLayer);
-
     
     return true;
     
 }
 
 void SelectScene::update_button() {
-    
+
     switchSceneButton->setEnabled(HandPileLayer::getInstance()->canSwitchScene);
     switchSceneButton->setTouchEnabled(HandPileLayer::getInstance()->canSwitchScene);
 }
-
-
-
-
-
 
 
 /*

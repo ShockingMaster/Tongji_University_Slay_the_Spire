@@ -12,7 +12,7 @@ HandPileLayer* HandPileLayer::getInstance()
 }
 bool HandPileLayer::init()
 {
-    card_num_select = 0; //初始化选择卡牌数量
+    card_num_select = 0;
     const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
     // 创建抽牌堆图标
     auto drawPileIcon = cocos2d::Sprite::create("drawPileIcon.png");
@@ -102,9 +102,8 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
     listener->onTouchEnded = [=](Touch* touch, Event* event) {
         auto location = touch->getLocation();
         auto& newhand = CombatSystem::getInstance()->hand;                                      //获取手牌引用
-
-        //这里的card->needTarget()是错误的，仅仅为了进行测试
-        if (playArea.containsPoint(location) && card->getCanBePlayed() && 1   //对于不需要选中敌人的卡牌
+        auto& monsters = CombatSystem::getInstance()->Monsters_;
+        if (playArea.containsPoint(location) && card->getCanBePlayed() && !card->needTarget()   //对于不需要选中敌人的卡牌
             && card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())
         {
             //auto& tempcard = card;
@@ -120,19 +119,28 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         //需要更新！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！！
         //
         //
-        /*
-        else if (card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())//还需要更新对于需要选中敌人的卡牌的逻辑
+        
+        else if (card->getCanBePlayed() && card->needTarget()   //对于需要选中敌人的卡牌
+            && card->getEnergyCost() <= Player::getInstance()->getCurrentEnergy())//还需要更新对于需要选中敌人的卡牌的逻辑
         {
-            newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());    //在手牌中移除这张卡牌
-            CombatSystem::getInstance()->cardPlayed(card);                                      //告诉战斗系统打出这张牌
-            cardSprite->removeFromParent();                                                     //将卡牌移除出屏幕
+            for (int i = 0;i < monsters.size();i++)
+            {
+                shared_ptr<Monster> target = static_pointer_cast<Monster>(monsters[i]);
+                if (target->area.containsPoint(location))
+                {
+                    //auto& tempcard = card;
+                    newhand.erase(std::remove(newhand.begin(), newhand.end(), card), newhand.end());    //在手牌中移除这张卡牌
+                    CombatSystem::getInstance()->cardPlayed(card, target);                              //告诉战斗系统打出这张牌
+                    cardSprite->removeFromParent();                                                     //将卡牌移除出屏幕
 
-            if (!card->isExhaust()) {                                                           //如果卡牌不是消耗类型
-                CombatSystem::getInstance()->discardPile.push(card);                            //向弃牌堆中加入这张卡牌
-                HandPileLayer::getInstance()->updateDiscardPileDisplay();                       //对弃牌堆进行更新
+                    if (!card->isExhaust()) {                                                           //如果卡牌不是消耗类型
+                        CombatSystem::getInstance()->discardPile.push(card);                            //向弃牌堆中加入这张卡牌
+                        HandPileLayer::getInstance()->updateDiscardPileDisplay();                       //对弃牌堆进行更新
+                    }
+                }
             }
         }
-        */
+        
         adjustHandPile();                                                                   //每次进行点击都调整卡牌位置
         };
     // 添加拖动监听
@@ -150,7 +158,6 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
 * 功能：设定卡牌可以被选择，无法被打出
 */
 void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card> card) {
-
     auto listener = EventListenerTouchOneByOne::create();
     listener->setSwallowTouches(true);
     //启用卡牌高亮（放大）功能
@@ -168,7 +175,6 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
                 cardSprite->runAction(MoveBy::create(0.2f, Vec2(0, 50)));  // 0.2秒内向上移动50个单位
                 *isCardMoved = true;
                 select_card_list.push_back(card);
-                CCLOG("%p", &card);
                 card_num_select++;
                 if (judge_select_num()) {
                     canSwitchScene = true;
@@ -177,20 +183,19 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
                     auto combatsystem = CombatSystem::getInstance();
 
                     std::vector<std::shared_ptr<Card>> list = combatsystem->hand;
-                    
+
                     for (auto& card : combatsystem->hand) {
                         auto it = std::find(select_card_list.begin(), select_card_list.end(), card);
                         if (it == select_card_list.end()) {
-                            switchToblank(card);  // 执行 switchToBlank 操作
+                            switchToblank(card);
                         }
                     }
-                    
+
                 }
                 else {
                     canSwitchScene = false;
                     SelectScene::getInstance()->update_button();
                 }
-                
             }
             else {
                 // 恢复到原来的位置
@@ -198,12 +203,12 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
                 *isCardMoved = false;
                 select_card_list.erase(std::remove(select_card_list.begin(), select_card_list.end(), card), select_card_list.end());
 
-                
+
                 card_num_select--;
                 if (judge_select_num()) {
                     canSwitchScene = true;
                     SelectScene::getInstance()->update_button();
-                    
+
 
                 }
                 else {
@@ -216,11 +221,11 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
                     for (auto& card : combatsystem->hand) {
                         auto it = std::find(select_card_list.begin(), select_card_list.end(), card);
                         if (it == select_card_list.end()) {
-                            switchToCardHighlight(card);  // 执行 switchToCardHighlight 操作
+                            switchToCardHighlight(card);  
                         }
                     }
                 }
-                           }
+            }
             return true;
         }
         return false;
@@ -232,16 +237,15 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
     cardSprite->setTag(reinterpret_cast<intptr_t>(card.get()));
 }
 
+
 void  HandPileLayer::exhaustCard() {
     auto combatsystem = CombatSystem::getInstance();
     for (auto& card : select_card_list) {
         combatsystem->hand.erase(std::remove(combatsystem->hand.begin(), combatsystem->hand.end(), card), combatsystem->hand.end());
 
     }
-   
+
 }
-
-
 
 
 
@@ -265,7 +269,7 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
     // 对抽牌堆进行更新
     updateDrawPileDisplay();
 
-    adjustHandPile();
+    //adjustHandPile();
 }
 
 
@@ -292,12 +296,10 @@ void HandPileLayer::switchToenableCardDrag(std::shared_ptr<Card> card) {
     enableCardDrag(cardSprite, card);
 }
 
-
-//切换至空白
 void HandPileLayer::switchToblank(std::shared_ptr<Card> card) {
     auto cardSpriteNode = this->getChildByTag(reinterpret_cast<intptr_t>(card.get()));
     Sprite* cardSprite = static_cast<Sprite*>(cardSpriteNode);
-    // 移除当前的拖动监听器
+
     _eventDispatcher->removeEventListenersForTarget(cardSprite);
 }
 

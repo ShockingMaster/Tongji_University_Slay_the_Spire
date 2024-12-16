@@ -71,7 +71,6 @@ public:
     }
 
     virtual ~Card() {}                                              //Îö¹¹º¯Êý
-
     int tag = 0;
     
 protected:

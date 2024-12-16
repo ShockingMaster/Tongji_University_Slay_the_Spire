@@ -47,6 +47,8 @@ public:
     virtual void onLoseBlock(int& numeric_value_) {};
     
     virtual void onLoseHealth(int& numeric_value_) {};
+
+    virtual void onAddHealth(int& numeric_value_) {};
     
     virtual void getBuff() {};
 

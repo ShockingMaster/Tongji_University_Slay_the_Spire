@@ -1,18 +1,80 @@
 #include "IncludeAll.h"
 
+
+cocos2d::Scene* CombatScene::createScene()
+{
+    auto scene = Scene::create();          // 创建一个空白场景
+    auto layer = CombatScene::create();     
+    scene->addChild(layer);                // 将层添加到场景
+    return scene;
+}
+
+void CombatScene::onEnter() {
+    Scene::onEnter();
+
+    // 初始检查
+    this->scheduleOnce([this](float dt) {
+        checkScene(); // 调用检查函数
+        }, 0.5f, "CheckSceneAfterDelay");
+}
+
+void CombatScene::checkScene() {
+    auto currentScene = Director::getInstance()->getRunningScene();
+
+    if (currentScene) {
+        CCLOG("Current running scene: %s", typeid(*currentScene).name());
+    }
+    else {
+        CCLOG("No running scene.");
+    }
+
+    // 尝试将当前场景转换为 CombatScene
+    CombatScene* scene = dynamic_cast<CombatScene*>(currentScene);
+    if (scene) {
+        CCLOG("Successfully cast to CombatScene.");
+        // 调用 updateDisplay
+        if (creatureLayer) {
+            creatureLayer->updateDisplay();
+        }
+    }
+    else {
+        CCLOG("Failed to cast to CombatScene. Retrying...");
+        // 如果失败了，隔一段时间再尝试
+        this->scheduleOnce([this](float dt) {
+            checkScene(); // 递归调用自己继续检查
+            }, 0.05f, "RetryCheckScene");
+    }
+}
+
 bool CombatScene::init() 
 {
     // 先进行战斗系统初始化
     CombatSystem::getInstance()->init();
+    const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
+    auto combat = CombatSystem::getInstance();
+    for (int i = 0;i < combat->Monsters_.size();i++)
+    {
+        auto monster = static_pointer_cast<Monster>(combat->Monsters_[i]);
+
+        // 设定怪物区域
+        static_pointer_cast<Monster>(combat->Monsters_[i])->
+            setRect(cocos2d::Vec2(0.83 * screenSize.width + combat->Monsters_.size() * 0.12207 * screenSize.width / 2 - (i + 1) * 0.12207 * screenSize.width, 0.526315 * screenSize.height), 0.09765 * screenSize.width, 0.315789 * screenSize.height);
+        cocos2d::Rect monsterRect = monster->getRect();
+
+        // 仅测试使用，画出可打出卡牌区域 
+        auto drawNode = cocos2d::DrawNode::create();
+        // 用红色绘制矩形
+        drawNode->drawRect(monsterRect.origin, cocos2d::Vec2(monsterRect.origin.x + monsterRect.size.width, monsterRect.origin.y + monsterRect.size.height), cocos2d::Color4F(1, 0, 0, 1));
+        this->addChild(drawNode,100);  // 将 DrawNode 添加到场景中
+    }
 
     auto player = EventSystem::getInstance();
-    auto headbar = HeaderBar::create(player);
+    headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar,100);
 
     // 创建并设置背景图像
     auto background = cocos2d::Sprite::create("combatScene.png");
-    const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
     if (background) 
     {
         background->setContentSize(Size(1.1 * screenSize.width, 1.5 * screenSize.height)); // 设置背景大小
@@ -76,6 +138,17 @@ bool CombatScene::init()
             {
                 CCLOG("End Turn clicked!");  // 打印日志
                 CombatSystem::getInstance()->endTurn(Player::getInstance());//执行玩家回合结束效果
+                //测试
+                
+                for (int i = 0; i < CombatSystem::getInstance()->Monsters_.size(); i++)
+                {
+                    
+                    auto monster = static_pointer_cast<Monster>(CombatSystem::getInstance()->Monsters_[i]);
+
+                    monster->takeEffect();
+                }
+                
+                
             }
             isMyTurn = 0;
         }
@@ -96,6 +169,24 @@ bool CombatScene::init()
     this->addChild(startTurnButton);
 
 
+    // 在你的场景或 Layer 中创建战斗结束按钮
+    auto endBattleButton = cocos2d::ui::Button::create("endTurnButton.png", "endTurnButton.png");  // 设置按钮的常态和按下态图片
+    endBattleButton->setPosition(cocos2d::Vec2(400, 800));  // 设置按钮位置
+    endBattleButton->setTitleText("End Battle");  // 设置按钮文本
+    // 添加按钮到当前层
+    this->addChild(endBattleButton);
+    // 设置触摸事件监听器
+    endBattleButton->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+        if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+            CCLOG("End Battle button clicked!");  // 打印日志
+            CombatSystem::getInstance()->endTurn(Player::getInstance());
+            // 结束战斗，弹出当前场景并返回上一个场景
+            Director::getInstance()->popScene();
+        }
+        });
+
+
+
     HandPileLayer::getInstance()->init();
     //测试使用：创建一个能打出牌的区域，当卡牌被拖动到这个区域时被打出
     playArea = Rect(screenSize.width / 2 - 0.15 * screenSize.width, screenSize.height / 2,
@@ -106,6 +197,10 @@ bool CombatScene::init()
 
     this->addChild(HandPileLayer::getInstance());
 
+    // 创建
+    creatureLayer = CreatureLayer::create(CombatSystem::getInstance()->Monsters_);
+    this->addChild(creatureLayer);
+    
     return true;
 }
 

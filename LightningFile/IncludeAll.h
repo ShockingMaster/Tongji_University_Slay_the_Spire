@@ -21,10 +21,12 @@
 #include "RandomGenerator.h"
 #include "EventSystem.h"
 #include "HeaderBar.h"
+#include "CreatureLayer.h"
+#include "Monster.h"
 
 using namespace std;
 USING_NS_CC;
 const int kWindowSizeX = 2048;
-const int kWindowSizeY = 1536;
+const int kWindowSizeY = 950;
 const int WindowSizeX = 1024;
 const int WindowSizeY = 768;

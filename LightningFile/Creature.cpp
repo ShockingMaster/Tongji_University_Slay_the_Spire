@@ -1,38 +1,39 @@
 #include "IncludeAll.h"
 #include "Enum.h"
-void Creature::updateHealth()
-{
-}
-
-void Creature::updateBuff()
-{
-}
-
-void Creature::updateBlock()
-{
-}
-
-void Creature::addBuff(Buff* buff)
-{
-}
-
 void Creature::addBlock(int numeric_value)
 {
+	block_ += numeric_value;
 }
 
-void Creature::takeDamage(int numeric_value)
+void Creature::loseBlock(int numeric_value)
 {
+	block_ -= numeric_value;
+	block_ = max(0, block_);
 }
 
-void Creature::show_info()
+void Creature::loseHealth(int numeric_value)
 {
+	health_ -= numeric_value;
 }
 
-void Creature::take_damage(int damage)
+void Creature::addHealth(int numeric_value)
 {
+	health_ += numeric_value;
+	// 防止超过最大生命值
+	health_ = min(health_, max_health_);
 }
 
-int Creature::getBlockValue()
+int Creature::getBlockValue() const
 {
-	return 0;
+	return block_;
+}
+
+int Creature::getHealth() const
+{
+	return health_;
+}
+
+int Creature::getMaxHealth() const
+{
+	return max_health_;
 }

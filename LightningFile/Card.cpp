@@ -58,7 +58,7 @@ public:
                 CombatSystem::getInstance()->exhaustCard(i, "Second_wind"); //消耗非攻击牌
                 i--;
                 CCLOG("Card at index %zu isn't an attack card", i);  // 输出当前卡牌的索引
-                CombatSystem::getInstance()->Addblock(Player::getInstance(), temp_block, "Second_wind"); //增加护盾
+                CombatSystem::getInstance()->Addblock(Player::getInstance(), temp_block); //增加护盾
             }
         }
     }
@@ -88,21 +88,18 @@ public:
             draw_num += 1;
         }
         if (tag == 0) {
-            // 创建 selectScene 并使用 pushScene 进行切换
+            
             Scene* selectScene = SelectScene::create();
             HandPileLayer::getInstance()->card_num_select_target = 1;
-            
-            cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene
-            // 实现前端选择卡牌并读取位数
-       
+
+            cocos2d::Director::getInstance()->pushScene(selectScene);  
+
         }
-        if(tag==1){
-            // 目前为消耗第0张牌
-            // CombatSystem::getInstance()->exhaustCard(num, "BurningContract"); //消耗选择的卡牌
-            CombatSystem::getInstance()->drawCard(draw_num); //抽取卡牌
+        if (tag == 1) {
+            
+            CombatSystem::getInstance()->drawCard(draw_num); 
             HandPileLayer::getInstance()->adjustHandPile();
         }
-        
     }
 };
 //进行卡牌注册

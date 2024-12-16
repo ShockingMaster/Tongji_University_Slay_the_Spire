@@ -15,8 +15,6 @@ private:
     //测试使用：
     cocos2d::Rect playArea;
     cocos2d::Label* energyLabel;
-    std::function<void()> callback_;
-    
     static SelectScene* instance_;
     HoverButton* switchSceneButton;
 public:
@@ -27,7 +25,7 @@ public:
 
     static SelectScene* createScene(int someValue) {
         SelectScene* scene = SelectScene::create();
-        scene->initWithValue(someValue);  // 初始化场景时传递参数
+        scene->initWithValue(someValue);  // ?????????????????
         return scene;
     }
 
@@ -40,7 +38,6 @@ public:
 
         return true;
     }
-    
 
     //测试使用
     int isMyTurn;
@@ -51,7 +48,6 @@ public:
 
     void update_button();
 
-    void setCallback(std::function<void()> callback);
 
     cocos2d::Rect getplayArea()
     {

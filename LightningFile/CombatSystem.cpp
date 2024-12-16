@@ -47,12 +47,11 @@ void CombatSystem::init()
 
 	// 清空怪物列表,随机生成怪物
 	Monsters_.clear();
-	int numMonsters = 1;
+	int numMonsters = 2;
 	for (int i = 0; i < numMonsters; i++)
 	{
-		// 生成怪物并加入到怪物列表
+		Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster());
 	}
-
 }
 
 
@@ -105,6 +104,9 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
 	numeric_value_ = max(numeric_value_, 0);
 
 	takeDamage(target, numeric_value_);
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
 }
 
 /*
@@ -155,8 +157,8 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 					Relic->onLoseBlock(numeric_value_);
 			}
 		}
-		target->loseBlock(target->getBlockValue());
 		int healthLoss = numeric_value_ - target->getBlockValue();
+		target->loseBlock(target->getBlockValue());
 		for (auto Buff : target->buffs_)
 		{
 			if (Buff != nullptr)
@@ -192,6 +194,8 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 		}
 		target->loseHealth(healthLoss);
 	}
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
 }
 
 /*
@@ -200,7 +204,7 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
  * 功能：触发护盾类buff并改写护盾值
  */
 
-void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_, std::string cardName) {
+void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_) {
 	//遍历使用者的buff列表，触发所有buff的Addblock效果
 	int tempBlock = numeric_value_;
 	for (auto Buff : target->buffs_)
@@ -219,6 +223,10 @@ void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_
 	//防止被减至负数
 	numeric_value_ = max(numeric_value_, 0);
 	target->addBlock(numeric_value_);  //增加护盾
+
+	// 进行更新
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
 }
 
 
@@ -261,11 +269,15 @@ void CombatSystem::exhaustCard(int num, std::string cardName)
 	// 消耗相应位置卡牌
 	hand.erase(hand.begin() + num);
 	CCLOG("Card '%s' at index %d has been exhuasted", cardName.c_str(), num);
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
 }
+
 
 void CombatSystem::exhaustCard()
 {
-	
+
 	for (auto& card : HandPileLayer::getInstance()->select_card_list) {
 		for (auto Buff : Player::getInstance()->buffs_)
 		{
@@ -282,14 +294,12 @@ void CombatSystem::exhaustCard()
 			}
 		}
 
-		// 触发卡牌被消耗的效果
 		card->takeEffectOnExhaust();
 
-		// 调用前端效果对卡牌进行移除
 		HandPileLayer::getInstance()->removeCard(card);
-		
+
 	}
-	
+
 }
 
 /*
@@ -314,6 +324,9 @@ void CombatSystem::upgradeCard(std::shared_ptr<Card> card)
 			}
 		}
 	}
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
 }
 
 
@@ -324,6 +337,11 @@ void CombatSystem::upgradeCard(std::shared_ptr<Card> card)
  */
 void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 {
+	// 失去所有格挡
+	creature->loseBlock(creature->getBlockValue());
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
+
 	// 触发
 	for (auto Buff : creature->buffs_)
 	{
@@ -351,6 +369,8 @@ void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 		addEnergy(Player::getInstance(), energy);
 		drawCard(5);
 	}
+
+	scene->creatureLayer->updateDisplay();
 }
 
 /*
@@ -390,6 +410,10 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
 		// 调用前端能量变化方法,对能量进行更新
 		HandPileLayer::getInstance()->updateDiscardPileDisplay();
 	}
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
+
 }
 
 /*
@@ -399,7 +423,40 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
  */
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 {
-	tem_card = card; //赋存临时卡牌
+	
+	tem_card = card;
+	for (auto Buff : Player::getInstance()->buffs_)
+	{
+		if (Buff != nullptr)
+		{
+			Buff->onCardPlayed(card);
+		}
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+		{
+			Relic->onCardPlayed(card);
+		}
+	}
+
+	card->takeEffect();
+
+	int tempEnergyCost = card->getEnergyCost();
+	Player::getInstance()->energyChange(-tempEnergyCost);
+	// 调用前端能量变化方法,对能量进行更新
+	auto currentScene = Director::getInstance()->getRunningScene();
+	if (currentScene && dynamic_cast<CombatScene*>(currentScene)) { //检查是否为战斗场景
+		CombatScene* combatScene = static_cast<CombatScene*>(currentScene);
+		combatScene->updateEnergyDisplay();
+	}
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
+}
+
+void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
+{
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
 		if (Buff != nullptr)
@@ -416,6 +473,14 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 	}
 	card->takeEffect();
 }
+
+void CombatSystem::use_tem_card() {
+	tem_card->tag = 1;
+	tem_cardPlayed(tem_card);
+
+}
+
+
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature)
 {
 	for (auto Buff : Player::getInstance()->buffs_)
@@ -433,8 +498,19 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creatu
 		}
 	}
 	card->takeEffect(creature);
-}
 
+	int tempEnergyCost = card->getEnergyCost();
+	Player::getInstance()->energyChange(-tempEnergyCost);
+	// 调用前端能量变化方法,对能量进行更新
+	auto currentScene = Director::getInstance()->getRunningScene();
+	if (currentScene && dynamic_cast<CombatScene*>(currentScene)) { //检查是否为战斗场景
+		CombatScene* combatScene = static_cast<CombatScene*>(currentScene);
+		combatScene->updateEnergyDisplay();
+	}
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
+}
 
 
 /*
@@ -454,7 +530,6 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 	}
 	if (user == Player::getInstance())
 	{
-		Player::getInstance()->energyChange(tempEnergy);
 		for (auto Relic : EventSystem::getInstance()->relics_)
 		{
 			if (Relic != nullptr)
@@ -462,6 +537,7 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 				Relic->onGetEnergy(tempEnergy);
 			}
 		}
+		Player::getInstance()->energyChange(tempEnergy);
 	}
 	// 调用前端能量变化方法,对能量进行更新
 	auto currentScene = Director::getInstance()->getRunningScene();
@@ -469,6 +545,9 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 		CombatScene* combatScene = static_cast<CombatScene*>(currentScene);
 		combatScene->updateEnergyDisplay();
 	}
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
 }
 
 /*
@@ -477,7 +556,36 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 */
 void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value)
 {
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
+}
 
+void CombatSystem::addHealth(std::shared_ptr<Creature> target, int numeric_value)
+{
+	int tempHealthRestore = numeric_value;
+	for (auto Buff : target->buffs_)
+	{
+		if (Buff != nullptr)
+		{
+			Buff->onAddHealth(tempHealthRestore);
+		}
+	}
+	if (target == Player::getInstance())
+	{
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+			{
+				Relic->onAddHealth(tempHealthRestore);
+			}
+		}
+	}
+	// 防止出现负数
+	tempHealthRestore = max(0, tempHealthRestore);
+	target->addHealth(tempHealthRestore);
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
 }
 
 
@@ -534,6 +642,9 @@ void CombatSystem::drawCard(int num)
 		}
 	}
 	HandPileLayer::getInstance()->adjustHandPile();
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
 }
 
 void CombatSystem::shuffleDeck() 
@@ -572,6 +683,9 @@ void CombatSystem::shuffleDeck()
 	HandPileLayer::getInstance()->updateDrawPileDisplay();
 	HandPileLayer::getInstance()->updateDiscardPileDisplay();
 
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
 	CCLOG("Moved all cards from discard pile to draw pile and shuffled. Draw pile now has %d cards", drawPile.size());
 }
 
