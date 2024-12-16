@@ -17,6 +17,7 @@ public:
 	std::queue<std::shared_ptr<Card>> drawPile;                                 // 抽牌堆
 	std::vector<std::shared_ptr<Card>> hand;                                    // 手牌
 	std::queue<std::shared_ptr<Card>> discardPile;                              // 弃牌堆
+	std::shared_ptr<Card> tem_card;
 
 	void init();                                                                //初始化战斗系统
 
@@ -30,10 +31,11 @@ public:
 	void takeDamage(std::shared_ptr<Creature> target, int numeric_value_,
 		std::shared_ptr<Creature> attacker = nullptr);                         //需要考虑具体需要传入什么参数
 
-	void Addblock(std::shared_ptr<Creature> target, int numeric_value_,
-		std::string cardName = "");
+	void Addblock(std::shared_ptr<Creature> target, int numeric_value_);
 
 	void exhaustCard(int num, std::string cardName = "");
+
+	void exhaustCard();
 
 	void startTurn(std::shared_ptr<Creature> creature);                        //回合开始效果
 

@@ -204,7 +204,7 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
  * 功能：触发护盾类buff并改写护盾值
  */
 
-void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_, std::string cardName) {
+void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_) {
 	//遍历使用者的buff列表，触发所有buff的Addblock效果
 	int tempBlock = numeric_value_;
 	for (auto Buff : target->buffs_)
@@ -272,6 +272,34 @@ void CombatSystem::exhaustCard(int num, std::string cardName)
 
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
+}
+
+
+void CombatSystem::exhaustCard()
+{
+
+	for (auto& card : HandPileLayer::getInstance()->select_card_list) {
+		for (auto Buff : Player::getInstance()->buffs_)
+		{
+			if (Buff != nullptr)
+			{
+				Buff->onExhaustCard();
+			}
+		}
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+			{
+				Relic->onExhaustCard();
+			}
+		}
+
+		card->takeEffectOnExhaust();
+
+		HandPileLayer::getInstance()->removeCard(card);
+
+	}
+
 }
 
 /*
@@ -395,6 +423,7 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
  */
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 {
+	tem_card = card;
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
 		if (Buff != nullptr)

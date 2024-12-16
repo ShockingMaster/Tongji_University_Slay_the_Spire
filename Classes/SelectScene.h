@@ -15,8 +15,29 @@ private:
     //测试使用：
     cocos2d::Rect playArea;
     cocos2d::Label* energyLabel;
+    static SelectScene* instance_;
+    HoverButton* switchSceneButton;
 public:
     bool init();
+
+    static SelectScene* SelectScene::getInstance();
+
+
+    static SelectScene* createScene(int someValue) {
+        SelectScene* scene = SelectScene::create();
+        scene->initWithValue(someValue);  // ?????????????????
+        return scene;
+    }
+
+    bool initWithValue(int Value) {
+        if (!Scene::init()) {
+            return false;
+        }
+
+        card_select_num = Value;
+
+        return true;
+    }
 
     //测试使用
     int isMyTurn;
@@ -25,9 +46,14 @@ public:
 
     void updateEnergyDisplay();//更新能量显示
 
+    void update_button();
+
+
     cocos2d::Rect getplayArea()
     {
         return playArea;
     }
     CREATE_FUNC(SelectScene);
+
+    int card_select_num = 0;
 };
