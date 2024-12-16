@@ -23,7 +23,7 @@ bool TestScene::init()
 void TestScene::switchToCombatScene(cocos2d::Ref* sender)
 {
 
-    CombatSystem::getInstance()->init();
+    // CombatSystem::getInstance()->init();
     // 创建 CombatScene 并使用 pushScene 进行切换
     auto combatScene = CombatScene::create();
     cocos2d::Director::getInstance()->pushScene(combatScene);  // 切换到 CombatScene
@@ -33,7 +33,7 @@ void TestScene::switchToCombatScene(cocos2d::Ref* sender)
 void TestScene::switchToSelectScene(cocos2d::Ref* sender)
 {
 
-    CombatSystem::getInstance()->init();
+    //CombatSystem::getInstance()->init();
     // 创建 selectScene 并使用 pushScene 进行切换
     auto selectScene = SelectScene::create();
     cocos2d::Director::getInstance()->pushScene(selectScene);  // 切换到 SelectScene

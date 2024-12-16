@@ -21,6 +21,8 @@ public:
 
     int rarity_;
 
+    int getRarity() const;
+
     virtual void onCardPlayed(std::shared_ptr<Card> card) {};          //在打出一张牌时触发
 
     virtual void onTurnStart() {};                                     //在回合开始时触发

@@ -4,6 +4,9 @@
 #include "InitialScene.h"
 #include "ShopScene.h"
 #include "TestEvent1.h"
+#include "StartScene.h"
+#include "TestScene.h"
+#include "RandomGenerator.h"
 // #define USE_AUDIO_ENGINE 1
 // #define USE_SIMPLE_AUDIO_ENGINE 1
 
@@ -107,7 +110,11 @@ bool AppDelegate::applicationDidFinishLaunching() {
 
 
     // 设置初始场景为 TestScene
+    //auto testScene = TestScene::create();
+    RandomGenerator::getInstance()->initializeGenerators();
     auto testScene = InitialScene::create();
+    //auto testScene = StartScene::create();
+
     cocos2d::Director::getInstance()->runWithScene(testScene);
 
 
