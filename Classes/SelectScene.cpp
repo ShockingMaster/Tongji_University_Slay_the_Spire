@@ -86,21 +86,20 @@ bool SelectScene::init()
             for (auto& card : combatsystem->hand) {
                 HandPileLayer::getInstance()->switchToenableCardDrag(card);
             }
-            
             HandPileLayer::getInstance() ->setSceneType(HandPileLayer::SceneType::SCENE_TYPE_1);
             CombatSystem::getInstance()->exhaustCard();
             HandPileLayer::getInstance()->exhaustCard();
             HandPileLayer::getInstance()->select_card_list.clear();
-            std::shared_ptr<Card> Card = CombatSystem::getInstance()->tem_card;
-            Card->tag = 1;
-            CombatSystem::getInstance()->cardPlayed(Card);
-
+            CCLOG("1111111111111111111111");  // 打印日
+            CombatSystem::getInstance()->use_tem_card();
+            CCLOG("222222222222222222222");  // 打印日
             auto delay = DelayTime::create(0.3f); 
             auto popSceneAction = CallFunc::create([=]() {
                 Director::getInstance()->popScene();  
                 });
-
+            
             this->runAction(Sequence::create(delay, popSceneAction, nullptr));
+            
         }
         });
 

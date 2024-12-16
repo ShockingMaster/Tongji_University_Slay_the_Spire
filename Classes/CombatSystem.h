@@ -76,8 +76,11 @@ public:
 		return round_;
 	}
 
+	void tem_cardPlayed(std::shared_ptr<Card> card);
+
 	~CombatSystem() {};
 
+	void use_tem_card();
 private:
 	static CombatSystem* instance_;
 	int round_;

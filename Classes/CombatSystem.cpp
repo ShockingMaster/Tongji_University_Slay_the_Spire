@@ -423,6 +423,7 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
  */
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 {
+	
 	tem_card = card;
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
@@ -453,6 +454,33 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
 }
+
+void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
+{
+	for (auto Buff : Player::getInstance()->buffs_)
+	{
+		if (Buff != nullptr)
+		{
+			Buff->onCardPlayed(card);
+		}
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+		{
+			Relic->onCardPlayed(card);
+		}
+	}
+	card->takeEffect();
+}
+
+void CombatSystem::use_tem_card() {
+	tem_card->tag = 1;
+	tem_cardPlayed(tem_card);
+
+}
+
+
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature)
 {
 	for (auto Buff : Player::getInstance()->buffs_)

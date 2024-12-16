@@ -142,9 +142,8 @@ bool CombatScene::init()
                 
                 for (int i = 0; i < CombatSystem::getInstance()->Monsters_.size(); i++)
                 {
-                    CCLOG("2222222222222222");
+                    
                     auto monster = static_pointer_cast<Monster>(CombatSystem::getInstance()->Monsters_[i]);
-                    CCLOG("1111111111111111111111");  // ´òÓ¡ÈÕÖ¾
 
                     monster->takeEffect();
                 }
