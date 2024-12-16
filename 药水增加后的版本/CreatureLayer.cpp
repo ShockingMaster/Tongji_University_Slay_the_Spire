@@ -148,76 +148,78 @@ void CreatureLayer::updateDisplay()
         CCLOG("Successfully cast to CombatScene.");
         layer = scene->creatureLayer;
         headBar = scene->headbar;
+
+
+
+        // 对于头栏进行更新
+        if (playerHealth != EventSystem::getInstance()->getCurrentHealth())
+        {
+            EventSystem::getInstance()->setHealth(playerHealth);
+        }
+        if (playerFullHealth != EventSystem::getInstance()->getFullHealth())
+        {
+            EventSystem::getInstance()->setFullHealth(playerFullHealth);
+        }
+        headBar->updateHeader(EventSystem::getInstance());
+        const float healthPercentage = static_cast<float>(playerHealth) / static_cast<float>(playerFullHealth);
+
+        cocos2d::ProgressTimer* timer = reinterpret_cast<cocos2d::ProgressTimer*>(layer->getChildByName("PlayerHealth"));
+        timer->setPercentage(healthPercentage * 100);  // 更新玩家血量显示
+
+        // 更新玩家血量显示
+        auto PlayerHealthLabel = layer->playerHealthLabel;
+        PlayerHealthLabel->setString(std::to_string(playerHealth) + "/" + std::to_string(playerFullHealth));
+
+        // 更新玩家护盾显示
+        auto PlayerBlockLabel = layer->playerBlockLabel;
+        auto PlayerBlockSprite = layer->playerDefend;
+        PlayerBlockLabel->setString(std::to_string(block));
+        if (block == 0) {
+            PlayerBlockLabel->setVisible(false);  // 隐藏标签
+            PlayerBlockSprite->setVisible(false);
+        }
+        else {
+            PlayerBlockLabel->setVisible(true);   // 显示标签
+            PlayerBlockSprite->setVisible(true);
+            PlayerBlockLabel->setString(std::to_string(block));  // 更新标签内容
+        }
+
+
+        for (int i = 0; i < CombatSystem::getInstance()->Monsters_.size(); i++)
+        {
+            // 首先通过 Monster 获取玩家信息
+            auto& monster = static_pointer_cast<Monster>(CombatSystem::getInstance()->Monsters_[i]);
+            const int monsterHealth = monster->getHealth();
+            const int monsterFullHealth = monster->getMaxHealth();
+            const int monsterblock = monster->getBlockValue();
+            const float monsterhealthPercentage = static_cast<float>(monsterHealth) / static_cast<float>(monsterFullHealth);
+
+            cocos2d::ProgressTimer* monstertimer = reinterpret_cast<cocos2d::ProgressTimer*>(layer->getChildByTag(reinterpret_cast<intptr_t>(monster.get())));
+            monstertimer->setPercentage(monsterhealthPercentage * 100);  // 更新玩家血量显示
+
+            // 更新玩家血量显示
+            auto monsterHealthLabel = layer->monsterHealthLabel[i];
+            monsterHealthLabel->setString(std::to_string(monsterHealth) + "/" + std::to_string(monsterFullHealth));
+
+            // 更新玩家护盾显示
+            auto monsterBlockLabel = layer->monsterBlockLabel[i];
+            auto monsterBlockSprite = layer->monsterBlock[i];
+            monsterBlockLabel->setString(std::to_string(monsterblock));
+            if (monsterblock == 0) {
+                monsterBlockLabel->setVisible(false);  // 隐藏标签
+                monsterBlockSprite->setVisible(false);
+            }
+            else {
+                monsterBlockLabel->setVisible(true);   // 显示标签
+                monsterBlockSprite->setVisible(true);
+                monsterBlockLabel->setString(std::to_string(monsterblock));  // 更新标签内容
+            }
+        }
     }
     else {
         CCLOG("Failed to cast to CombatScene.");
     }
-    
-    
-    // 对于头栏进行更新
-    if (playerHealth != EventSystem::getInstance()->getCurrentHealth())
-    {
-        EventSystem::getInstance()->setHealth(playerHealth);
-    }
-    if (playerFullHealth != EventSystem::getInstance()->getFullHealth())
-    {
-        EventSystem::getInstance()->setFullHealth(playerFullHealth);
-    }
-    headBar->updateHeader(EventSystem::getInstance());
-    const float healthPercentage = static_cast<float>(playerHealth) / static_cast<float>(playerFullHealth);
-    
-    cocos2d::ProgressTimer* timer = reinterpret_cast<cocos2d::ProgressTimer*>(layer->getChildByName("PlayerHealth"));
-    timer->setPercentage(healthPercentage * 100);  // 更新玩家血量显示
-    
-    // 更新玩家血量显示
-    auto PlayerHealthLabel = layer->playerHealthLabel;
-    PlayerHealthLabel->setString(std::to_string(playerHealth) + "/" + std::to_string(playerFullHealth));
 
-    // 更新玩家护盾显示
-    auto PlayerBlockLabel = layer->playerBlockLabel;
-    auto PlayerBlockSprite = layer->playerDefend;
-    PlayerBlockLabel->setString(std::to_string(block));
-    if (block == 0) {
-        PlayerBlockLabel->setVisible(false);  // 隐藏标签
-        PlayerBlockSprite->setVisible(false);
-    }
-    else {
-        PlayerBlockLabel->setVisible(true);   // 显示标签
-        PlayerBlockSprite->setVisible(true);
-        PlayerBlockLabel->setString(std::to_string(block));  // 更新标签内容
-    }
-
-    
-    for (int i = 0;i < CombatSystem::getInstance()->Monsters_.size();i++)
-    {
-        // 首先通过 Monster 获取玩家信息
-        auto& monster = static_pointer_cast<Monster>(CombatSystem::getInstance()->Monsters_[i]);
-        const int monsterHealth = monster->getHealth();
-        const int monsterFullHealth = monster->getMaxHealth();
-        const int monsterblock = monster->getBlockValue();
-        const float monsterhealthPercentage = static_cast<float>(monsterHealth) / static_cast<float>(monsterFullHealth);
-
-        cocos2d::ProgressTimer* monstertimer = reinterpret_cast<cocos2d::ProgressTimer*>(layer->getChildByTag(reinterpret_cast<intptr_t>(monster.get())));
-        monstertimer->setPercentage(monsterhealthPercentage * 100);  // 更新玩家血量显示
-
-        // 更新玩家血量显示
-        auto monsterHealthLabel = layer->monsterHealthLabel[i];
-        monsterHealthLabel->setString(std::to_string(monsterHealth) + "/" + std::to_string(monsterFullHealth));
-
-        // 更新玩家护盾显示
-        auto monsterBlockLabel = layer->monsterBlockLabel[i];
-        auto monsterBlockSprite = layer->monsterBlock[i];
-        monsterBlockLabel->setString(std::to_string(monsterblock));
-        if (monsterblock == 0) {
-            monsterBlockLabel->setVisible(false);  // 隐藏标签
-            monsterBlockSprite->setVisible(false);
-        }
-        else {
-            monsterBlockLabel->setVisible(true);   // 显示标签
-            monsterBlockSprite->setVisible(true);
-            monsterBlockLabel->setString(std::to_string(monsterblock));  // 更新标签内容
-        }
-    }
     
 }
 

@@ -12,6 +12,7 @@ HandPileLayer* HandPileLayer::getInstance()
 }
 bool HandPileLayer::init()
 {
+    card_num_select = 0;
     const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
     // 创建抽牌堆图标
     auto drawPileIcon = cocos2d::Sprite::create("drawPileIcon.png");
@@ -173,11 +174,57 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
                 // 卡牌上移一点
                 cardSprite->runAction(MoveBy::create(0.2f, Vec2(0, 50)));  // 0.2秒内向上移动50个单位
                 *isCardMoved = true;
+                select_card_list.push_back(card);
+                card_num_select++;
+                if (judge_select_num()) {
+                    canSwitchScene = true;
+                    SelectScene::getInstance()->update_button();
+
+                    auto combatsystem = CombatSystem::getInstance();
+
+                    std::vector<std::shared_ptr<Card>> list = combatsystem->hand;
+
+                    for (auto& card : combatsystem->hand) {
+                        auto it = std::find(select_card_list.begin(), select_card_list.end(), card);
+                        if (it == select_card_list.end()) {
+                            switchToblank(card);
+                        }
+                    }
+
+                }
+                else {
+                    canSwitchScene = false;
+                    SelectScene::getInstance()->update_button();
+                }
             }
             else {
                 // 恢复到原来的位置
                 cardSprite->runAction(MoveBy::create(0.2f, Vec2(0, -50)));  // 0.2秒内恢复到原来的位置
                 *isCardMoved = false;
+                select_card_list.erase(std::remove(select_card_list.begin(), select_card_list.end(), card), select_card_list.end());
+
+
+                card_num_select--;
+                if (judge_select_num()) {
+                    canSwitchScene = true;
+                    SelectScene::getInstance()->update_button();
+
+
+                }
+                else {
+                    canSwitchScene = false;
+                    SelectScene::getInstance()->update_button();
+                    auto combatsystem = CombatSystem::getInstance();
+
+                    std::vector<std::shared_ptr<Card>> list = combatsystem->hand;
+
+                    for (auto& card : combatsystem->hand) {
+                        auto it = std::find(select_card_list.begin(), select_card_list.end(), card);
+                        if (it == select_card_list.end()) {
+                            switchToCardHighlight(card);  
+                        }
+                    }
+                }
             }
             return true;
         }
@@ -188,6 +235,16 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
 
     // 使用卡牌地址作为唯一 tag
     cardSprite->setTag(reinterpret_cast<intptr_t>(card.get()));
+}
+
+
+void  HandPileLayer::exhaustCard() {
+    auto combatsystem = CombatSystem::getInstance();
+    for (auto& card : select_card_list) {
+        combatsystem->hand.erase(std::remove(combatsystem->hand.begin(), combatsystem->hand.end(), card), combatsystem->hand.end());
+
+    }
+
 }
 
 
@@ -239,6 +296,12 @@ void HandPileLayer::switchToenableCardDrag(std::shared_ptr<Card> card) {
     enableCardDrag(cardSprite, card);
 }
 
+void HandPileLayer::switchToblank(std::shared_ptr<Card> card) {
+    auto cardSpriteNode = this->getChildByTag(reinterpret_cast<intptr_t>(card.get()));
+    Sprite* cardSprite = static_cast<Sprite*>(cardSpriteNode);
+
+    _eventDispatcher->removeEventListenersForTarget(cardSprite);
+}
 
 
 
