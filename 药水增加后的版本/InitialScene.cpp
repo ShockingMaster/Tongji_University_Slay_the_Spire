@@ -125,7 +125,7 @@ bool InitialScene::init()
                 player->coins_ = 100;
                 player->health_ = 50;
                 player->fullHealth_ = 100;
-                player->potions_ = { NULL,NULL };
+               
 
                 this->scheduleOnce([](float dt) {
                     // 跳转到下一个场景

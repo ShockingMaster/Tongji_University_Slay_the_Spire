@@ -64,7 +64,7 @@ public:
 
     virtual void onHealthChange(int& healthChange) {};
 
-    virtual ~Relic();
+    virtual ~Relic() {};
 
 private:
 
