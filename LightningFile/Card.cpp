@@ -149,3 +149,16 @@ public:
     }
 };
 AUTO_REGISTER_CARD(Apotheosis)
+
+
+/*
+* 卡牌名称：眩晕
+* 效果：不能被打出
+*/
+class dazed :public Card
+{
+public:
+    dazed() : Card("dazed", "Cannot be hit",
+        0, 0, RARE, PLAYABLE, SKILL, NO, NO, NO) {};
+};
+AUTO_REGISTER_CARD(dazed)

@@ -42,20 +42,6 @@ cocos2d::Rect Monster::getRect()
 }
 
 /*
-class testMonster : public Monster
-{
-public:
-    testMonster() : Monster(NORMAL, 100) {}
-    void takeEffect() {}
-    std::string Intention_display() {
-        string a = "test";
-        return a;
-    }
-};
-
-AUTO_REGISTER_MONSTER(testMonster)
-*/
-
 class Mandibular_worm : public Monster
 {
 public:
@@ -110,4 +96,36 @@ public:
     }
 };
 
-AUTO_REGISTER_MONSTER(Mandibular_worm)
+AUTO_REGISTER_MONSTER(Mandibular_worm)*/
+
+
+class sentinel : public Monster
+{
+public:
+    sentinel() : Monster(NORMAL, 38) {}
+    void takeEffect() {
+        
+
+        if (tag == 0) {
+            CombatSystem::getInstance()->onAttack(std::make_shared<sentinel>(), Player::getInstance(),
+                9, "Attack");
+            tag = 1;
+        }
+        else if (tag == 1) {
+            //Íæ¼ÒÊÖÖÐÈûÅÆ
+            CombatSystem::getInstance()->discardPile.push(CardRegistry::createCard("dazed"));
+            HandPileLayer::getInstance()->updateDiscardPileDisplay();
+            tag = 0;
+        }
+    }
+    std::string Intention_display() {
+        if (tag == 0) {
+            return "attack.png";
+        }
+        else {
+            return "debuff1.png";
+        }
+    }
+};
+
+AUTO_REGISTER_MONSTER(sentinel)
