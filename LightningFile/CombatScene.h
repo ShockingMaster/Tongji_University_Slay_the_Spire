@@ -20,6 +20,9 @@ public:
     static cocos2d::Scene* createScene();
     void onEnter();
     void checkScene();
+
+    void intent_change(const cocos2d::Size screenSize);
+
     bool init();
 
     CreatureLayer* creatureLayer;

@@ -99,13 +99,13 @@ public:
     }
     std::string Intention_display() {
         if (tag == 0) {
-            return "Mandibular_worm_intention1";
+            return "attack.png";
         }
         else if (tag == 1) {
-            return "Mandibular_worm_intention2";
+            return "defendBuff.png";
         }
         else {
-            return "Mandibular_worm_intention3";
+            return "attackDefend.png";
         }
     }
 };

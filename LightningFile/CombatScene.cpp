@@ -1,4 +1,5 @@
 #include "IncludeAll.h"
+#include "string"
 
 
 cocos2d::Scene* CombatScene::createScene()
@@ -46,6 +47,46 @@ void CombatScene::checkScene() {
     }
 }
 
+// 在类的定义中添加一个成员变量来存储当前显示的怪物图标
+std::vector<cocos2d::Sprite*> combatSprites;
+
+void CombatScene::intent_change(const cocos2d::Size screenSize) {
+    // 1. 删除之前显示的所有图标
+    for (auto sprite : combatSprites) {
+        sprite->removeFromParent();  // 从场景中移除
+    }
+    combatSprites.clear();  // 清空容器
+
+    // 2. 添加新的怪物图标
+    auto combat = CombatSystem::getInstance();
+    for (int i = 0; i < combat->Monsters_.size(); i++) {
+        auto monster = static_pointer_cast<Monster>(combat->Monsters_[i]);
+        std::string png_path = monster->Intention_display();
+
+        // 计算图标位置
+        float rectX = 0.765 * screenSize.width;
+        float rectY = 0.72 * screenSize.height;
+
+        // 计算图标位置：怪物区域的上方
+        float spriteX = rectX+(i- (combat->Monsters_.size()-1)/2.0)* 0.12 * screenSize.width;  // 中心位置
+        float spriteY = rectY; // 上方位置，偏移一个矩形高度
+
+
+
+        auto sprite = cocos2d::Sprite::create(png_path);
+        if (sprite) {
+            CCLOG("111111111111111111111");
+            // 设置Sprite位置，将其放置在怪物区域的上方
+            sprite->setPosition(cocos2d::Vec2(spriteX, spriteY));
+            this->addChild(sprite, 101);  // 将Sprite添加到场景中，确保在DrawNode之上
+            // 将新添加的Sprite保存到容器中
+            combatSprites.push_back(sprite);
+        }
+    }
+}
+
+
+
 bool CombatScene::init() 
 {
     // 先进行战斗系统初始化
@@ -67,6 +108,7 @@ bool CombatScene::init()
         drawNode->drawRect(monsterRect.origin, cocos2d::Vec2(monsterRect.origin.x + monsterRect.size.width, monsterRect.origin.y + monsterRect.size.height), cocos2d::Color4F(1, 0, 0, 1));
         this->addChild(drawNode,100);  // 将 DrawNode 添加到场景中
     }
+    CombatScene::intent_change(screenSize);
 
     auto player = EventSystem::getInstance();
     headbar = HeaderBar::create(player);
@@ -147,6 +189,8 @@ bool CombatScene::init()
 
                     monster->takeEffect();
                 }
+                const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
+                CombatScene::intent_change(screenSize);
                 
                 
             }
