@@ -302,6 +302,32 @@ void CombatSystem::exhaustCard()
 
 }
 
+
+void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
+{
+	for (auto Buff : Player::getInstance()->buffs_)
+	{
+		if (Buff != nullptr)
+		{
+			Buff->onExhaustCard();
+		}
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+		{
+			Relic->onExhaustCard();
+		}
+	}
+	card->takeEffectOnExhaust();
+
+	HandPileLayer::getInstance()->removeCard(card);
+
+
+	// 消耗相应位置
+    hand.erase(std::remove(hand.begin(), hand.end(), card), hand.end());
+}
+
 /*
 * 函数名称：upgradeCard
 * 参数：需要升级的卡牌的指针

@@ -32,5 +32,6 @@ public:
 	cocos2d::Rect area;  // 定义一个矩形区域用于判断
 	int type_;
 	int tag = 0; //怪物行动tag
+	int num = 0;
 
 };

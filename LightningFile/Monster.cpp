@@ -85,6 +85,7 @@ public:
     }
     std::string Intention_display() {
         if (tag == 0) {
+            num=11;
             return "attack.png";
         }
         else if (tag == 1) {
@@ -105,7 +106,7 @@ public:
     sentinel() : Monster(NORMAL, 38) {}
     void takeEffect() {
         
-
+        num = 9;
         if (tag == 0) {
             CombatSystem::getInstance()->onAttack(std::make_shared<sentinel>(), Player::getInstance(),
                 9, "Attack");
@@ -113,13 +114,14 @@ public:
         }
         else if (tag == 1) {
             //Íæ¼ÒÊÖÖÐÈûÅÆ
-            CombatSystem::getInstance()->discardPile.push(CardRegistry::createCard("dazed"));
-            HandPileLayer::getInstance()->updateDiscardPileDisplay();
+            //CombatSystem::getInstance()->discardPile.push(CardRegistry::createCard("dazed"));
+            //HandPileLayer::getInstance()->updateDiscardPileDisplay();
             tag = 0;
         }
     }
     std::string Intention_display() {
         if (tag == 0) {
+            num = 9;
             return "attack.png";
         }
         else {

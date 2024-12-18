@@ -90,9 +90,7 @@ bool SelectScene::init()
             CombatSystem::getInstance()->exhaustCard();
             HandPileLayer::getInstance()->exhaustCard();
             HandPileLayer::getInstance()->select_card_list.clear();
-            CCLOG("1111111111111111111111");  // 打印日
             CombatSystem::getInstance()->use_tem_card();
-            CCLOG("222222222222222222222");  // 打印日
             auto delay = DelayTime::create(0.3f); 
             auto popSceneAction = CallFunc::create([=]() {
                 Director::getInstance()->popScene();  

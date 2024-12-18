@@ -37,6 +37,8 @@ public:
 
 	void exhaustCard();
 
+	void exhaustCard(std::shared_ptr<Card> card);
+
 	void startTurn(std::shared_ptr<Creature> creature);                        //回合开始效果
 
 	void endTurn(std::shared_ptr<Creature> creature);                          //回合结束效果

@@ -70,12 +70,22 @@ void CombatScene::intent_change(const cocos2d::Size screenSize) {
         // 计算图标位置：怪物区域的上方
         float spriteX = rectX+(i- (combat->Monsters_.size()-1)/2.0)* 0.12 * screenSize.width;  // 中心位置
         float spriteY = rectY; // 上方位置，偏移一个矩形高度
+        
 
 
 
         auto sprite = cocos2d::Sprite::create(png_path);
+        if (png_path=="attack.png") {
+            int num = monster->num;
+            auto label = cocos2d::Label::createWithSystemFont(std::to_string(num), "Arial", 24);
+            if (label) {
+                // 设置Label的位置，放置在sprite右边
+                label->setPosition(cocos2d::Vec2(spriteX + 0.02 * screenSize.width, spriteY));
+                // 将Label添加到场景中
+                this->addChild(label, 102);  // 设置层级为102，确保在sprite上方
+            }
+        }
         if (sprite) {
-            CCLOG("111111111111111111111");
             // 设置Sprite位置，将其放置在怪物区域的上方
             sprite->setPosition(cocos2d::Vec2(spriteX, spriteY));
             this->addChild(sprite, 101);  // 将Sprite添加到场景中，确保在DrawNode之上
@@ -179,6 +189,9 @@ bool CombatScene::init()
             if(isMyTurn)
             {
                 CCLOG("End Turn clicked!");  // 打印日志
+                for (auto& card : CombatSystem::getInstance()->hand) {
+                    card->takeeffectonturnend(card);
+                }
                 CombatSystem::getInstance()->endTurn(Player::getInstance());//执行玩家回合结束效果
                 //测试
                 

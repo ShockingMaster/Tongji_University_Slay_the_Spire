@@ -159,6 +159,10 @@ class dazed :public Card
 {
 public:
     dazed() : Card("dazed", "Cannot be hit",
-        0, 0, RARE, PLAYABLE, SKILL, NO, NO, NO) {};
+        0, 0, RARE, FALSE, SKILL, NO, NO, NO) {};
+    void takeeffectonturnend(std::shared_ptr<Card> card) {
+        CCLOG("discard dazed");
+        CombatSystem::getInstance()->exhaustCard(card);
+    }
 };
 AUTO_REGISTER_CARD(dazed)
