@@ -114,7 +114,7 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
  * 参数：被攻击者指针，被攻击的数值，攻击者的指针
  * 功能：触发被攻击类buff并改写被攻击数值
  */
-void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_value_, std::shared_ptr<Creature> attacker)
+void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_value_, std::shared_ptr<Creature> attack)
 {
 	if (target == nullptr)
 	{
@@ -170,6 +170,90 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 			{
 				if (Relic != nullptr)
 					Relic-> onLoseHealth(healthLoss);
+			}
+		}
+		target->loseHealth(healthLoss);
+	}
+
+	// 3.目标的格挡为0，此时事件为生命值减少
+	else
+	{
+		int healthLoss = numeric_value_ - target->getBlockValue();
+		for (auto Buff : target->buffs_)
+		{
+			if (Buff != nullptr)
+				Buff->onLoseHealth(healthLoss);
+		}
+		if (target == Player::getInstance())
+		{
+			for (auto Relic : EventSystem::getInstance()->relics_)
+			{
+				if (Relic != nullptr)
+					Relic->onLoseHealth(healthLoss);
+			}
+		}
+		target->loseHealth(healthLoss);
+	}
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
+}
+
+void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_value_)
+{
+	if (target == nullptr)
+	{
+		CCLOG("TakeDamage传入目标为空！");
+		return;
+	}
+	// 共有三种情况：
+	// 1.目标的格挡大于等于伤害总量，此时不能击穿敌方护甲,此时事件为护甲减少
+	if (numeric_value_ <= target->getBlockValue())
+	{
+		for (auto Buff : target->buffs_)
+		{
+			if (Buff != nullptr)
+				Buff->onLoseBlock(numeric_value_);
+		}
+		if (target == Player::getInstance())
+		{
+			for (auto Relic : EventSystem::getInstance()->relics_)
+			{
+				if (Relic != nullptr)
+					Relic->onLoseBlock(numeric_value_);
+			}
+		}
+		target->loseBlock(numeric_value_);
+	}
+
+	// 2.目标的格挡不为0，但小于伤害值，此时击穿护甲，造成伤害，此时事件为护甲减少，生命值减少
+	else if (target->getBlockValue() > 0)
+	{
+		for (auto Buff : target->buffs_)
+		{
+			if (Buff != nullptr)
+				Buff->onLoseBlock(numeric_value_);
+		}
+		if (target == Player::getInstance())
+		{
+			for (auto Relic : EventSystem::getInstance()->relics_)
+			{
+				if (Relic != nullptr)
+					Relic->onLoseBlock(numeric_value_);
+			}
+		}
+		int healthLoss = numeric_value_ - target->getBlockValue();
+		target->loseBlock(target->getBlockValue());
+		for (auto Buff : target->buffs_)
+		{
+			if (Buff != nullptr)
+				Buff->onLoseHealth(healthLoss);
+		}
+		if (target == Player::getInstance())
+		{
+			for (auto Relic : EventSystem::getInstance()->relics_)
+			{
+				if (Relic != nullptr)
+					Relic->onLoseHealth(healthLoss);
 			}
 		}
 		target->loseHealth(healthLoss);

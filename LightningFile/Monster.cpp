@@ -85,7 +85,7 @@ public:
     }
     std::string Intention_display() {
         if (tag == 0) {
-            num=11;
+            num="9";
             return "attack.png";
         }
         else if (tag == 1) {
@@ -97,7 +97,7 @@ public:
     }
 };
 
-AUTO_REGISTER_MONSTER(Mandibular_worm)*/
+AUTO_REGISTER_MONSTER(Mandibular_worm)
 
 
 class sentinel : public Monster
@@ -105,8 +105,6 @@ class sentinel : public Monster
 public:
     sentinel() : Monster(NORMAL, 38) {}
     void takeEffect() {
-        
-        num = 9;
         if (tag == 0) {
             CombatSystem::getInstance()->onAttack(std::make_shared<sentinel>(), Player::getInstance(),
                 9, "Attack");
@@ -121,7 +119,7 @@ public:
     }
     std::string Intention_display() {
         if (tag == 0) {
-            num = 9;
+            num = "9";
             return "attack.png";
         }
         else {
@@ -131,3 +129,71 @@ public:
 };
 
 AUTO_REGISTER_MONSTER(sentinel)
+*/
+
+
+class Six_Fire_Souls : public Monster
+{
+public:
+    Six_Fire_Souls() : Monster(NORMAL, 250) {}
+    void takeEffect() {
+        
+        if (tag == 0) {
+            CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
+                6, "Attack");
+            //塞入一张灼热
+            round_num++;
+        }
+        else if (tag == 1) {
+            CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
+               5, "Attack");
+            CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
+                5, "Attack");
+            round_num++;
+        }
+        else if (tag == 2) {
+            CombatSystem::getInstance()->Addblock(std::make_shared<Six_Fire_Souls>(), 12);
+            //获得力量Buff
+            round_num++;
+        }
+        else if (tag == 3) {
+            for (int i = 0; i < 6; i++) {
+                CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
+                    2, "Attack");
+            }
+            //塞入三张灼热
+            round_num++;
+        }
+        if (round_num % 7 == 1 || round_num % 7 == 3 || round_num % 7 == 6) {
+            tag = 0;
+        }
+        else if (round_num % 7 == 2 || round_num % 7 == 5) {
+            tag = 1;
+        }
+        else if (round_num % 7 == 4) {
+            tag = 2;
+        }
+        else if (round_num % 7 == 0) {
+            tag = 3;
+        }
+    }
+    std::string Intention_display() {
+        if (tag == 0) {
+            num = "6";
+            return "attack.png";
+        }
+        else if(tag==1) {
+            num = "5*2";
+            return "attack.png";
+        }
+        else if (tag == 2) {
+            return "defendBuff.png";
+        }
+        else if (tag == 3) {
+            num = "2*6";
+            return "attack.png";
+        }
+    }
+};
+
+AUTO_REGISTER_MONSTER(Six_Fire_Souls)

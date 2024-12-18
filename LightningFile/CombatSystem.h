@@ -29,7 +29,9 @@ public:
 	void combatEnd();                                                           //战斗结束·
 
 	void takeDamage(std::shared_ptr<Creature> target, int numeric_value_,
-		std::shared_ptr<Creature> attacker = nullptr);                         //需要考虑具体需要传入什么参数
+		std::shared_ptr<Creature> attack);                         //需要考虑具体需要传入什么参数
+
+	void takeDamage(std::shared_ptr<Creature> target, int numeric_value_);                         //需要考虑具体需要传入什么参数
 
 	void Addblock(std::shared_ptr<Creature> target, int numeric_value_);
 

@@ -153,7 +153,7 @@ AUTO_REGISTER_CARD(Apotheosis)
 
 /*
 * 卡牌名称：眩晕
-* 效果：不能被打出
+* 效果：不能被打出，虚无
 */
 class dazed :public Card
 {
@@ -166,3 +166,19 @@ public:
     }
 };
 AUTO_REGISTER_CARD(dazed)
+
+
+/*
+* 卡牌名称：灼烧
+* 效果：不能被打出，回合结束造成两点伤害
+*/
+class burn :public Card
+{
+public:
+    burn() : Card("burn", "Cannot be hit, causing two points of damage at the end of the turn",
+        0, 0, RARE, FALSE, SKILL, NO, NO, NO) {};
+    void takeeffectonturnend(std::shared_ptr<Card> card) {
+        CombatSystem::getInstance()->takeDamage(Player::getInstance(), 2);
+    }
+};
+AUTO_REGISTER_CARD(burn)

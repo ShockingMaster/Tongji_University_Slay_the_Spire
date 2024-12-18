@@ -49,6 +49,7 @@ void CombatScene::checkScene() {
 
 // 在类的定义中添加一个成员变量来存储当前显示的怪物图标
 std::vector<cocos2d::Sprite*> combatSprites;
+std::vector<cocos2d::Label*> combatSprites_num;
 
 void CombatScene::intent_change(const cocos2d::Size screenSize) {
     // 1. 删除之前显示的所有图标
@@ -56,6 +57,10 @@ void CombatScene::intent_change(const cocos2d::Size screenSize) {
         sprite->removeFromParent();  // 从场景中移除
     }
     combatSprites.clear();  // 清空容器
+    for (auto sprite : combatSprites_num) {
+        sprite->removeFromParent();  // 从场景中移除
+    }
+    combatSprites_num.clear();  // 清空容器
 
     // 2. 添加新的怪物图标
     auto combat = CombatSystem::getInstance();
@@ -76,13 +81,14 @@ void CombatScene::intent_change(const cocos2d::Size screenSize) {
 
         auto sprite = cocos2d::Sprite::create(png_path);
         if (png_path=="attack.png") {
-            int num = monster->num;
-            auto label = cocos2d::Label::createWithSystemFont(std::to_string(num), "Arial", 24);
+            string num = monster->num;
+            auto label = cocos2d::Label::createWithSystemFont(num, "Arial", 24);
             if (label) {
                 // 设置Label的位置，放置在sprite右边
                 label->setPosition(cocos2d::Vec2(spriteX + 0.02 * screenSize.width, spriteY));
                 // 将Label添加到场景中
                 this->addChild(label, 102);  // 设置层级为102，确保在sprite上方
+                combatSprites_num.push_back(label);
             }
         }
         if (sprite) {
