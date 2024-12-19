@@ -218,5 +218,4 @@ public:
         }
     }
 };
-
 AUTO_REGISTER_MONSTER(Six_Fire_Souls)

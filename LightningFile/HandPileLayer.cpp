@@ -238,16 +238,12 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
 }
 
 
-void  HandPileLayer::exhaustCard() {
+void HandPileLayer::exhaustCard() {
     auto combatsystem = CombatSystem::getInstance();
     for (auto& card : select_card_list) {
         combatsystem->hand.erase(std::remove(combatsystem->hand.begin(), combatsystem->hand.end(), card), combatsystem->hand.end());
-
     }
-
 }
-
-
 
 void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 {
@@ -268,7 +264,6 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
     }
     // 对抽牌堆进行更新
     updateDrawPileDisplay();
-
     //adjustHandPile();
 }
 

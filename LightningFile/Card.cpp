@@ -159,7 +159,7 @@ class dazed :public Card
 {
 public:
     dazed() : Card("dazed", "Cannot be hit",
-        0, 0, RARE, FALSE, SKILL, NO, NO, NO) {};
+        0, 0, STATUS, FALSE, STATUS, NO, NO, NO) {};
     void takeeffectonturnend(std::shared_ptr<Card> card) {
         CCLOG("discard dazed");
         CombatSystem::getInstance()->exhaustCard(card);
@@ -176,7 +176,7 @@ class burn :public Card
 {
 public:
     burn() : Card("burn", "Cannot be hit, causing two points of damage at the end of the turn",
-        0, 0, RARE, FALSE, SKILL, NO, NO, NO) {};
+        0, 0, STATUS, FALSE, STATUS, NO, NO, NO) {};
     void takeeffectonturnend(std::shared_ptr<Card> card) {
         CombatSystem::getInstance()->takeDamage(Player::getInstance(), 2);
     }

@@ -88,6 +88,7 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
 				Relic->onAttack(numeric_value_, cardName, user, target);
 			}
 		}
+		audioPlayer("FastAttackSound.ogg", false);
 	}
 
 	if (target == Player::getInstance())
@@ -145,6 +146,7 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 					Relic->onLoseBlock(numeric_value_);
 			}
 		}
+		audioPlayer("AttackOnBlockSound.ogg", false);
 		target->loseBlock(numeric_value_);
 	}
 
@@ -179,6 +181,7 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 					Relic-> onLoseHealth(healthLoss);
 			}
 		}
+		audioPlayer("DefenseBreakSound.ogg", false);
 		target->loseHealth(healthLoss);
 	}
 
@@ -199,6 +202,7 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 					Relic->onLoseHealth(healthLoss);
 			}
 		}
+		audioPlayer("FastAttackSound.ogg", false);
 		target->loseHealth(healthLoss);
 	}
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
@@ -231,6 +235,10 @@ void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_
 	numeric_value_ = max(numeric_value_, 0);
 	target->addBlock(numeric_value_);  //增加护盾
 
+	if (numeric_value_ > 0)
+	{
+		audioPlayer("GetBlockSound.ogg", false);
+	}
 	// 进行更新
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
