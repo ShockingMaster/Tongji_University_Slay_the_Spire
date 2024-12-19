@@ -16,7 +16,13 @@ void CombatScene::onEnter() {
     // 初始检查
     this->scheduleOnce([this](float dt) {
         checkScene(); // 调用检查函数
+
+        isMyTurn = 1;
+        CombatSystem::getInstance()->combatStart();
+        CombatSystem::getInstance()->startTurn(Player::getInstance());
+        creatureLayer->updateDisplay();
         }, 0.5f, "CheckSceneAfterDelay");
+
 }
 
 void CombatScene::checkScene() {
@@ -141,12 +147,16 @@ bool CombatScene::init()
                 CCLOG("End Turn clicked!");  // 打印日志
                 CombatSystem::getInstance()->endTurnCardPlayed();
                 CombatSystem::getInstance()->endTurn(Player::getInstance());//执行玩家回合结束效果
-                //测试
                 
                 for (int i = 0; i < CombatSystem::getInstance()->Monsters_.size(); i++)
                 {
                     auto monster = static_pointer_cast<Monster>(CombatSystem::getInstance()->Monsters_[i]);
-                    monster->takeEffect();
+                    if (monster->getHealth() > 0)
+                    {
+                        CombatSystem::getInstance()->startTurn(monster);
+                        monster->takeEffect();
+                        CombatSystem::getInstance()->endTurn(monster);
+                    }
                 }
             }
             CombatSystem::getInstance()->startTurn(Player::getInstance());

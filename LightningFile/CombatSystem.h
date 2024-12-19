@@ -75,6 +75,8 @@ public:
 
 	void addToDiscardPile(std::shared_ptr<Card> card, int num = 1);             //将卡牌放入弃牌堆
 
+	void onDeath(std::shared_ptr<Creature> creature);
+
 	int getRoundNumber() const {                                                //返回当前回合数
 		return round_;
 	}

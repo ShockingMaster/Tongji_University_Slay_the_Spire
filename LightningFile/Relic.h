@@ -25,6 +25,10 @@ public:
 
     virtual void onCardPlayed(std::shared_ptr<Card> card) {};          //在打出一张牌时触发
 
+    virtual void onCombatStart() {};
+
+    virtual void onCombatEnd() {};
+
     virtual void onTurnStart() {};                                     //在回合开始时触发
 
     virtual void onTurnEnd() {};                                       //在回合结束时触发

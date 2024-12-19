@@ -14,7 +14,7 @@ public:
             "At the end of combat, heal 6 HP",
             0) {}
 
-    void onTurnEnd() override {
+    void onCombatEnd() override {
        
        
     }

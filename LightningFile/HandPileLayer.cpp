@@ -125,6 +125,9 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         {
             for (int i = 0;i < monsters.size();i++)
             {
+                // 如果怪物已经没有生命值，那么不能选中
+                if (monsters[i]->getHealth() <= 0)
+                    break;
                 shared_ptr<Monster> target = static_pointer_cast<Monster>(monsters[i]);
                 if (target->area.containsPoint(location))
                 {
