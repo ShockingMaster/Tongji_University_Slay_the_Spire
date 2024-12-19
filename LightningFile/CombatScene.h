@@ -21,7 +21,7 @@ public:
     void onEnter();
     void checkScene();
 
-    void intent_change(const cocos2d::Size screenSize);
+    void intentChange(const cocos2d::Size screenSize);
 
     bool init();
 

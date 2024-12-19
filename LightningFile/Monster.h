@@ -23,7 +23,7 @@ public:
     bool containsPoint(cocos2d::Vec2 point);
 	virtual void takeEffect();
 
-	virtual string Intention_display();
+	virtual string IntentionDisplay();
 
     // 获取怪物的区域
 	cocos2d::Rect getRect();

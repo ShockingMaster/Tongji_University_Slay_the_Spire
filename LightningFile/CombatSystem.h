@@ -17,7 +17,7 @@ public:
 	std::queue<std::shared_ptr<Card>> drawPile;                                 // 抽牌堆
 	std::vector<std::shared_ptr<Card>> hand;                                    // 手牌
 	std::queue<std::shared_ptr<Card>> discardPile;                              // 弃牌堆
-	std::shared_ptr<Card> tem_card;
+	std::shared_ptr<Card> temCard;
 
 	void init();                                                                //初始化战斗系统
 
@@ -48,7 +48,7 @@ public:
 
 	void cardPlayed(std::shared_ptr<Card> card);                               //打出卡牌效果
 
-	void endturn_cardPlayed();                                                 //回合结束卡牌效果
+	void endturnCardPlayed();                                                 //回合结束卡牌效果
 
 	void cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature);//对于需要目标的卡牌进行重载
 
@@ -82,11 +82,13 @@ public:
 		return round_;
 	}
 
-	void tem_cardPlayed(std::shared_ptr<Card> card);
+	void useTemCard();
+
+	void temCardPlayed(std::shared_ptr<Card> card);
 
 	~CombatSystem() {};
 
-	void use_tem_card();
+
 private:
 	static CombatSystem* instance_;
 	int round_;

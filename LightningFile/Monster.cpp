@@ -12,7 +12,7 @@ void Monster::endTurn()
 
 }
 
-std::string Monster::Intention_display() {
+std::string Monster::IntentionDisplay() {
     return "";
 }
 
@@ -83,7 +83,7 @@ public:
             }
         }
     }
-    std::string Intention_display() {
+    std::string IntentionDisplay() {
         if (tag == 0) {
             attack_value="9";
             return "attack.png";
@@ -117,7 +117,7 @@ public:
             tag = 0;
         }
     }
-    std::string Intention_display() {
+    std::string IntentionDisplay() {
         if (tag == 0) {
             attack_value = "9";
             return "attack.png";
@@ -177,7 +177,7 @@ public:
             tag = 3;
         }
     }
-    std::string Intention_display() {
+    std::string IntentionDisplay() {
         if (tag == 0) {
             attack_value = "6";
             return "attack.png";

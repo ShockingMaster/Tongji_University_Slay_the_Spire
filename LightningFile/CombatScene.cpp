@@ -48,25 +48,25 @@ void CombatScene::checkScene() {
 }
 
 // 在类的定义中添加一个成员变量来存储当前显示的怪物图标
-std::vector<cocos2d::Sprite*> intent;
-std::vector<cocos2d::Label*> attack_value_list;
+std::vector<cocos2d::Sprite*> intentList;
+std::vector<cocos2d::Label*> attackValueList;
 
-void CombatScene::intent_change(const cocos2d::Size screenSize) {
+void CombatScene::intentChange(const cocos2d::Size screenSize) {
     // 1. 删除之前显示的所有图标
-    for (auto sprite : intent) {
+    for (auto sprite : intentList) {
         sprite->removeFromParent();  // 从场景中移除
     }
-    intent.clear();  // 清空容器
-    for (auto sprite : attack_value_list) {
+    intentList.clear();  // 清空容器
+    for (auto sprite : attackValueList) {
         sprite->removeFromParent();  // 从场景中移除
     }
-    attack_value_list.clear();  // 清空容器
+    attackValueList.clear();  // 清空容器
 
     // 2. 添加新的怪物图标
     auto combat = CombatSystem::getInstance();
     for (int i = 0; i < combat->Monsters_.size(); i++) {
         auto monster = static_pointer_cast<Monster>(combat->Monsters_[i]);
-        std::string png_path = monster->Intention_display();
+        std::string png_path = monster->IntentionDisplay();
 
         // 计算图标位置
         float rectX = 0.765 * screenSize.width;
@@ -88,7 +88,7 @@ void CombatScene::intent_change(const cocos2d::Size screenSize) {
                 label->setPosition(cocos2d::Vec2(spriteX + 0.02 * screenSize.width, spriteY));
                 // 将Label添加到场景中
                 this->addChild(label, 102);  // 设置层级为102，确保在sprite上方
-                attack_value_list.push_back(label);
+                attackValueList.push_back(label);
             }
         }
         if (sprite) {
@@ -96,7 +96,7 @@ void CombatScene::intent_change(const cocos2d::Size screenSize) {
             sprite->setPosition(cocos2d::Vec2(spriteX, spriteY));
             this->addChild(sprite, 101);  // 将Sprite添加到场景中，确保在DrawNode之上
             // 将新添加的Sprite保存到容器中
-            intent.push_back(sprite);
+            intentList.push_back(sprite);
         }
     }
 }
@@ -124,7 +124,7 @@ bool CombatScene::init()
         drawNode->drawRect(monsterRect.origin, cocos2d::Vec2(monsterRect.origin.x + monsterRect.size.width, monsterRect.origin.y + monsterRect.size.height), cocos2d::Color4F(1, 0, 0, 1));
         this->addChild(drawNode,100);  // 将 DrawNode 添加到场景中
     }
-    CombatScene::intent_change(screenSize);
+    CombatScene::intentChange(screenSize);
 
     auto player = EventSystem::getInstance();
     headbar = HeaderBar::create(player);
@@ -195,7 +195,7 @@ bool CombatScene::init()
             if(isMyTurn)
             {
                 CCLOG("End Turn clicked!");  // 打印日志
-                CombatSystem::getInstance()->endturn_cardPlayed();
+                CombatSystem::getInstance()->endturnCardPlayed();
                 CombatSystem::getInstance()->endTurn(Player::getInstance());//执行玩家回合结束效果
                 //测试
                 
@@ -207,7 +207,7 @@ bool CombatScene::init()
                     monster->takeEffect();
                 }
                 const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
-                CombatScene::intent_change(screenSize);
+                CombatScene::intentChange(screenSize);
                 
                 
             }

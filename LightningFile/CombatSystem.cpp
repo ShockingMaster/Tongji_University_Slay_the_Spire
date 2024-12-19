@@ -413,7 +413,7 @@ void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
 }
 
 
-void CombatSystem::endturn_cardPlayed() {
+void CombatSystem::endturnCardPlayed() {
 	std::vector<std::shared_ptr<Card>> Hand = hand;
 	for (auto& card : Hand) {
 		card->takeeffectonturnend(card);
@@ -542,7 +542,7 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 {
 	
-	tem_card = card;
+	temCard = card;
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
 		if (Buff != nullptr)
@@ -573,7 +573,7 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 	scene->creatureLayer->updateDisplay();
 }
 
-void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
+void CombatSystem::temCardPlayed(std::shared_ptr<Card> card)
 {
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
@@ -592,9 +592,9 @@ void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
 	card->takeEffect();
 }
 
-void CombatSystem::use_tem_card() {
-	tem_card->tag = 1;
-	tem_cardPlayed(tem_card);
+void CombatSystem::useTemCard() {
+	temCard->tag = 1;
+	temCardPlayed(temCard);
 
 }
 
