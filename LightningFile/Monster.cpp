@@ -160,9 +160,9 @@ public:
         }
         else if (tag == 3) {
             for (int i = 0; i < 6; i++) {
-                int basic_attack_value = Player::getInstance()->getHealth() / 12 + 1;
-                CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
-                    basic_attack_value, "");
+                int attackValue = Player::getInstance()->getHealth() / 12 + 1;
+                CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                    attackValue, "");
             }
             //塞入三张灼热
             round_num++;

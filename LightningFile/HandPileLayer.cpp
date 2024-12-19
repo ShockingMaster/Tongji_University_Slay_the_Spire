@@ -359,6 +359,7 @@ void HandPileLayer::adjustHandPile()
 */
 void HandPileLayer::updateDrawPileDisplay()
 {
+
     const int drawPileNum = CombatSystem::getInstance()->getDrawPileNumber();
     HandPileLayer::getInstance()->drawPileNumLabel->setString(std::to_string(drawPileNum));
 }

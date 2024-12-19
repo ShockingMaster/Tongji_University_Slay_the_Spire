@@ -17,8 +17,13 @@ private:
     cocos2d::Label* energyLabel;
     static SelectScene* instance_;
     HoverButton* switchSceneButton;
+    CombatScene* combatScene = nullptr;
 public:
     bool init();
+
+    void setCombatScene(CombatScene* scene) {
+        combatScene = scene;  // ±£¥Ê CombatScene ÷∏’Î
+    }
 
     static SelectScene* SelectScene::getInstance();
 

@@ -662,6 +662,7 @@ void CombatSystem::addHealth(std::shared_ptr<Creature> target, int numeric_value
 */
 void CombatSystem::drawCard(int num)
 {
+	
 	int tempNum = num;
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
@@ -707,10 +708,15 @@ void CombatSystem::drawCard(int num)
 			HandPileLayer::getInstance()->drawCard(card);
 		}
 	}
+	
 	HandPileLayer::getInstance()->adjustHandPile();
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+	auto scene = dynamic_cast<CombatScene*>(Director::getInstance()->getRunningScene());
+	if (scene) {
+		scene->creatureLayer->updateDisplay();
+	}
+	else {
+	}
 }
 
 void CombatSystem::shuffleDeck() 
@@ -750,8 +756,12 @@ void CombatSystem::shuffleDeck()
 	HandPileLayer::getInstance()->updateDiscardPileDisplay();
 
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+	auto scene = dynamic_cast<CombatScene*>(Director::getInstance()->getRunningScene());
+	if (scene) {
+		scene->creatureLayer->updateDisplay();
+	}
+	else {
+	}
 	CCLOG("Moved all cards from discard pile to draw pile and shuffled. Draw pile now has %d cards", drawPile.size());
 }
 
