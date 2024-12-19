@@ -30,6 +30,7 @@ public:
 
 	void takeDamage(std::shared_ptr<Creature> target, int numeric_value_,
 		std::shared_ptr<Creature> attack);                         //需要考虑具体需要传入什么参数
+	
 
 	void takeDamage(std::shared_ptr<Creature> target, int numeric_value_);                         //需要考虑具体需要传入什么参数
 
@@ -46,6 +47,8 @@ public:
 	void endTurn(std::shared_ptr<Creature> creature);                          //回合结束效果
 
 	void cardPlayed(std::shared_ptr<Card> card);                               //打出卡牌效果
+
+	void endturn_cardPlayed();                                                 //回合结束卡牌效果
 
 	void cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature);//对于需要目标的卡牌进行重载
 

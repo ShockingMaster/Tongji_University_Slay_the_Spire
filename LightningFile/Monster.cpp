@@ -85,7 +85,7 @@ public:
     }
     std::string Intention_display() {
         if (tag == 0) {
-            num="9";
+            attack_value="9";
             return "attack.png";
         }
         else if (tag == 1) {
@@ -119,7 +119,7 @@ public:
     }
     std::string Intention_display() {
         if (tag == 0) {
-            num = "9";
+            attack_value = "9";
             return "attack.png";
         }
         else {
@@ -179,18 +179,18 @@ public:
     }
     std::string Intention_display() {
         if (tag == 0) {
-            num = "6";
+            attack_value = "6";
             return "attack.png";
         }
         else if(tag==1) {
-            num = "5*2";
+            attack_value = "5*2";
             return "attack.png";
         }
         else if (tag == 2) {
             return "defendBuff.png";
         }
         else if (tag == 3) {
-            num = "2*6";
+            attack_value = "2*6";
             return "attack.png";
         }
     }

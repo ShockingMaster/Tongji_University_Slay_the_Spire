@@ -30,9 +30,10 @@ public:
 
 	cocos2d::Vec2 position;
 	cocos2d::Rect area;  // 定义一个矩形区域用于判断
+
 	int type_;
 	int tag = 0; //怪物行动tag
 	int round_num = 1;
-	string num;
+	string attack_value;
 
 };

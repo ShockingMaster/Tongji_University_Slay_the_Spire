@@ -412,6 +412,14 @@ void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
     hand.erase(std::remove(hand.begin(), hand.end(), card), hand.end());
 }
 
+
+void CombatSystem::endturn_cardPlayed() {
+	std::vector<std::shared_ptr<Card>> Hand = hand;
+	for (auto& card : Hand) {
+		card->takeeffectonturnend(card);
+	}
+}
+
 /*
 * 函数名称：upgradeCard
 * 参数：需要升级的卡牌的指针
@@ -666,6 +674,7 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 */
 void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value)
 {
+
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
 }

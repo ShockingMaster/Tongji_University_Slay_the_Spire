@@ -48,19 +48,19 @@ void CombatScene::checkScene() {
 }
 
 // 在类的定义中添加一个成员变量来存储当前显示的怪物图标
-std::vector<cocos2d::Sprite*> combatSprites;
-std::vector<cocos2d::Label*> combatSprites_num;
+std::vector<cocos2d::Sprite*> intent;
+std::vector<cocos2d::Label*> attack_value_list;
 
 void CombatScene::intent_change(const cocos2d::Size screenSize) {
     // 1. 删除之前显示的所有图标
-    for (auto sprite : combatSprites) {
+    for (auto sprite : intent) {
         sprite->removeFromParent();  // 从场景中移除
     }
-    combatSprites.clear();  // 清空容器
-    for (auto sprite : combatSprites_num) {
+    intent.clear();  // 清空容器
+    for (auto sprite : attack_value_list) {
         sprite->removeFromParent();  // 从场景中移除
     }
-    combatSprites_num.clear();  // 清空容器
+    attack_value_list.clear();  // 清空容器
 
     // 2. 添加新的怪物图标
     auto combat = CombatSystem::getInstance();
@@ -81,14 +81,14 @@ void CombatScene::intent_change(const cocos2d::Size screenSize) {
 
         auto sprite = cocos2d::Sprite::create(png_path);
         if (png_path=="attack.png") {
-            string num = monster->num;
-            auto label = cocos2d::Label::createWithSystemFont(num, "Arial", 24);
+            string attack_value = monster->attack_value;
+            auto label = cocos2d::Label::createWithSystemFont(attack_value, "Arial", 24);
             if (label) {
                 // 设置Label的位置，放置在sprite右边
                 label->setPosition(cocos2d::Vec2(spriteX + 0.02 * screenSize.width, spriteY));
                 // 将Label添加到场景中
                 this->addChild(label, 102);  // 设置层级为102，确保在sprite上方
-                combatSprites_num.push_back(label);
+                attack_value_list.push_back(label);
             }
         }
         if (sprite) {
@@ -96,7 +96,7 @@ void CombatScene::intent_change(const cocos2d::Size screenSize) {
             sprite->setPosition(cocos2d::Vec2(spriteX, spriteY));
             this->addChild(sprite, 101);  // 将Sprite添加到场景中，确保在DrawNode之上
             // 将新添加的Sprite保存到容器中
-            combatSprites.push_back(sprite);
+            intent.push_back(sprite);
         }
     }
 }
@@ -195,9 +195,7 @@ bool CombatScene::init()
             if(isMyTurn)
             {
                 CCLOG("End Turn clicked!");  // 打印日志
-                for (auto& card : CombatSystem::getInstance()->hand) {
-                    card->takeeffectonturnend(card);
-                }
+                CombatSystem::getInstance()->endturn_cardPlayed();
                 CombatSystem::getInstance()->endTurn(Player::getInstance());//执行玩家回合结束效果
                 //测试
                 
