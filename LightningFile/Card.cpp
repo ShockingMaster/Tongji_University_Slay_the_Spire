@@ -89,10 +89,10 @@ public:
         }
         if (tag == 0) {
             
-            Scene* selectScene = SelectScene::create();
-            HandPileLayer::getInstance()->card_num_select_target = 1;
+            //Scene* selectScene = SelectScene::create();
+            //HandPileLayer::getInstance()->card_num_select_target = 1;
 
-            cocos2d::Director::getInstance()->pushScene(selectScene);  
+            //cocos2d::Director::getInstance()->pushScene(selectScene);  
 
         }
         if (tag == 1) {

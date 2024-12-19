@@ -2,7 +2,7 @@
 
 CombatSystem* CombatSystem::instance_ = nullptr;
 
-//返回CombatSytem的唯一实例
+// 返回CombatSytem的唯一实例
 CombatSystem* CombatSystem::getInstance()
 {
 	if (instance_ == nullptr)
@@ -47,7 +47,7 @@ void CombatSystem::init()
 
 	// 清空怪物列表,随机生成怪物
 	Monsters_.clear();
-	int numMonsters = 2;
+	int numMonsters = 3;
 	for (int i = 0; i < numMonsters; i++)
 	{
 		Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster());
@@ -61,7 +61,8 @@ void CombatSystem::init()
  * 参数：攻击者指针，被攻击者指针，攻击原数值，卡牌名称（为了判断卡牌是否为特殊类型）
  * 功能：完成攻击者的攻击相关的buff结算，触发攻击类buff并改写攻击数值
  */
-void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Creature> target, int numeric_value_, std::string cardName)
+void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Creature> target, 
+	int& numeric_value_, std::string cardName, bool isForIntentionUpdate)
 {
 	//首先遍历使用者的buff列表，触发所有buff的onAttack效果
 	for (auto Buff : user->buffs_)
@@ -103,10 +104,16 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
 	//防止被减至负数
 	numeric_value_ = max(numeric_value_, 0);
 
-	takeDamage(target, numeric_value_);
+	if (!isForIntentionUpdate)
+	{
+		takeDamage(target, numeric_value_);
+	}
 
+	// 此处不能进行更新，会出现循环调用
+	/*
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
+	*/
 }
 
 /*
@@ -170,90 +177,6 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 			{
 				if (Relic != nullptr)
 					Relic-> onLoseHealth(healthLoss);
-			}
-		}
-		target->loseHealth(healthLoss);
-	}
-
-	// 3.目标的格挡为0，此时事件为生命值减少
-	else
-	{
-		int healthLoss = numeric_value_ - target->getBlockValue();
-		for (auto Buff : target->buffs_)
-		{
-			if (Buff != nullptr)
-				Buff->onLoseHealth(healthLoss);
-		}
-		if (target == Player::getInstance())
-		{
-			for (auto Relic : EventSystem::getInstance()->relics_)
-			{
-				if (Relic != nullptr)
-					Relic->onLoseHealth(healthLoss);
-			}
-		}
-		target->loseHealth(healthLoss);
-	}
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
-}
-
-void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_value_)
-{
-	if (target == nullptr)
-	{
-		CCLOG("TakeDamage传入目标为空！");
-		return;
-	}
-	// 共有三种情况：
-	// 1.目标的格挡大于等于伤害总量，此时不能击穿敌方护甲,此时事件为护甲减少
-	if (numeric_value_ <= target->getBlockValue())
-	{
-		for (auto Buff : target->buffs_)
-		{
-			if (Buff != nullptr)
-				Buff->onLoseBlock(numeric_value_);
-		}
-		if (target == Player::getInstance())
-		{
-			for (auto Relic : EventSystem::getInstance()->relics_)
-			{
-				if (Relic != nullptr)
-					Relic->onLoseBlock(numeric_value_);
-			}
-		}
-		target->loseBlock(numeric_value_);
-	}
-
-	// 2.目标的格挡不为0，但小于伤害值，此时击穿护甲，造成伤害，此时事件为护甲减少，生命值减少
-	else if (target->getBlockValue() > 0)
-	{
-		for (auto Buff : target->buffs_)
-		{
-			if (Buff != nullptr)
-				Buff->onLoseBlock(numeric_value_);
-		}
-		if (target == Player::getInstance())
-		{
-			for (auto Relic : EventSystem::getInstance()->relics_)
-			{
-				if (Relic != nullptr)
-					Relic->onLoseBlock(numeric_value_);
-			}
-		}
-		int healthLoss = numeric_value_ - target->getBlockValue();
-		target->loseBlock(target->getBlockValue());
-		for (auto Buff : target->buffs_)
-		{
-			if (Buff != nullptr)
-				Buff->onLoseHealth(healthLoss);
-		}
-		if (target == Player::getInstance())
-		{
-			for (auto Relic : EventSystem::getInstance()->relics_)
-			{
-				if (Relic != nullptr)
-					Relic->onLoseHealth(healthLoss);
 			}
 		}
 		target->loseHealth(healthLoss);
@@ -413,7 +336,7 @@ void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
 }
 
 
-void CombatSystem::endturnCardPlayed() {
+void CombatSystem::endTurnCardPlayed() {
 	std::vector<std::shared_ptr<Card>> Hand = hand;
 	for (auto& card : Hand) {
 		card->takeeffectonturnend(card);
@@ -542,7 +465,7 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 {
 	
-	temCard = card;
+	tem_card = card;
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
 		if (Buff != nullptr)
@@ -573,7 +496,7 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 	scene->creatureLayer->updateDisplay();
 }
 
-void CombatSystem::temCardPlayed(std::shared_ptr<Card> card)
+void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
 {
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
@@ -592,9 +515,25 @@ void CombatSystem::temCardPlayed(std::shared_ptr<Card> card)
 	card->takeEffect();
 }
 
-void CombatSystem::useTemCard() {
-	temCard->tag = 1;
-	temCardPlayed(temCard);
+std::shared_ptr<Creature> CombatSystem::getMonsterPointer(Creature* creature)
+{
+	if (creature == nullptr)
+	{
+		return nullptr;
+	}
+	for (int i = 0;i < Monsters_.size();i++)
+	{
+		if (Monsters_[i].get() == creature)
+		{
+			return Monsters_[i];
+		}
+	}
+	return nullptr;
+}
+
+void CombatSystem::use_tem_card() {
+	tem_card->tag = 1;
+	tem_cardPlayed(tem_card);
 
 }
 

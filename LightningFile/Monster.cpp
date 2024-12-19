@@ -12,7 +12,7 @@ void Monster::endTurn()
 
 }
 
-std::string Monster::IntentionDisplay() {
+std::string Monster::intentionDisplay() {
     return "";
 }
 
@@ -83,7 +83,7 @@ public:
             }
         }
     }
-    std::string IntentionDisplay() {
+    std::string Intention_display() {
         if (tag == 0) {
             attack_value="9";
             return "attack.png";
@@ -117,7 +117,7 @@ public:
             tag = 0;
         }
     }
-    std::string IntentionDisplay() {
+    std::string Intention_display() {
         if (tag == 0) {
             attack_value = "9";
             return "attack.png";
@@ -137,29 +137,32 @@ class Six_Fire_Souls : public Monster
 public:
     Six_Fire_Souls() : Monster(NORMAL, 250) {}
     void takeEffect() {
-        
+        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {
-            CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
-                6, "Attack");
+            int basic_attack_value = 6;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                basic_attack_value, "");
             //塞入一张灼热
             round_num++;
         }
         else if (tag == 1) {
-            CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
-               5, "Attack");
-            CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
-                5, "Attack");
+            int basic_attack_value = 6;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                basic_attack_value, "");
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                basic_attack_value, "");
             round_num++;
         }
         else if (tag == 2) {
-            CombatSystem::getInstance()->Addblock(std::make_shared<Six_Fire_Souls>(), 12);
+            CombatSystem::getInstance()->Addblock(thisMonster, 12);
             //获得力量Buff
             round_num++;
         }
         else if (tag == 3) {
             for (int i = 0; i < 6; i++) {
+                int basic_attack_value = Player::getInstance()->getHealth() / 12 + 1;
                 CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
-                    2, "Attack");
+                    basic_attack_value, "");
             }
             //塞入三张灼热
             round_num++;
@@ -177,21 +180,41 @@ public:
             tag = 3;
         }
     }
-    std::string IntentionDisplay() {
-        if (tag == 0) {
-            attack_value = "6";
+    std::string intentionDisplay() 
+    {
+        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
+        // 在修改意图的时候计算造成的伤害数值和段数
+        if (tag == 0) 
+        {
+            attack_numeric_value = 6;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                attack_numeric_value, "", true);
+            attack_times = 1;
             return "attack.png";
         }
-        else if(tag==1) {
-            attack_value = "5*2";
+        else if(tag == 1) 
+        {
+            attack_numeric_value = 6;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                attack_numeric_value, "", true);
+            attack_times = 2;
             return "attack.png";
         }
-        else if (tag == 2) {
+        else if (tag == 2) 
+        {
             return "defendBuff.png";
         }
-        else if (tag == 3) {
-            attack_value = "2*6";
+        else if (tag == 3) 
+        {
+            attack_numeric_value = Player::getInstance()->getHealth() / 12 + 1;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                attack_numeric_value, "", true);
+            attack_times = 6;
             return "attack.png";
+        }
+        else
+        {
+            return "";
         }
     }
 };

@@ -90,7 +90,7 @@ bool SelectScene::init()
             CombatSystem::getInstance()->exhaustCard();
             HandPileLayer::getInstance()->exhaustCard();
             HandPileLayer::getInstance()->select_card_list.clear();
-            CombatSystem::getInstance()->useTemCard();
+            CombatSystem::getInstance()->use_tem_card();
             auto delay = DelayTime::create(0.3f); 
             auto popSceneAction = CallFunc::create([=]() {
                 Director::getInstance()->popScene();  
