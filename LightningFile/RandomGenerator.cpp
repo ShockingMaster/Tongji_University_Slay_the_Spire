@@ -88,7 +88,7 @@ std::shared_ptr<Card> RandomGenerator::getRandomCard(int type, int rarity)
 		auto card = CardRegistry::createCard(randomCardName);
 
 		//如果满足要求则进行返回
-		if ((type == ALL || type == card->getType()) && (rarity == ALL || rarity == card->getRarity()) && type != STATUS)
+		if ((type == ALL || type == card->getType()) && (rarity == ALL || rarity == card->getRarity()) && card->getType() != STATUS)
 		{
 			return card;
 		}
