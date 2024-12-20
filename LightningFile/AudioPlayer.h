@@ -9,7 +9,19 @@ extern int backgroundMusicId;
 extern int soundEffectId;
 extern float backgroundVolumn;
 extern float soundEffectVolumn;
+inline void audioPlayer(const std::string& audioPath, bool isLoop)
+{
 
-void audioPlayer(const string& audioPath, bool isLoop);
+    if (isLoop) {
+        cocos2d::experimental::AudioEngine::stop(backgroundMusicId);
+        backgroundMusicId = cocos2d::experimental::AudioEngine::play2d(audioPath, isLoop, backgroundVolumn);
+        cocos2d::experimental::AudioEngine::setVolume(backgroundMusicId, backgroundVolumn);
+    }
+    else {
+        soundEffectId = cocos2d::experimental::AudioEngine::play2d(audioPath, isLoop, soundEffectVolumn);
+        cocos2d::experimental::AudioEngine::setVolume(soundEffectId, soundEffectVolumn);
+    }
+}
+
 
 #endif

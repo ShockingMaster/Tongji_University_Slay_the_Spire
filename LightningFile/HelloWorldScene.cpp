@@ -22,7 +22,6 @@
  THE SOFTWARE.
  ****************************************************************************/
 
-#include "IncludeAll.h"
 #include "HelloWorldScene.h"
 #include "MapScene.h"
 #include "SimpleAudioEngine.h"

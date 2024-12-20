@@ -113,8 +113,8 @@ class sentinel : public Monster
 public:
     sentinel() : Monster(NORMAL, 38) {}
     void takeEffect() {
-        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {
+            std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
             int basic_attack_value = 9;
             CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
                 basic_attack_value, "");
@@ -127,6 +127,7 @@ public:
             tag = 0;
         }
     }
+
     std::string intentionDisplay() {
         std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {
@@ -174,9 +175,9 @@ public:
         }
         else if (tag == 3) {
             for (int i = 0; i < 6; i++) {
-                int attackValue = Player::getInstance()->getHealth() / 12 + 1;
-                CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
-                    attackValue, "");
+                int basic_attack_value = Player::getInstance()->getHealth() / 12 + 1;
+                CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
+                    basic_attack_value, "");
             }
             //塞入三张灼热
             round_num++;

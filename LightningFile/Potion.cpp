@@ -4,18 +4,7 @@
 void Potion::take_effect() {}; 
 
 
-// 火焰药水
-class FlamePotion : public Potion {
-public:
-    FlamePotion()
-        : Potion("FlamePotion", "Deals fire damage to a target", 20, 50, 3, true) {}
 
-    void take_effect() override {
-        
-    }
-
-};
-AUTO_REGISTER_POTION(FlamePotion);
 
 // 鲜血药水：回复目标最大生命值的 20%
 class BloodPotion : public Potion {

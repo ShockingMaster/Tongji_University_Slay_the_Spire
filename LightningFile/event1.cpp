@@ -60,8 +60,10 @@ bool event1::init() {
         }
         else {
             player->changeCoins(-85);
-            headbar->updateHeader(player);
+            auto randomRelic = RandomGenerator::getInstance()->getRandomRelic();
             audioPlayer("gold.ogg", false);
+            EventSystem::getInstance()->relics_.push_back(randomRelic);
+            headbar->updateHeader(EventSystem::getInstance());
             //获得遗物逻辑待更新
             auto delay = DelayTime::create(2.0f); // 创建一个2秒的延迟动作
             auto pop = CallFunc::create([]() {

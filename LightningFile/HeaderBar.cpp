@@ -169,26 +169,26 @@ bool HeaderBar::init(EventSystem* eventSystem) {
     relicIcons->setPosition(Vec2(200, 50));
     backgroundBar->addChild(relicIcons);
     
-    auto descriptionLabel = cocos2d::Label::createWithSystemFont("", "Arial", 20); // 创建描述标签
-    descriptionLabel->setPosition(cocos2d::Vec2(400, 50)); // 设置标签显示的位置
-    descriptionLabel->setColor(cocos2d::Color3B::WHITE); // 设置字体颜色
+    auto descriptionLabel = cocos2d::Label::createWithSystemFont("", "Arial", 80); // 创建描述标签
+    descriptionLabel->setPosition(cocos2d::Vec2(400, 250)); // 设置标签显示的位置
+    descriptionLabel->setColor(cocos2d::Color3B::YELLOW); // 设置字体颜色
     descriptionLabel->setVisible(false); // 初始时隐藏
-    this->addChild(descriptionLabel); // 添加到场景中
+    backgroundBar->addChild(descriptionLabel); // 添加到场景中
 
     int i = 0;
     for (auto relic : relics) {
         // 创建一个按钮的精灵，使用MenuItemImage代替Sprite
         cocos2d::MenuItemImage* relicMenuItem = cocos2d::MenuItemImage::create(
-            relic->name_ + ".png", relic->name_ + ".png");
+           relic->name_ + ".png", relic->name_ + ".png");
 
         // 设置药水菜单项的缩放和位置
-        relicMenuItem->setScale(1.0f);
-        relicMenuItem->setPosition(cocos2d::Vec2(30 + 80 * i, 30));
+        relicMenuItem->setScale(0.5f);
+        relicMenuItem->setPosition(cocos2d::Vec2(-50+70 * i, -30));
 
         // 创建一个菜单，并将MenuItem添加到菜单中
         auto menu = cocos2d::Menu::create(relicMenuItem, nullptr);
         menu->setPosition(cocos2d::Vec2::ZERO); // Menu本身的位置不影响Item的位置
-        potionIcons->addChild(menu); // 将菜单添加到场景
+        relicIcons->addChild(menu); // 将菜单添加到场景
         relicMenuItem->setUserData((void*)relic.get()); // 存储指针到用户数据
         i++;
 
@@ -196,7 +196,7 @@ bool HeaderBar::init(EventSystem* eventSystem) {
         auto mouseListener = cocos2d::EventListenerMouse::create();
 
         // 鼠标移动事件
-        mouseListener->onMouseMove = [relicMenuItem, relic, descriptionLabel](cocos2d::EventMouse* event) {
+        mouseListener->onMouseMove= [relicMenuItem, relic, descriptionLabel](cocos2d::EventMouse* event) {
             auto mousePos = event->getLocationInView();
             auto itemBox = relicMenuItem->getBoundingBox(); // 获取按钮的边界框
 
@@ -204,6 +204,7 @@ bool HeaderBar::init(EventSystem* eventSystem) {
             if (itemBox.containsPoint(mousePos)) {
                 descriptionLabel->setString(relic->description_); // 设置标签文本
                 descriptionLabel->setVisible(true); // 显示描述标签
+                
             }
             else {
                 descriptionLabel->setVisible(false); // 鼠标离开时隐藏
@@ -310,49 +311,57 @@ void HeaderBar::updateHeader(EventSystem* player) {
     relicIcons = Node::create();
     relicIcons->setPosition(Vec2(230, 50));
     this->addChild(relicIcons);
-    int i = 0;
-    auto descriptionLabel = cocos2d::Label::createWithSystemFont("", "Arial", 20); // 创建描述标签
-    descriptionLabel->setPosition(cocos2d::Vec2(400, 50)); // 设置标签显示的位置
-    descriptionLabel->setColor(cocos2d::Color3B::WHITE); // 设置字体颜色
-    descriptionLabel->setVisible(false); // 初始时隐藏
-    this->addChild(descriptionLabel); // 添加到场景中
-    for (auto relic : relics) {
-        // 创建一个按钮的精灵，使用MenuItemImage代替Sprite
-        cocos2d::MenuItemImage* relicMenuItem = cocos2d::MenuItemImage::create(
-            relic->name_ + ".png", relic->name_ + ".png");
 
-        // 设置药水菜单项的缩放和位置
-        relicMenuItem->setScale(1.0f);
-        relicMenuItem->setPosition(cocos2d::Vec2(30 + 80 * i, 30));
+  auto descriptionLabel = cocos2d::Label::createWithSystemFont("", "Arial", 80); // 创建描述标签
+descriptionLabel->setColor(cocos2d::Color3B::YELLOW); // 设置字体颜色
+descriptionLabel->setVisible(false); // 初始时隐藏
+this->addChild(descriptionLabel); // 添加到场景中
 
-        // 创建一个菜单，并将MenuItem添加到菜单中
-        auto menu = cocos2d::Menu::create(relicMenuItem, nullptr);
-        menu->setPosition(cocos2d::Vec2::ZERO); // Menu本身的位置不影响Item的位置
-        potionIcons->addChild(menu); // 将菜单添加到场景
-        relicMenuItem->setUserData((void*)relic.get()); // 存储指针到用户数据
-        i++;
+int i = 0;
+for (auto relic : relics) {
+    // 创建一个按钮的精灵，使用MenuItemImage代替Sprite
+    cocos2d::MenuItemImage* relicMenuItem = cocos2d::MenuItemImage::create(
+        relic->name_ + ".png", relic->name_ + ".png");
 
-        // 添加鼠标事件监听器
-        auto mouseListener = cocos2d::EventListenerMouse::create();
+    // 设置药水菜单项的缩放和位置
+    relicMenuItem->setScale(0.5f);
+    relicMenuItem->setPosition(cocos2d::Vec2(-95 + 70 * i, 25));
 
-        // 鼠标移动事件
-        mouseListener->onMouseMove = [relicMenuItem, relic, descriptionLabel](cocos2d::EventMouse* event) {
-            auto mousePos = event->getLocationInView();
-            auto itemBox = relicMenuItem->getBoundingBox(); // 获取按钮的边界框
+    // 创建一个菜单，并将MenuItem添加到菜单中
+    auto menu = cocos2d::Menu::create(relicMenuItem, nullptr);
+    menu->setPosition(cocos2d::Vec2::ZERO); // Menu本身的位置不影响Item的位置
+    relicIcons->addChild(menu); // 将菜单添加到场景
+    relicMenuItem->setUserData((void*)relic.get()); // 存储指针到用户数据
+    i++;
 
-            // 检查鼠标是否悬停在按钮上
-            if (itemBox.containsPoint(mousePos)) {
-                descriptionLabel->setString(relic->description_); // 设置标签文本
-                descriptionLabel->setVisible(true); // 显示描述标签
-            }
-            else {
-                descriptionLabel->setVisible(false); // 鼠标离开时隐藏
-            }
-            };
+    // 添加鼠标事件监听器
+    auto mouseListener = cocos2d::EventListenerMouse::create();
 
-        // 注册事件监听器到事件调度器
-        cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(mouseListener, relicMenuItem);
-    }
+    // 鼠标移动事件
+    mouseListener->onMouseMove = [relicMenuItem, relic, descriptionLabel](cocos2d::EventMouse* event) {
+        auto mousePos = event->getLocationInView();
+        auto itemBox = relicMenuItem->getBoundingBox(); // 获取按钮的边界框
+
+        // 检查鼠标是否悬停在按钮上
+        if (itemBox.containsPoint(mousePos)) {
+            descriptionLabel->setString(relic->description_); // 设置标签文本
+            descriptionLabel->setVisible(true); // 显示描述标签
+
+            // 设置描述标签的位置为按钮的下方
+            float labelX = relicMenuItem->getPosition().x;
+            float labelY = relicMenuItem->getPosition().y - relicMenuItem->getContentSize().height * relicMenuItem->getScale() - 10; // 调整垂直间距
+            descriptionLabel->setPosition(cocos2d::Vec2(labelX, labelY)); // 更新标签位置
+        }
+        else {
+            descriptionLabel->setVisible(false); // 鼠标离开时隐藏
+        }
+    };
+
+    // 注册事件监听器到事件调度器
+    cocos2d::Director::getInstance()->getEventDispatcher()->addEventListenerWithSceneGraphPriority(mouseListener, relicMenuItem);
+}
+
+    
 
 
 }
