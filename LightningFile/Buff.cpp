@@ -47,7 +47,7 @@ class Thorns :public Buff
 //人工制品，效果为当被叠加debuff的时候，消耗一层并抵消
 class ArtificialProducts :public Buff
 {
-    void addBuffed(std::shared_ptr<Buff> buff, int &numeric_value, std::shared_ptr<Creature> target)
+    void addBuff(std::shared_ptr<Buff> buff, int &numeric_value)
     {
         //负面buff才会执行
         if (buff->is_positive_ == false) {
@@ -57,6 +57,7 @@ class ArtificialProducts :public Buff
             }
             else {
                 numeric_value_ -= numeric_value;           //人工制品层数减少
+                numeric_value = 0;                         //debuff层数归零
             }
         }
     }

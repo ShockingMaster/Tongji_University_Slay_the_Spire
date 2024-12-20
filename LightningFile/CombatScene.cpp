@@ -191,6 +191,7 @@ bool CombatScene::init()
             CCLOG("End Battle button clicked!");  // 打印日志
             CombatSystem::getInstance()->endTurn(Player::getInstance());
             // 结束战斗，弹出当前场景并返回上一个场景
+            isMyTurn = 0;
             Director::getInstance()->popScene();
         }
         });

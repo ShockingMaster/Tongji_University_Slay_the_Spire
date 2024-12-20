@@ -151,7 +151,10 @@ void CombatSystem::combatEnd()
 	}
 
 	// 直接弹出
+	auto scene = dynamic_cast<CombatScene*>(Director::getInstance()->getRunningScene());
+	scene->isMyTurn = 0;
 	Director::getInstance()->popScene();
+	
 }
 
 /*
@@ -695,9 +698,15 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 * 函数名称：addBuff
 * 参数：增加的Buff种类，
 */
-void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value)
+void CombatSystem::addBuff(std::shared_ptr<Buff> buff,int numeric_value,std::shared_ptr<Creature> target)
 {
-
+	//遍历目标的buff列表，触发所有buff的addBuff效果
+	for (auto Buff : target->buffs_)
+	{
+		if (Buff != nullptr)
+			Buff->addBuff( buff, numeric_value);
+	}
+	//增加buff部分，需补充
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
 }

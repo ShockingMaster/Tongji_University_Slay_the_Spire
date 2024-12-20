@@ -63,7 +63,7 @@ bool SelectScene::init()
 
     // 创建切换场景按钮
     auto switchSceneButton = HoverButton::create("endTurnButton.png", "endTurnButtonGlow.png", "endTurnButton.png");
-    switchSceneButton->setTitleText(u8"切换场景");
+    switchSceneButton->setTitleText(u8"确定");
     switchSceneButton->setScale(1.5f);
     switchSceneButton->setTitleFontSize(20);
     switchSceneButton->setPosition(Vec2(0.906525 * screenSize.width, 0.15625 * screenSize.height)); // 设置按钮位置

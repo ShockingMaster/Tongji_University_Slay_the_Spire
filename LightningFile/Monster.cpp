@@ -41,20 +41,23 @@ cocos2d::Rect Monster::getRect()
     return area;
 }
 
-/*
+
 class Mandibular_worm : public Monster
 {
 public:
     Mandibular_worm() : Monster(NORMAL, 40) {}
     void takeEffect() {
+        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
+        
         std::random_device rd;               // 用于生成随机种子
         std::mt19937 gen(rd());              // 随机数引擎
         std::uniform_real_distribution<> dist(0.0, 1.0); // [0.0, 1.0) 均匀分布
         double randomValue = dist(gen); // 生成随机数
 
         if (tag == 0) {
-            CombatSystem::getInstance()->onAttack(std::make_shared<Mandibular_worm>(), Player::getInstance(),
-                11, "Attack");
+            int basic_attack_value = 9;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                basic_attack_value, "");
             if (randomValue < 0.6) {
                 tag = 1; // 60% 的概率赋值为 1
             }
@@ -72,9 +75,10 @@ public:
             }
         }
         else{
-            CombatSystem::getInstance()->onAttack(std::make_shared<Mandibular_worm>(), Player::getInstance(),
-                7, "Attack");
-            CombatSystem::getInstance()->Addblock(std::make_shared<Mandibular_worm>(),5 );
+            int basic_attack_value = 7;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                basic_attack_value, "");
+            CombatSystem::getInstance()->Addblock(thisMonster,5 );
             if (randomValue < 0.36) {
                 tag = 0; // 36% 的概率赋值为 0
             }
@@ -83,9 +87,13 @@ public:
             }
         }
     }
-    std::string Intention_display() {
+    std::string intentionDisplay() {
+        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {
-            attack_value="9";
+            attack_numeric_value = 9;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                attack_numeric_value, "", true);
+            attack_times = 1;
             return "attack.png";
         }
         else if (tag == 1) {
@@ -98,7 +106,7 @@ public:
 };
 
 AUTO_REGISTER_MONSTER(Mandibular_worm)
-*/
+
 
 class sentinel : public Monster
 {
@@ -107,7 +115,7 @@ public:
     void takeEffect() {
         std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {
-            int basic_attack_value = 6;
+            int basic_attack_value = 9;
             CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
                 basic_attack_value, "");
             tag = 1;
@@ -119,7 +127,7 @@ public:
             tag = 0;
         }
     }
-    std::string Intention_display() {
+    std::string intentionDisplay() {
         std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {
             attack_numeric_value = 9;

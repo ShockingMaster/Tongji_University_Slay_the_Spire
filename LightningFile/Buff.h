@@ -53,6 +53,8 @@ public:
     virtual void onLoseHealth(int& numeric_value_) {};
 
     virtual void onAddHealth(int& numeric_value_) {};
+
+    virtual void addBuff(std::shared_ptr<Buff> buff, int& numeric_value) {};
     
     virtual void getBuff() {};
 

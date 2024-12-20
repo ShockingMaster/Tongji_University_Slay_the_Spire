@@ -55,7 +55,7 @@ public:
 
 	void addEnergy(std::shared_ptr<Creature> user, int numeric_value_);         //增加能量
 
-	void addBuff(std::shared_ptr<Buff> buff, int numeric_value);                //增加Buff
+	void addBuff(std::shared_ptr<Buff> buff, int numeric_value,std::shared_ptr<Creature> target);                //增加Buff
 
 	void addHealth(std::shared_ptr<Creature> target, int numeric_value);       //生命回复
 
