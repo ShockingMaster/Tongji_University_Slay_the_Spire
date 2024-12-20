@@ -16,11 +16,12 @@ void CombatScene::onEnter() {
     // 初始检查
     this->scheduleOnce([this](float dt) {
         checkScene(); // 调用检查函数
-
-        isMyTurn = 1;
-        CombatSystem::getInstance()->combatStart();
-        CombatSystem::getInstance()->startTurn(Player::getInstance());
-        creatureLayer->updateDisplay();
+        if (isMyTurn == 0) {
+            isMyTurn = 1;
+            CombatSystem::getInstance()->combatStart();
+            CombatSystem::getInstance()->startTurn(Player::getInstance());
+            creatureLayer->updateDisplay();
+        }
         }, 0.5f, "CheckSceneAfterDelay");
 
 }
