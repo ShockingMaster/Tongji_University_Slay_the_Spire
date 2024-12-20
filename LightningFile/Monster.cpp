@@ -98,18 +98,16 @@ public:
 };
 
 AUTO_REGISTER_MONSTER(Mandibular_worm)
-*/
+
 
 class sentinel : public Monster
 {
 public:
     sentinel() : Monster(NORMAL, 38) {}
     void takeEffect() {
-        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {
-            int basic_attack_value = 6;
-            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
-                basic_attack_value, "");
+            CombatSystem::getInstance()->onAttack(std::make_shared<sentinel>(), Player::getInstance(),
+                9, "Attack");
             tag = 1;
         }
         else if (tag == 1) {
@@ -120,12 +118,8 @@ public:
         }
     }
     std::string Intention_display() {
-        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {
-            attack_numeric_value = 9;
-            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
-                attack_numeric_value, "", true);
-            attack_times = 1;
+            attack_value = "9";
             return "attack.png";
         }
         else {
@@ -135,7 +129,7 @@ public:
 };
 
 AUTO_REGISTER_MONSTER(sentinel)
-
+*/
 
 
 class Six_Fire_Souls : public Monster
@@ -166,9 +160,9 @@ public:
         }
         else if (tag == 3) {
             for (int i = 0; i < 6; i++) {
-                int attackValue = Player::getInstance()->getHealth() / 12 + 1;
-                CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
-                    attackValue, "");
+                int basic_attack_value = Player::getInstance()->getHealth() / 12 + 1;
+                CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
+                    basic_attack_value, "");
             }
             //塞入三张灼热
             round_num++;

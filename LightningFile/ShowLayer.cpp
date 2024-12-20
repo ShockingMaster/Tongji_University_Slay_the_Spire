@@ -32,7 +32,7 @@ bool ShowLayer::init( int op) {
     auto headbar = HeaderBar::create(EventSystem::getInstance());
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
-    headbar->setLocalZOrder(100);
+    headbar->setLocalZOrder(1000);
     operation = op;
     // 加载背景
     _background = cocos2d::Sprite::create("panel.png");
@@ -174,13 +174,13 @@ bool ShowLayer::init( int op) {
 
 
     if (op == 5) {
-        // 创建返回Label
-        auto background4 = Sprite::create("potion_s_glass.png");
-        background4->setScale(4.0f);
-        background4->setPosition(Vec2(1000, 400));
-        this->addChild(background4, 2000);
+       
         // 生成随机数
         auto randomPotion = RandomGenerator::getInstance()->getRandomPotion();
+        auto background4 = PotionSpriteGenerator::createCardSprite(randomPotion);
+        background4->setScale(3.0f);
+        background4->setPosition(Vec2(1000, 400));
+        this->addChild(background4, 2000);
         auto Label1 = cocos2d::Label::createWithSystemFont(u8"恭喜获得新药水", "Arial", 60);
         Label1->setTextColor(cocos2d::Color4B::WHITE);
         Label1->setPosition(cocos2d::Vec2(1000, 60));  // 设置Label的位置，使其在按钮上方

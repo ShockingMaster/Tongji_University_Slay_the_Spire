@@ -16,12 +16,11 @@ void CombatScene::onEnter() {
     // 初始检查
     this->scheduleOnce([this](float dt) {
         checkScene(); // 调用检查函数
-        if (isMyTurn == 0) {
-            isMyTurn = 1;
-            CombatSystem::getInstance()->combatStart();
-            CombatSystem::getInstance()->startTurn(Player::getInstance());
-            creatureLayer->updateDisplay();
-        }
+
+        isMyTurn = 1;
+        CombatSystem::getInstance()->combatStart();
+        CombatSystem::getInstance()->startTurn(Player::getInstance());
+        creatureLayer->updateDisplay();
         }, 0.5f, "CheckSceneAfterDelay");
 
 }
@@ -79,7 +78,7 @@ bool CombatScene::init()
     auto player = EventSystem::getInstance();
     headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
-    this->addChild(headbar,100);
+    this->addChild(headbar,1);
 
     // 创建并设置背景图像
     auto background = cocos2d::Sprite::create("combatScene.png");

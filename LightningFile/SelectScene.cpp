@@ -13,7 +13,7 @@ SelectScene* SelectScene::getInstance()
 
 bool SelectScene::init()
 {
-    
+
     // 创建并设置背景图像
     auto background = cocos2d::Sprite::create("combatScene.png");
     const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
@@ -75,10 +75,11 @@ bool SelectScene::init()
     // 切换场景按钮事件
     switchSceneButton->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
         if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-            CCLOG("Switch to combatScene clicked!");  // 打印日志
+            CCLOG("Switch Scene clicked!");  // 打印日志
 
             HandPileLayer::getInstance()->card_num_select = 0;
             HandPileLayer::getInstance()->canSwitchScene = false;
+
             // 在此处执行切换场景的操作
             //切回原来卡牌的监听
             auto combatsystem = CombatSystem::getInstance();
@@ -90,16 +91,13 @@ bool SelectScene::init()
             HandPileLayer::getInstance()->exhaustCard();
             HandPileLayer::getInstance()->select_card_list.clear();
             CombatSystem::getInstance()->use_tem_card();
-            auto delay = DelayTime::create(0.4f);
+            auto delay = DelayTime::create(0.3f); 
             auto popSceneAction = CallFunc::create([=]() {
-                HandPileLayer::getInstance()->removeFromParent();
-                combatScene->addChild(HandPileLayer::getInstance());
                 Director::getInstance()->popScene();  
-                //暂时
                 });
             
             this->runAction(Sequence::create(delay, popSceneAction, nullptr));
-
+            
         }
         });
 
@@ -112,7 +110,6 @@ bool SelectScene::init()
     
     //改变原来的卡牌监听
     auto handPileLayer = HandPileLayer::getInstance();
-
     auto combatsystem = CombatSystem::getInstance();
     
     handPileLayer->setSceneType(HandPileLayer::SceneType::SCENE_TYPE_2);
@@ -120,7 +117,6 @@ bool SelectScene::init()
         HandPileLayer::getInstance()->switchToCardHighlight(card);
     }
     HandPileLayer::getInstance()->adjustHandPile();
-
     this->addChild(handPileLayer);
     
     return true;
