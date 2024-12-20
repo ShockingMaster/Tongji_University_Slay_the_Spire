@@ -98,6 +98,7 @@ public:
         // 更新卡牌名称
         Label* nameLabel = dynamic_cast<Label*>(cardSprite->getChildByName("nameLabel")); // 获取现有的 nameLabel
         if (nameLabel) {
+            if(card->getType() != STATUS)
             nameLabel->setColor(Color3B::YELLOW);
             nameLabel->setString(card->getName());
         }

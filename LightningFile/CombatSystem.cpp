@@ -135,10 +135,9 @@ void CombatSystem::combatStart()
 void CombatSystem::combatEnd()
 {
 	// 先触发一次回合结束效果
-	Player::getInstance()->endTurn();
-
-	//
 	auto player = Player::getInstance();
+
+	CombatSystem::getInstance()->endTurn(player);
 	for (auto Buff : player->buffs_)
 	{
 		if (Buff != nullptr)
