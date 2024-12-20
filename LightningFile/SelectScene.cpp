@@ -93,6 +93,8 @@ bool SelectScene::init()
             CombatSystem::getInstance()->use_tem_card();
             auto delay = DelayTime::create(0.3f); 
             auto popSceneAction = CallFunc::create([=]() {
+                HandPileLayer::getInstance()->removeFromParent();
+                combatScene->addChild(HandPileLayer::getInstance());
                 Director::getInstance()->popScene();  
                 });
             
