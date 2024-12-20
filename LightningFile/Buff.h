@@ -28,6 +28,10 @@ public:
     int numeric_value_;                                                //buff的效果层数
     
     virtual void onCardPlayed(std::shared_ptr<Card> card) {};          //在打出一张牌时触发
+
+    virtual void onCombatStart(std::shared_ptr<Creature> creature) {};
+
+    virtual void onCombatEnd(std::shared_ptr<Creature> creaure) {};
     
     virtual void onTurnStart() {};                                     //在回合开始时触发
     

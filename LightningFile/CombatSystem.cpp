@@ -47,7 +47,7 @@ void CombatSystem::init()
 
 	// 清空怪物列表,随机生成怪物
 	Monsters_.clear();
-	int numMonsters = 3;
+	int numMonsters = 2;
 	for (int i = 0; i < numMonsters; i++)
 	{
 		Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster());
@@ -115,6 +115,43 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
 	*/
+}
+
+void CombatSystem::combatStart()
+{
+	auto player = Player::getInstance();
+	for (auto Buff : player->buffs_)
+	{
+		if (Buff != nullptr)
+			Buff->onCombatStart(player);
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+			Relic->onCombatStart();
+	}
+}
+
+void CombatSystem::combatEnd()
+{
+	// 先触发一次回合结束效果
+	Player::getInstance()->endTurn();
+
+	//
+	auto player = Player::getInstance();
+	for (auto Buff : player->buffs_)
+	{
+		if (Buff != nullptr)
+			Buff->onCombatEnd(player);
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+			Relic->onCombatEnd();
+	}
+
+	// 直接弹出
+	Director::getInstance()->popScene();
 }
 
 /*
@@ -205,6 +242,11 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 		audioPlayer("FastAttackSound.ogg", false);
 		target->loseHealth(healthLoss);
 	}
+	if (target->getHealth() < 0)
+	{
+		CombatSystem::getInstance()->onDeath(target);
+	}
+
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
 }
@@ -504,6 +546,35 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 	scene->creatureLayer->updateDisplay();
 }
 
+void CombatSystem::onDeath(std::shared_ptr<Creature> creature)
+{
+	if (creature == Player::getInstance())
+	{
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			Relic->onDeath();
+		}
+		if (Player::getInstance()->getHealth() < 0)
+		{
+			// 游戏失败！
+		}
+	}
+	// 对于怪物而言,检测当前怪物是否全部死亡
+	else
+	{
+		int is_all_monster_dead = 1;
+		for (int i = 0;i < Monsters_.size();i++)
+		{
+			if (Monsters_[i]->getHealth() > 0)
+				is_all_monster_dead = 0;
+		}
+		if (is_all_monster_dead)
+		{
+			CombatSystem::combatEnd();
+		}
+	}
+}
+
 void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
 {
 	for (auto Buff : Player::getInstance()->buffs_)
@@ -523,6 +594,11 @@ void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
 	card->takeEffect();
 }
 
+/*
+* 函数名称：getMonsterPointer
+* 参数：怪物裸指针
+* 参数：返回该指针在CombatSystem中的智能指针
+*/
 std::shared_ptr<Creature> CombatSystem::getMonsterPointer(Creature* creature)
 {
 	if (creature == nullptr)
