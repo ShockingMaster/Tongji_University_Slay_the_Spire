@@ -89,10 +89,10 @@ public:
         }
         if (tag == 0) {
             
-            Scene* selectScene = SelectScene::create();
-            HandPileLayer::getInstance()->card_num_select_target = 1;
+            //Scene* selectScene = SelectScene::create();
+            //HandPileLayer::getInstance()->card_num_select_target = 1;
 
-            cocos2d::Director::getInstance()->pushScene(selectScene);  
+            //cocos2d::Director::getInstance()->pushScene(selectScene);  
 
         }
         if (tag == 1) {
@@ -149,3 +149,36 @@ public:
     }
 };
 AUTO_REGISTER_CARD(Apotheosis)
+
+
+/*
+* 卡牌名称：眩晕
+* 效果：不能被打出，虚无
+*/
+class dazed :public Card
+{
+public:
+    dazed() : Card("dazed", "Cannot be hit",
+        0, 0, STATUS, FALSE, STATUS, NO, NO, NO) {};
+    void takeeffectonturnend(std::shared_ptr<Card> card) {
+        CCLOG("discard dazed");
+        CombatSystem::getInstance()->exhaustCard(card);
+    }
+};
+AUTO_REGISTER_CARD(dazed)
+
+
+/*
+* 卡牌名称：灼烧
+* 效果：不能被打出，回合结束造成两点伤害
+*/
+class burn :public Card
+{
+public:
+    burn() : Card("burn", "Cannot be hit, causing two points of damage at the end of the turn",
+        0, 0, STATUS, FALSE, STATUS, NO, NO, NO) {};
+    void takeeffectonturnend(std::shared_ptr<Card> card) {
+        CombatSystem::getInstance()->takeDamage(Player::getInstance(), 2);
+    }
+};
+AUTO_REGISTER_CARD(burn)

@@ -22,6 +22,7 @@
 #include "EventSystem.h"
 #include "HeaderBar.h"
 #include "CreatureLayer.h"
+#include "AudioPlayer.h"
 #include "Monster.h"
 
 using namespace std;

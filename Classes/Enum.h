@@ -26,6 +26,7 @@ enum CardRarity
     COMMON,
     UNCOMMON,
     RARE,
+    STATUS,
     ALL
 };
 enum CardType

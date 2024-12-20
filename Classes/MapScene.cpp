@@ -38,13 +38,17 @@ Scene* MapScene::createScene() {
 void MapScene::onEnter() {
     Scene::onEnter();
     audioPlayer("menu.ogg", true);
+    static int i = 0;
     CCLOG("onEnter called!");  // 调试输出
-    auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
-    if (headbar) {
-        auto player= EventSystem::getInstance();
-        headbar->updateHeader(player);  // 使用 player 的最新数据更新 headbar
-        headbar->level = currentLevel-1;
+    if (i) {
+        auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
+        if (headbar) {
+            auto player = EventSystem::getInstance();
+            headbar->updateHeader(player);  // 使用 player 的最新数据更新 headbar
+            headbar->level = currentLevel - 1;
+        }
     }
+    i++;
 }
 /**
  * 初始化 MapScene

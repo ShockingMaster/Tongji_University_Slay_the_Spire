@@ -35,7 +35,10 @@ private:
 	cocos2d::Label* playerBlockLabel;
 	cocos2d::Sprite* playerDefend;
 	std::vector<Sprite*> monsterBlock;
+	std::vector<Sprite*> monsterHealthBackground;
 	std::vector<ProgressTimer*> monsterHealth;
 	std::vector<cocos2d::Label*> monsterHealthLabel;
 	std::vector<cocos2d::Label*> monsterBlockLabel;
+	std::vector<cocos2d::Sprite*> intent;
+	std::vector<cocos2d::Label*> attack_value_list;
 };

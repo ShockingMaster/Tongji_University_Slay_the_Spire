@@ -125,6 +125,9 @@ void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> car
         {
             for (int i = 0;i < monsters.size();i++)
             {
+                // 如果怪物已经没有生命值，那么不能选中
+                if (monsters[i]->getHealth() <= 0)
+                    break;
                 shared_ptr<Monster> target = static_pointer_cast<Monster>(monsters[i]);
                 if (target->area.containsPoint(location))
                 {
@@ -238,16 +241,12 @@ void HandPileLayer::enableCardHighlight(Sprite* cardSprite, std::shared_ptr<Card
 }
 
 
-void  HandPileLayer::exhaustCard() {
+void HandPileLayer::exhaustCard() {
     auto combatsystem = CombatSystem::getInstance();
     for (auto& card : select_card_list) {
         combatsystem->hand.erase(std::remove(combatsystem->hand.begin(), combatsystem->hand.end(), card), combatsystem->hand.end());
-
     }
-
 }
-
-
 
 void HandPileLayer::drawCard(std::shared_ptr<Card> card)
 {
@@ -268,7 +267,6 @@ void HandPileLayer::drawCard(std::shared_ptr<Card> card)
     }
     // 对抽牌堆进行更新
     updateDrawPileDisplay();
-
     //adjustHandPile();
 }
 

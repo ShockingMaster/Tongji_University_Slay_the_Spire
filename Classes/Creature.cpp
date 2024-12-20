@@ -19,6 +19,8 @@ void Creature::loseHealth(int numeric_value)
 void Creature::addHealth(int numeric_value)
 {
 	health_ += numeric_value;
+	// 防止超过最大生命值
+	health_ = min(health_, max_health_);
 }
 
 int Creature::getBlockValue() const

@@ -22,7 +22,7 @@ public:
 	void init();                                                                //初始化战斗系统
 
 	void onAttack(std::shared_ptr<Creature> attacker, std::shared_ptr<Creature> target,
-		int numeric_value_, std::string cardName = "");
+		int& numeric_value_, std::string cardName = "", bool isForIntentionUpdate = false);
 
 	void combatStart();                                                         //战斗开始
 
@@ -37,11 +37,15 @@ public:
 
 	void exhaustCard();
 
+	void exhaustCard(std::shared_ptr<Card> card);
+
 	void startTurn(std::shared_ptr<Creature> creature);                        //回合开始效果
 
 	void endTurn(std::shared_ptr<Creature> creature);                          //回合结束效果
 
 	void cardPlayed(std::shared_ptr<Card> card);                               //打出卡牌效果
+
+	void endTurnCardPlayed();                                                 //回合结束卡牌效果
 
 	void cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature);//对于需要目标的卡牌进行重载
 
@@ -52,6 +56,8 @@ public:
 	void addEnergy(std::shared_ptr<Creature> user, int numeric_value_);         //增加能量
 
 	void addBuff(std::shared_ptr<Buff> buff, int numeric_value);                //增加Buff
+
+	void addHealth(std::shared_ptr<Creature> target, int numeric_value);       //生命回复
 
 	void shuffleDeck();                                                         //进行洗牌
 
@@ -69,14 +75,15 @@ public:
 
 	void addToDiscardPile(std::shared_ptr<Card> card, int num = 1);             //将卡牌放入弃牌堆
 
-	template<typename operation_type>
-	void chooseTarget(const int num, operation_type operation);                 //选择目标卡牌，进行升级或消耗或丢弃的操作
+	void onDeath(std::shared_ptr<Creature> creature);
 
 	int getRoundNumber() const {                                                //返回当前回合数
 		return round_;
 	}
 
 	void tem_cardPlayed(std::shared_ptr<Card> card);
+
+	std::shared_ptr<Creature> getMonsterPointer(Creature* creature);
 
 	~CombatSystem() {};
 

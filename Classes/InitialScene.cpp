@@ -1,11 +1,13 @@
 #include <locale>
 #include <codecvt>
+#include <memory>
 #include "InitialScene.h"
 #include "HoverButton.h"
+#include "relic.h"
 #include "const.h"
 #include "AudioPlayer.h"
 #include "Player.h"
-#include "HelloWorldScene.h"
+#include "potion.h"
 #include "MenuScene.h"
 
 // 白色颜色定义
@@ -125,7 +127,8 @@ bool InitialScene::init()
                 player->coins_ = 100;
                 player->health_ = 50;
                 player->fullHealth_ = 100;
-                player->potions_ = { NULL,NULL };
+                player->relics_ = { RelicRegistry::createRelic("CeramicFish"),RelicRegistry::createRelic("BurningBlood") };
+               
 
                 this->scheduleOnce([](float dt) {
                     // 跳转到下一个场景

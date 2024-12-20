@@ -1,8 +1,8 @@
 #include "IncludeAll.h"
-
+#include "RewardLayer.h"
 CombatSystem* CombatSystem::instance_ = nullptr;
 
-//返回CombatSytem的唯一实例
+// 返回CombatSytem的唯一实例
 CombatSystem* CombatSystem::getInstance()
 {
 	if (instance_ == nullptr)
@@ -61,7 +61,8 @@ void CombatSystem::init()
  * 参数：攻击者指针，被攻击者指针，攻击原数值，卡牌名称（为了判断卡牌是否为特殊类型）
  * 功能：完成攻击者的攻击相关的buff结算，触发攻击类buff并改写攻击数值
  */
-void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Creature> target, int numeric_value_, std::string cardName)
+void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Creature> target, 
+	int& numeric_value_, std::string cardName, bool isForIntentionUpdate)
 {
 	//首先遍历使用者的buff列表，触发所有buff的onAttack效果
 	for (auto Buff : user->buffs_)
@@ -87,6 +88,7 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
 				Relic->onAttack(numeric_value_, cardName, user, target);
 			}
 		}
+		audioPlayer("FastAttackSound.ogg", false);
 	}
 
 	if (target == Player::getInstance())
@@ -103,10 +105,72 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
 	//防止被减至负数
 	numeric_value_ = max(numeric_value_, 0);
 
-	takeDamage(target, numeric_value_);
+	if (!isForIntentionUpdate)
+	{
+		takeDamage(target, numeric_value_);
+	}
 
+	// 此处不能进行更新，会出现循环调用
+	/*
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
+	*/
+}
+
+void CombatSystem::combatStart()
+{
+	auto player = Player::getInstance();
+	for (auto Buff : player->buffs_)
+	{
+		if (Buff != nullptr)
+			Buff->onCombatStart(player);
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+			Relic->onCombatStart();
+	}
+}
+
+void CombatSystem::combatEnd()
+{
+	// 先触发一次回合结束效果
+	Player::getInstance()->endTurn();
+
+	//
+	auto player = Player::getInstance();
+	for (auto Buff : player->buffs_)
+	{
+		if (Buff != nullptr)
+			Buff->onCombatEnd(player);
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+			Relic->onCombatEnd();
+	}
+	auto blackLayer = LayerColor::create(Color4B(0, 0, 0, 200));
+	Director::getInstance()->getRunningScene()->addChild(blackLayer,100000);
+
+	// 创建 RewardLayer
+	auto rewardLayer = RewardLayer::create(true, true, false, false, true);
+	blackLayer->addChild(rewardLayer); // 将 RewardLayer 添加到黑色背景层中
+	auto startButton = HoverButton::create(
+		"button1 (1).png",  // 默认图片
+		"button1 (2).png",  // 按钮悬停时的图片
+		"button1 (3).png"   // 按钮点击时的图片
+	);
+
+	// 设置按钮位置
+	startButton->setPosition(Vec2(1800, 500));
+	blackLayer->addChild(startButton);
+
+	// 添加按钮点击事件监听器
+	startButton->addClickEventListener([=](Ref* sender) {
+		// 执行 popScene 操作，返回上一个场景
+		Director::getInstance()->popScene();
+		});
+
 }
 
 /*
@@ -114,7 +178,7 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
  * 参数：被攻击者指针，被攻击的数值，攻击者的指针
  * 功能：触发被攻击类buff并改写被攻击数值
  */
-void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_value_, std::shared_ptr<Creature> attacker)
+void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_value_, std::shared_ptr<Creature> attack)
 {
 	if (target == nullptr)
 	{
@@ -138,6 +202,7 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 					Relic->onLoseBlock(numeric_value_);
 			}
 		}
+		audioPlayer("AttackOnBlockSound.ogg", false);
 		target->loseBlock(numeric_value_);
 	}
 
@@ -172,6 +237,7 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 					Relic-> onLoseHealth(healthLoss);
 			}
 		}
+		audioPlayer("DefenseBreakSound.ogg", false);
 		target->loseHealth(healthLoss);
 	}
 
@@ -192,8 +258,14 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 					Relic->onLoseHealth(healthLoss);
 			}
 		}
+		audioPlayer("FastAttackSound.ogg", false);
 		target->loseHealth(healthLoss);
 	}
+	if (target->getHealth() < 0)
+	{
+		CombatSystem::getInstance()->onDeath(target);
+	}
+
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
 }
@@ -224,6 +296,10 @@ void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_
 	numeric_value_ = max(numeric_value_, 0);
 	target->addBlock(numeric_value_);  //增加护盾
 
+	if (numeric_value_ > 0)
+	{
+		audioPlayer("GetBlockSound.ogg", false);
+	}
 	// 进行更新
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
@@ -300,6 +376,40 @@ void CombatSystem::exhaustCard()
 
 	}
 
+}
+
+
+void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
+{
+	for (auto Buff : Player::getInstance()->buffs_)
+	{
+		if (Buff != nullptr)
+		{
+			Buff->onExhaustCard();
+		}
+	}
+	for (auto Relic : EventSystem::getInstance()->relics_)
+	{
+		if (Relic != nullptr)
+		{
+			Relic->onExhaustCard();
+		}
+	}
+	card->takeEffectOnExhaust();
+
+	HandPileLayer::getInstance()->removeCard(card);
+
+
+	// 消耗相应位置
+    hand.erase(std::remove(hand.begin(), hand.end(), card), hand.end());
+}
+
+
+void CombatSystem::endTurnCardPlayed() {
+	std::vector<std::shared_ptr<Card>> Hand = hand;
+	for (auto& card : Hand) {
+		card->takeeffectonturnend(card);
+	}
 }
 
 /*
@@ -455,6 +565,35 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 	scene->creatureLayer->updateDisplay();
 }
 
+void CombatSystem::onDeath(std::shared_ptr<Creature> creature)
+{
+	if (creature == Player::getInstance())
+	{
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			Relic->onDeath();
+		}
+		if (Player::getInstance()->getHealth() < 0)
+		{
+			// 游戏失败！
+		}
+	}
+	// 对于怪物而言,检测当前怪物是否全部死亡
+	else
+	{
+		int is_all_monster_dead = 1;
+		for (int i = 0;i < Monsters_.size();i++)
+		{
+			if (Monsters_[i]->getHealth() > 0)
+				is_all_monster_dead = 0;
+		}
+		if (is_all_monster_dead)
+		{
+			CombatSystem::combatEnd();
+		}
+	}
+}
+
 void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
 {
 	for (auto Buff : Player::getInstance()->buffs_)
@@ -472,6 +611,27 @@ void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
 		}
 	}
 	card->takeEffect();
+}
+
+/*
+* 函数名称：getMonsterPointer
+* 参数：怪物裸指针
+* 参数：返回该指针在CombatSystem中的智能指针
+*/
+std::shared_ptr<Creature> CombatSystem::getMonsterPointer(Creature* creature)
+{
+	if (creature == nullptr)
+	{
+		return nullptr;
+	}
+	for (int i = 0;i < Monsters_.size();i++)
+	{
+		if (Monsters_[i].get() == creature)
+		{
+			return Monsters_[i];
+		}
+	}
+	return nullptr;
 }
 
 void CombatSystem::use_tem_card() {
@@ -530,7 +690,6 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 	}
 	if (user == Player::getInstance())
 	{
-		Player::getInstance()->energyChange(tempEnergy);
 		for (auto Relic : EventSystem::getInstance()->relics_)
 		{
 			if (Relic != nullptr)
@@ -538,6 +697,7 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 				Relic->onGetEnergy(tempEnergy);
 			}
 		}
+		Player::getInstance()->energyChange(tempEnergy);
 	}
 	// 调用前端能量变化方法,对能量进行更新
 	auto currentScene = Director::getInstance()->getRunningScene();
@@ -556,6 +716,35 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 */
 void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value)
 {
+
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
+}
+
+void CombatSystem::addHealth(std::shared_ptr<Creature> target, int numeric_value)
+{
+	int tempHealthRestore = numeric_value;
+	for (auto Buff : target->buffs_)
+	{
+		if (Buff != nullptr)
+		{
+			Buff->onAddHealth(tempHealthRestore);
+		}
+	}
+	if (target == Player::getInstance())
+	{
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+			{
+				Relic->onAddHealth(tempHealthRestore);
+			}
+		}
+	}
+	// 防止出现负数
+	tempHealthRestore = max(0, tempHealthRestore);
+	target->addHealth(tempHealthRestore);
+
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
 }

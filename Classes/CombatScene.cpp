@@ -1,4 +1,5 @@
 #include "IncludeAll.h"
+#include "string"
 
 
 cocos2d::Scene* CombatScene::createScene()
@@ -15,7 +16,13 @@ void CombatScene::onEnter() {
     // 初始检查
     this->scheduleOnce([this](float dt) {
         checkScene(); // 调用检查函数
+
+        isMyTurn = 1;
+        CombatSystem::getInstance()->combatStart();
+        CombatSystem::getInstance()->startTurn(Player::getInstance());
+        creatureLayer->updateDisplay();
         }, 0.5f, "CheckSceneAfterDelay");
+
 }
 
 void CombatScene::checkScene() {
@@ -71,7 +78,7 @@ bool CombatScene::init()
     auto player = EventSystem::getInstance();
     headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
-    this->addChild(headbar,100);
+    this->addChild(headbar,1);
 
     // 创建并设置背景图像
     auto background = cocos2d::Sprite::create("combatScene.png");
@@ -136,21 +143,24 @@ bool CombatScene::init()
         if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
             if(isMyTurn)
             {
+                isMyTurn = 0;
                 CCLOG("End Turn clicked!");  // 打印日志
+                CombatSystem::getInstance()->endTurnCardPlayed();
                 CombatSystem::getInstance()->endTurn(Player::getInstance());//执行玩家回合结束效果
-                //测试
                 
                 for (int i = 0; i < CombatSystem::getInstance()->Monsters_.size(); i++)
                 {
-                    
                     auto monster = static_pointer_cast<Monster>(CombatSystem::getInstance()->Monsters_[i]);
-
-                    monster->takeEffect();
+                    if (monster->getHealth() > 0)
+                    {
+                        CombatSystem::getInstance()->startTurn(monster);
+                        monster->takeEffect();
+                        CombatSystem::getInstance()->endTurn(monster);
+                    }
                 }
-                
-                
             }
-            isMyTurn = 0;
+            CombatSystem::getInstance()->startTurn(Player::getInstance());
+            isMyTurn = 1;
         }
         });
 
@@ -166,7 +176,6 @@ bool CombatScene::init()
         }
         });
     this->addChild(endTurnButton);
-    this->addChild(startTurnButton);
 
 
     // 在你的场景或 Layer 中创建战斗结束按钮

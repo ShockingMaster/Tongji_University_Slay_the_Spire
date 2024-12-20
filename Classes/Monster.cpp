@@ -12,7 +12,7 @@ void Monster::endTurn()
 
 }
 
-std::string Monster::Intention_display() {
+std::string Monster::intentionDisplay() {
     return "";
 }
 
@@ -42,20 +42,6 @@ cocos2d::Rect Monster::getRect()
 }
 
 /*
-class testMonster : public Monster
-{
-public:
-    testMonster() : Monster(NORMAL, 100) {}
-    void takeEffect() {}
-    std::string Intention_display() {
-        string a = "test";
-        return a;
-    }
-};
-
-AUTO_REGISTER_MONSTER(testMonster)
-*/
-
 class Mandibular_worm : public Monster
 {
 public:
@@ -99,15 +85,137 @@ public:
     }
     std::string Intention_display() {
         if (tag == 0) {
-            return "Mandibular_worm_intention1";
+            attack_value="9";
+            return "attack.png";
         }
         else if (tag == 1) {
-            return "Mandibular_worm_intention2";
+            return "defendBuff.png";
         }
         else {
-            return "Mandibular_worm_intention3";
+            return "attackDefend.png";
         }
     }
 };
 
 AUTO_REGISTER_MONSTER(Mandibular_worm)
+
+
+class sentinel : public Monster
+{
+public:
+    sentinel() : Monster(NORMAL, 38) {}
+    void takeEffect() {
+        if (tag == 0) {
+            CombatSystem::getInstance()->onAttack(std::make_shared<sentinel>(), Player::getInstance(),
+                9, "Attack");
+            tag = 1;
+        }
+        else if (tag == 1) {
+            //玩家手中塞牌
+            //CombatSystem::getInstance()->discardPile.push(CardRegistry::createCard("dazed"));
+            //HandPileLayer::getInstance()->updateDiscardPileDisplay();
+            tag = 0;
+        }
+    }
+    std::string Intention_display() {
+        if (tag == 0) {
+            attack_value = "9";
+            return "attack.png";
+        }
+        else {
+            return "debuff1.png";
+        }
+    }
+};
+
+AUTO_REGISTER_MONSTER(sentinel)
+*/
+
+
+class Six_Fire_Souls : public Monster
+{
+public:
+    Six_Fire_Souls() : Monster(NORMAL, 2) {}
+    void takeEffect() {
+        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
+        if (tag == 0) {
+            int basic_attack_value = 6;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                basic_attack_value, "");
+            //塞入一张灼热
+            round_num++;
+        }
+        else if (tag == 1) {
+            int basic_attack_value = 6;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                basic_attack_value, "");
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                basic_attack_value, "");
+            round_num++;
+        }
+        else if (tag == 2) {
+            CombatSystem::getInstance()->Addblock(thisMonster, 12);
+            //获得力量Buff
+            round_num++;
+        }
+        else if (tag == 3) {
+            for (int i = 0; i < 6; i++) {
+                int basic_attack_value = Player::getInstance()->getHealth() / 12 + 1;
+                CombatSystem::getInstance()->onAttack(std::make_shared<Six_Fire_Souls>(), Player::getInstance(),
+                    basic_attack_value, "");
+            }
+            //塞入三张灼热
+            round_num++;
+        }
+        if (round_num % 7 == 1 || round_num % 7 == 3 || round_num % 7 == 6) {
+            tag = 0;
+        }
+        else if (round_num % 7 == 2 || round_num % 7 == 5) {
+            tag = 1;
+        }
+        else if (round_num % 7 == 4) {
+            tag = 2;
+        }
+        else if (round_num % 7 == 0) {
+            tag = 3;
+        }
+    }
+    std::string intentionDisplay() 
+    {
+        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
+        // 在修改意图的时候计算造成的伤害数值和段数
+        if (tag == 0) 
+        {
+            attack_numeric_value = 6;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                attack_numeric_value, "", true);
+            attack_times = 1;
+            return "attack.png";
+        }
+        else if(tag == 1) 
+        {
+            attack_numeric_value = 6;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                attack_numeric_value, "", true);
+            attack_times = 2;
+            return "attack.png";
+        }
+        else if (tag == 2) 
+        {
+            return "defendBuff.png";
+        }
+        else if (tag == 3) 
+        {
+            attack_numeric_value = Player::getInstance()->getHealth() / 12 + 1;
+            CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
+                attack_numeric_value, "", true);
+            attack_times = 6;
+            return "attack.png";
+        }
+        else
+        {
+            return "";
+        }
+    }
+};
+AUTO_REGISTER_MONSTER(Six_Fire_Souls)

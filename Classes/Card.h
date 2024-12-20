@@ -25,11 +25,12 @@ public:
                                                        对于自身造成效果、对于随机目标造成效果)*/
     virtual void takeEffect(std::shared_ptr<Creature> target) {};    //打出卡牌时触发效果，需要选中敌人
 
+    virtual void takeeffectonturnend(std::shared_ptr<Card> card) {};                           //回合结束后产生效果
+
     virtual void takeEffectOnDiscard() {};                           //被弃置时产生效果
 
     virtual void takeEffectOnExhaust() {};                           //被消耗时产生效果
 
-    virtual void takeEffectOnTurnEnd() {};                           //在回合结束时产生效果 
 
     virtual void upgrade() {};                                       //对卡牌进行升级
     
