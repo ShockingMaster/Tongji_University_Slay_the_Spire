@@ -40,7 +40,7 @@ bool EventSystem::init()
     }
     for (int i = 0; i < 4; i++)
     {
-        auto DefenseCard = CardRegistry::createCard("Defense");
+        auto DefenseCard = CardRegistry::createCard("BurningContract");
         this->addCard(DefenseCard);
     }
     this->addCard(CardRegistry::createCard("Apotheosis"));

@@ -124,6 +124,9 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
 		takeDamage(target, numeric_value_);
 	}
 
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->attackAction(user);
+
 	// 此处不能进行更新，会出现循环调用
 	/*
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());

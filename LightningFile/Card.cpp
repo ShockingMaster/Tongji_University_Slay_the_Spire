@@ -114,29 +114,28 @@ public:
     }
     void takeEffect()
     {
-        //int draw_num = 2;
-        //if (is_upgraded_)
-        //{
-        //    draw_num += 1;
-        //}
-        //if (tag == 0) {
-        //    HandPileLayer::getInstance()->removeFromParent();
-        //    Scene* selectScene = SelectScene::create();
-        //    SelectScene* selectScenePtr = dynamic_cast<SelectScene*>(selectScene);
-        //    auto scene = dynamic_cast<CombatScene*>(Director::getInstance()->getRunningScene());
-        //    selectScenePtr->setCombatScene(scene);
-        //    HandPileLayer::getInstance()->card_num_select_target = 1;
-        //    cocos2d::Director::getInstance()->pushScene(selectScene);
-        //    
-        //    
-
-        //}
-        //if (tag == 1) {
-        //    
-        //    CombatSystem::getInstance()->drawCard(draw_num); 
-        //    HandPileLayer::getInstance()->adjustHandPile();
-        //    tag = 0;
-        //}
+        int draw_num = 2;
+        if (is_upgraded_)
+        {
+            draw_num += 1;
+        }
+        if (tag == 0) {
+            HandPileLayer::getInstance()->removeFromParent();
+            Scene* selectScene = SelectScene::create();
+            SelectScene* selectScenePtr = dynamic_cast<SelectScene*>(selectScene);
+            auto scene = dynamic_cast<CombatScene*>(Director::getInstance()->getRunningScene());
+            selectScenePtr->setCombatScene(scene);
+            HandPileLayer::getInstance()->card_num_select_target = 1;
+            cocos2d::Director::getInstance()->pushScene(selectScene);
+            
+            
+        }
+        if (tag == 1) {
+            
+            CombatSystem::getInstance()->drawCard(draw_num); 
+            HandPileLayer::getInstance()->adjustHandPile();
+            tag = 0;
+        }
     }
 };
 //½øÐÐ¿¨ÅÆ×¢²á
