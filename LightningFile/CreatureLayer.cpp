@@ -159,16 +159,21 @@ void CreatureLayer::attackAction(std::shared_ptr<Creature> creature)
             }
         }
     }
-    float attackDistance = 50.0f; // 移动距离
-    auto moveBy = cocos2d::MoveBy::create(0.2f,
-        creature == Player::getInstance()
-        ? cocos2d::Vec2(attackDistance, 0)
-        : cocos2d::Vec2(-attackDistance, 0));
-    auto moveBack = moveBy->reverse(); // 回到原位置
-    auto attackSequence = cocos2d::Sequence::create(moveBy, moveBack, nullptr);
+    if (sprite)
+    {
+        float attackDistance = 50.0f; // 移动距离
+        auto moveBy = cocos2d::MoveBy::create(0.2f,
+            creature == Player::getInstance()
+            ? cocos2d::Vec2(attackDistance, 0)
+            : cocos2d::Vec2(-attackDistance, 0));
+        auto moveBack = moveBy->reverse(); // 回到原位置
+        auto attackSequence = cocos2d::Sequence::create(moveBy, moveBack, nullptr);
 
-    // 运行动作
-    sprite->runAction(attackSequence);
+        if (!sprite->getActionByTag(100)) { // 检查特定标签的动作是否存在
+            attackSequence->setTag(100);   // 为动作设置标签
+            sprite->runAction(attackSequence);
+        }
+    }
 }
 
 void CreatureLayer::updateDisplay()
