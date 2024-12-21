@@ -58,7 +58,7 @@ void CombatScene::checkScene() {
 bool CombatScene::init() 
 {
     // 先进行战斗系统初始化
-    CombatSystem::getInstance()->init();
+    // CombatSystem::getInstance()->init();
     const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
     auto combat = CombatSystem::getInstance();
     for (int i = 0;i < combat->Monsters_.size();i++)

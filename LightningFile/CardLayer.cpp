@@ -7,8 +7,7 @@
 CardLayer::CardLayer() : _cards({}), _scrollView(nullptr), _background(nullptr) {
 }
 
-CardLayer::~CardLayer() {
-}
+CardLayer::~CardLayer() {}
 
 CardLayer* CardLayer::create(std::vector<std::shared_ptr<Card>> cards,int op) {
     CardLayer* ret = new CardLayer();

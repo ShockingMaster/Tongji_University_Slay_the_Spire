@@ -19,7 +19,7 @@ public:
 	std::queue<std::shared_ptr<Card>> discardPile;                              // 弃牌堆
 	std::shared_ptr<Card> tem_card;
 
-	void init();                                                                //初始化战斗系统
+	void init(int type = -1);                                                                //初始化战斗系统
 
 	void onAttack(std::shared_ptr<Creature> attacker, std::shared_ptr<Creature> target,
 		int& numeric_value_, std::string cardName = "", bool isForIntentionUpdate = false);

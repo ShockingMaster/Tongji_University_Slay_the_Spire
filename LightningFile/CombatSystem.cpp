@@ -17,7 +17,7 @@ CombatSystem* CombatSystem::getInstance()
 * 功能：对战斗系统先进行清空，对角色进行初始化，将抽牌堆，弃牌堆，手牌中的卡牌全部进行清空
 * 随机生成怪物，将卡组中所有的卡牌进行一次复制，放入抽牌堆，调用场景的初始化方法
 */
-void CombatSystem::init()
+void CombatSystem::init(int type)
 {
 	// 对角色进行初始化
 	Player::getInstance()->init();
@@ -61,10 +61,29 @@ void CombatSystem::init()
 
 	// 清空怪物列表,随机生成怪物
 	Monsters_.clear();
-	int numMonsters = 2;
-	for (int i = 0; i < numMonsters; i++)
+	if (type == ELITE)
 	{
-		Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster());
+		int numMonsters = 3;
+		for (int i = 0; i < numMonsters; i++)
+		{
+			Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster(ELITE));
+		}
+	}
+	else if (type == BOSS)
+	{
+		int numMonsters = 1;
+		for (int i = 0; i < numMonsters; i++)
+		{
+			Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster(BOSS));
+		}
+	}
+	else
+	{
+		int numMonsters = 2;
+		for (int i = 0; i < numMonsters; i++)
+		{
+			Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster(NORMAL));
+		}
 	}
 }
 
