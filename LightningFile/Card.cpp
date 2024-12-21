@@ -32,6 +32,38 @@ public:
 //进行卡牌注册
 AUTO_REGISTER_CARD(Attack)
 
+/*
+* 卡牌名称：Attack
+* 效果：对于选中的敌人造成6点伤害
+ */
+class Defense : public Card
+{
+public:
+    Defense() : Card("Defense", "Gain 5 block", 1, 20, COMMON, PLAYABLE, SKILL, NO, NO, NO) {}
+    void upgrade() {
+        is_upgraded_ = 1;
+        name_ += '+';
+        description_ = "Gain 8 block";
+    }
+    void takeEffect()
+    {
+        int temp_block = 5;
+        if (is_upgraded_)
+        {
+            temp_block += 3;
+        }
+        CCLOG("Defense played!");
+        CombatSystem::getInstance()->Addblock(Player::getInstance(), temp_block);
+    }
+};
+//进行卡牌注册
+AUTO_REGISTER_CARD(Defense)
+
+
+/*
+* 卡牌名称：重振精神
+* 效果：消耗当前手牌中所有的非攻击牌，每张获得5点格挡
+*/
 class Second_wind : public Card
 {
 public:
@@ -82,29 +114,29 @@ public:
     }
     void takeEffect()
     {
-        int draw_num = 2;
-        if (is_upgraded_)
-        {
-            draw_num += 1;
-        }
-        if (tag == 0) {
-            HandPileLayer::getInstance()->removeFromParent();
-            Scene* selectScene = SelectScene::create();
-            SelectScene* selectScenePtr = dynamic_cast<SelectScene*>(selectScene);
-            auto scene = dynamic_cast<CombatScene*>(Director::getInstance()->getRunningScene());
-            selectScenePtr->setCombatScene(scene);
-            HandPileLayer::getInstance()->card_num_select_target = 1;
-            cocos2d::Director::getInstance()->pushScene(selectScene);
-            
-            
+        //int draw_num = 2;
+        //if (is_upgraded_)
+        //{
+        //    draw_num += 1;
+        //}
+        //if (tag == 0) {
+        //    HandPileLayer::getInstance()->removeFromParent();
+        //    Scene* selectScene = SelectScene::create();
+        //    SelectScene* selectScenePtr = dynamic_cast<SelectScene*>(selectScene);
+        //    auto scene = dynamic_cast<CombatScene*>(Director::getInstance()->getRunningScene());
+        //    selectScenePtr->setCombatScene(scene);
+        //    HandPileLayer::getInstance()->card_num_select_target = 1;
+        //    cocos2d::Director::getInstance()->pushScene(selectScene);
+        //    
+        //    
 
-        }
-        if (tag == 1) {
-            
-            CombatSystem::getInstance()->drawCard(draw_num); 
-            HandPileLayer::getInstance()->adjustHandPile();
-            tag = 0;
-        }
+        //}
+        //if (tag == 1) {
+        //    
+        //    CombatSystem::getInstance()->drawCard(draw_num); 
+        //    HandPileLayer::getInstance()->adjustHandPile();
+        //    tag = 0;
+        //}
     }
 };
 //进行卡牌注册

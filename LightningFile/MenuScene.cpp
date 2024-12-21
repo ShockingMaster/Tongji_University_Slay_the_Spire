@@ -73,6 +73,9 @@ bool MenuScene::init() {
     startGameButton->addTouchEventListener([](Ref* sender, ui::Widget::TouchEventType type) {
         if (type == ui::Widget::TouchEventType::ENDED) {
             CCLOG("Start Game clicked!"); // 打印日志
+            // 点击之后进行初始化EventSystem
+            EventSystem::getInstance()->init();
+
             audioPlayer("ClickSoundEffect.mp3", false);  // 播放点击音效
             auto selectionScene = SelectionScene::createScene(); // 创建选择场景
             Director::getInstance()->replaceScene(TransitionFade::create(1.0f, selectionScene, Color3B::BLACK)); // 场景切换

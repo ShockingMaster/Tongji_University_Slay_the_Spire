@@ -28,9 +28,22 @@ void CombatSystem::init()
 	drawPile = emptyQueue;
 	hand = emptyVector;
 	discardPile = emptyQueue;
+	
+	// 获得一份卡组的复制
+	std::vector<std::shared_ptr<Card>> tempVector;
+	for (int i = 0; i < EventSystem::getInstance()->cards_.size(); i++)
+	{
+		tempVector.push_back(CardRegistry::createCard(EventSystem::getInstance()->cards_[i]->getName()));
+	}
+	RandomGenerator::getInstance()->shuffleVector(tempVector);
 
 	// 将卡组中的牌加入到抽牌堆中
-	// 这里只是一个测试
+	for (int i = 0; i < tempVector.size(); i++)
+	{
+		drawPile.push(tempVector[i]);
+	}
+	/*
+	// 测试卡牌注册及功能 
 	std::vector<std::string>  tempDeck = CardRegistry::getAllCardNames();
 	if (tempDeck.empty())
 	{
@@ -44,6 +57,7 @@ void CombatSystem::init()
 			drawPile.push(CardRegistry::createCard(name));
 		}
 	}
+	*/
 
 	// 清空怪物列表,随机生成怪物
 	Monsters_.clear();

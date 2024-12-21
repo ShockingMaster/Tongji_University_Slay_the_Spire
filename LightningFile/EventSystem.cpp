@@ -4,6 +4,7 @@
 #include "MapScene.h"
 #include "CardLayer.h"
 #include "AudioPlayer.h"
+#include "Register.h"
 using namespace std;
 using namespace cocos2d;
 
@@ -19,9 +20,30 @@ EventSystem::EventSystem()
 // 析构函数
 EventSystem::~EventSystem() {}
 
-// 初始化头栏
-bool EventSystem::init() {
+// 初始化
+bool EventSystem::init() 
+{
+    // 设定数值
+    this->coins_ = 99;
+    this->maxPotions_ = 2;
+    this->health_ = 80;
+    this->fullHealth_ = 80;
+    
+    // 清空药水和卡组
+    cards_.clear();
+    potions_.clear();
 
+    for (int i = 0;i < 5;i++)
+    {
+        auto AttackCard = CardRegistry::createCard("Attack");
+        this->addCard(AttackCard);
+    }
+    for (int i = 0; i < 4; i++)
+    {
+        auto DefenseCard = CardRegistry::createCard("Defense");
+        this->addCard(DefenseCard);
+    }
+    this->addCard(CardRegistry::createCard("Apotheosis"));
     return true;
 }
 
