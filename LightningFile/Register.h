@@ -22,11 +22,24 @@ public:
     }
 
     // 根据卡牌名称返回相应卡牌的指针
-    static std::shared_ptr<Card> createCard(const std::string& name) {
+    static std::shared_ptr<Card> createCard(const std::string& name) 
+    {
+        auto newname = name;
+        int upgraded = 0;
+        if (name.back() == '+')
+        {
+            newname.pop_back();
+            upgraded = 1;
+        }
         auto& registry = getRegistry();
-        auto it = registry.find(name);
+        auto it = registry.find(newname);
         if (it != registry.end()) {
-            return it->second();
+            auto card = it->second();
+            if (upgraded)
+            {
+                card->upgrade();
+            }
+            return card;
         }
         throw std::runtime_error("Card not found: " + name);
     }
