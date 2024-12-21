@@ -91,4 +91,5 @@ public:
 private:
 	static CombatSystem* instance_;
 	int round_;
+	int isLastCombat = 0;
 };

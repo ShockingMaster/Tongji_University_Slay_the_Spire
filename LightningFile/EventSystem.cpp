@@ -29,9 +29,10 @@ bool EventSystem::init()
     this->health_ = 80;
     this->fullHealth_ = 80;
     
-    // 清空药水和卡组
+    // 清空药水和卡组和遗物
     cards_.clear();
     potions_.clear();
+    relics_.clear();
 
     for (int i = 0;i < 5;i++)
     {

@@ -208,12 +208,14 @@ void MapNode::onClick() {
                 Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                 }, 1.0f, "LoadNextScene");
         }
-        if (type == Combat|| type == Elite) {
+        if (type == Combat|| type == Elite || type == Boss) {
             this->scheduleOnce([=](float dt) {
                 if (type == Combat)
                     CombatSystem::getInstance()->init(NORMAL);
                 else if (type == Elite)
                     CombatSystem::getInstance()->init(ELITE);
+                else 
+                    CombatSystem::getInstance()->init(BOSS);
                 auto nextScene = CombatScene::create(); // 创建目标场景
                 Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                 }, 1.0f, "LoadNextScene");

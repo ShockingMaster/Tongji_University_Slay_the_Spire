@@ -1,5 +1,6 @@
 #include "IncludeAll.h"
 #include "RewardLayer.h"
+#include "EndingScene.h"
 CombatSystem* CombatSystem::instance_ = nullptr;
 
 // 返回CombatSytem的唯一实例
@@ -21,6 +22,16 @@ void CombatSystem::init(int type)
 {
 	// 对角色进行初始化
 	Player::getInstance()->init();
+
+	// 如果是BOSS，那么是最终战斗
+	if (type == BOSS)
+	{
+		isLastCombat = 1;
+	}
+	else
+	{
+		isLastCombat = 0;
+	}
 
 	// 清空抽牌堆、弃牌堆和手牌
 	std::queue<std::shared_ptr<Card>> emptyQueue;
@@ -185,27 +196,42 @@ void CombatSystem::combatEnd()
 		if (Relic != nullptr)
 			Relic->onCombatEnd();
 	}
-	auto blackLayer = LayerColor::create(Color4B(0, 0, 0, 200));
-	Director::getInstance()->getRunningScene()->addChild(blackLayer, 100000);
 
-	// 创建 RewardLayer
-	auto rewardLayer = RewardLayer::create(true, true, false, false, true);
-	blackLayer->addChild(rewardLayer); // 将 RewardLayer 添加到黑色背景层中
-	auto startButton = HoverButton::create(
-		"button1 (1).png",  // 默认图片
-		"button1 (2).png",  // 按钮悬停时的图片
-		"button1 (3).png"   // 按钮点击时的图片
-	);
+	if (player->getHealth() <= 0)
+	{
+		auto endScene = EndingScene::create(0);
+		Director::getInstance()->pushScene(endScene);
+	}
+	// 如果是最终战斗
+	else if (isLastCombat)
+	{
+		auto endScene = EndingScene::create(1);
+		Director::getInstance()->pushScene(endScene);
+	}
+	else
+	{
+		auto blackLayer = LayerColor::create(Color4B(0, 0, 0, 200));
+		Director::getInstance()->getRunningScene()->addChild(blackLayer, 100000);
 
-	// 设置按钮位置
-	startButton->setPosition(Vec2(1800, 500));
-	blackLayer->addChild(startButton);
+		// 创建 RewardLayer
+		auto rewardLayer = RewardLayer::create(true, true, false, false, true);
+		blackLayer->addChild(rewardLayer); // 将 RewardLayer 添加到黑色背景层中
+		auto startButton = HoverButton::create(
+			"button1 (1).png",  // 默认图片
+			"button1 (2).png",  // 按钮悬停时的图片
+			"button1 (3).png"   // 按钮点击时的图片
+		);
 
-	// 添加按钮点击事件监听器
-	startButton->addClickEventListener([=](Ref* sender) {
-		// 执行 popScene 操作，返回上一个场景
-		Director::getInstance()->popScene();
-		});
+		// 设置按钮位置
+		startButton->setPosition(Vec2(1800, 500));
+		blackLayer->addChild(startButton);
+
+		// 添加按钮点击事件监听器
+		startButton->addClickEventListener([=](Ref* sender) {
+			// 执行 popScene 操作，返回上一个场景
+			Director::getInstance()->popScene();
+			});
+	}
 }
 
 /*
@@ -624,10 +650,9 @@ void CombatSystem::onDeath(std::shared_ptr<Creature> creature)
 		}
 		if (Player::getInstance()->getHealth() < 0)
 		{
-			// 游戏失败！
+			this->combatEnd();
 		}
 	}
-	// 对于怪物而言,检测当前怪物是否全部死亡
 	else
 	{
 		int is_all_monster_dead = 1;

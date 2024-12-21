@@ -151,7 +151,7 @@ AUTO_REGISTER_MONSTER(Sentinel)
 class Six_Fire_Souls : public Monster
 {
 public:
-    Six_Fire_Souls() : Monster(BOSS, 250, "Six_Fire_Souls", 1) {}
+    Six_Fire_Souls() : Monster(BOSS, 2, "Six_Fire_Souls", 1) {}
     void takeEffect() {
         std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {
