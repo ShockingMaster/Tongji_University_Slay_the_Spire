@@ -186,24 +186,28 @@ void CombatSystem::combatEnd()
 	auto player = Player::getInstance();
 
 	CombatSystem::getInstance()->endTurn(player);
-	for (auto Buff : player->buffs_)
-	{
-		if (Buff != nullptr)
-			Buff->onCombatEnd(player);
-	}
-	for (auto Relic : EventSystem::getInstance()->relics_)
-	{
-		if (Relic != nullptr)
-			Relic->onCombatEnd();
-	}
+	HandPileLayer::getInstance()->clearAll();
 
 	if (player->getHealth() <= 0)
 	{
 		auto endScene = EndingScene::create(0);
 		Director::getInstance()->pushScene(endScene);
 	}
+	else
+	{
+		for (auto Buff : player->buffs_)
+		{
+			if (Buff != nullptr)
+				Buff->onCombatEnd(player);
+		}
+		for (auto Relic : EventSystem::getInstance()->relics_)
+		{
+			if (Relic != nullptr)
+				Relic->onCombatEnd();
+		}
+	}
 	// 如果是最终战斗
-	else if (isLastCombat)
+	if (isLastCombat && player->getHealth()>0)
 	{
 		auto endScene = EndingScene::create(1);
 		Director::getInstance()->pushScene(endScene);
@@ -540,7 +544,6 @@ void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 		addEnergy(Player::getInstance(), energy);
 		drawCard(5);
 	}
-
 	scene->creatureLayer->updateDisplay();
 }
 

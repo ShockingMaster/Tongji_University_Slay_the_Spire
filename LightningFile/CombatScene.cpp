@@ -22,6 +22,7 @@ void CombatScene::onEnter() {
             CombatSystem::getInstance()->combatStart();
             CombatSystem::getInstance()->startTurn(Player::getInstance());
             creatureLayer->updateDisplay();
+            this->updateEnergyDisplay();
         }
         }, 0.5f, "CheckSceneAfterDelay");
 

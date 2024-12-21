@@ -70,6 +70,8 @@ public:
 
     void HandPileLayer::updateDiscardPileDisplay();//更新手牌数量显示
 
+    void clearAll();
+
     CREATE_FUNC(HandPileLayer);
 
 

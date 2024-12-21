@@ -302,7 +302,27 @@ void HandPileLayer::switchToblank(std::shared_ptr<Card> card) {
 }
 
 
-
+void HandPileLayer::clearAll()
+{
+    auto& newhand = CombatSystem::getInstance()->hand;
+    for (size_t i = 0; i < newhand.size(); ++i)
+    {
+         auto cardSprite = HandPileLayer::getInstance()->getChildByTag(reinterpret_cast<intptr_t>(newhand[i].get()));
+         HandPileLayer::getInstance()->removeChild(cardSprite);
+    }
+    while (!newhand.empty())
+    {
+        newhand.pop_back();
+    }
+    while (!CombatSystem::getInstance()->drawPile.empty())
+    {
+        CombatSystem::getInstance()->drawPile.pop();
+    }
+    while (!CombatSystem::getInstance()->discardPile.empty())
+    {
+        CombatSystem::getInstance()->discardPile.pop();
+    }
+}
 
 
 /*
