@@ -12,7 +12,7 @@ enum YesOrNo
 enum stackType
 {
     DURATION,
-    NUMERIC_VALUE
+    EFFECT_LAYERS
 };
 enum Enemy 
 {
@@ -39,6 +39,15 @@ enum CardType
 #define AUTO_REGISTER_CARD(className)                          \
     const bool className##Registered = []() {                  \
         CardRegistry::registerCard(#className, []() {          \
+            return std::make_shared<className>();              \
+        });                                                    \
+        return true;                                           \
+    }();
+
+
+#define AUTO_REGISTER_BUFF(className)                          \
+    const bool className##Registered = []() {                  \
+        BuffRegistry::registerBuff(#className, []() {          \
             return std::make_shared<className>();              \
         });                                                    \
         return true;                                           \

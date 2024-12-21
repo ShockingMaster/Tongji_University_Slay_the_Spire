@@ -56,6 +56,52 @@ private:
         return true;                                           \
     }();
 
+
+
+// Buff注册
+class BuffRegistry {
+public:
+    using BuffFactory = std::function<std::shared_ptr<Buff>()>;
+    // Buff注册
+    static void registerBuff(const std::string& name, BuffFactory factory) {
+        getRegistry()[name] = factory;
+    }
+
+    // 根据Buff名称返回相应卡牌的指针
+    static std::shared_ptr<Buff> createBuff(const std::string& name) {
+        auto& registry = getRegistry();
+        auto it = registry.find(name);
+        if (it != registry.end()) {
+            return it->second();
+        }
+        throw std::runtime_error("Card not found: " + name);
+    }
+
+    // 返回所有Buff的名称
+    static std::vector<std::string> getAllBuffNames() {
+        std::vector<std::string> names;
+        for (const auto& pair : getRegistry()) {
+            names.push_back(pair.first);
+        }
+        return names;
+    }
+
+private:
+    static std::map<std::string, BuffFactory>& getRegistry() {
+        static std::map<std::string, BuffFactory> registry;
+        return registry;
+    }
+};
+
+// Buff自动注册
+#define AUTO_REGISTER_BUFF(className)                          \
+    const bool className##Registered = []() {                  \
+        BuffRegistry::registerBuff(#className, []() {          \
+            return std::make_shared<className>();              \
+        });                                                    \
+        return true;                                           \
+    }();
+
 // 遗物注册，方式同上
 class RelicRegistry {
 public:
@@ -96,6 +142,7 @@ private:
         return true;                                           \
     }();
 
+/*
 // buff注册，方法同上
 class BuffRegistry {
 public:
@@ -135,6 +182,7 @@ private:
         });                                                    \
         return true;                                           \
     }();
+    */
 
 // 药水注册，效果同上
 class PotionRegistry {

@@ -771,7 +771,44 @@ void CombatSystem::addBuff(std::shared_ptr<Buff> buff,int numeric_value,std::sha
 		if (Buff != nullptr)
 			Buff->addBuff( buff, numeric_value);
 	}
-	//增加buff部分，需补充
+	int tag = 0;
+	//buff能否被叠加
+	if (buff->is_stackable_ == true) {
+		for (auto Buff : target->buffs_)
+		{
+			//已经存在同种buff
+			if (Buff->name_ == buff->name_) {
+				//持续时间
+				if (Buff->stack_type_ == DURATION) {
+					Buff->duration_ += numeric_value;
+				}
+				//效果层数
+				else {
+					Buff->effect_layers += numeric_value;
+				}
+				//更新
+
+				tag = 1;
+				break;
+			}
+		}
+		if (tag == 0) {
+			//持续时间
+			if (buff->stack_type_ == DURATION) {
+				buff->duration_ = numeric_value;
+			}
+			//效果层数
+			else {
+				buff->effect_layers = numeric_value;
+			}
+			target->buffs_.push_back(buff);
+		}
+	}
+	//测试
+	for (auto Buff : target->buffs_)
+	{
+		CCLOG("have buff: %s. num is %d", typeid(*Buff).name(), Buff->effect_layers);
+	}
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
 }

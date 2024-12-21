@@ -55,6 +55,7 @@ public:
         double randomValue = dist(gen); // 生成随机数
 
         if (tag == 0) {
+
             int basic_attack_value = 9;
             CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
                 basic_attack_value, "");
@@ -119,11 +120,10 @@ public:
             CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
                 basic_attack_value, "");
             tag = 1;
+            
         }
         else if (tag == 1) {
             //玩家手中塞牌
-            //CombatSystem::getInstance()->discardPile.push(CardRegistry::createCard("dazed"));
-            //HandPileLayer::getInstance()->updateDiscardPileDisplay();
             CombatSystem::getInstance()->addToDiscardPile(CardRegistry::createCard("dazed"), 2);
             tag = 0;
         }
@@ -173,6 +173,7 @@ public:
         else if (tag == 2) {
             CombatSystem::getInstance()->Addblock(thisMonster, 12);
             //获得力量Buff
+            CombatSystem::getInstance()->addBuff(BuffRegistry::createBuff("StrengthBuff"), 2, thisMonster);
             round_num++;
         }
         else if (tag == 3) {
