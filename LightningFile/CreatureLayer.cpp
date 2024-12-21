@@ -28,7 +28,7 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
     this->addChild(playerModel);
 
     // 创建血条底部
-    auto playerHealthBackground = cocos2d::Sprite::create("testground.png");
+    auto playerHealthBackground = cocos2d::Sprite::create("healthground.png");
     if (!playerHealthBackground) {
         CCLOG("Healthbackground missing!");
         return false;
@@ -37,7 +37,7 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
     this->addChild(playerHealthBackground);
 
     // 创建血条进度条
-    auto playerHealthBar = cocos2d::Sprite::create("testbar.png");
+    auto playerHealthBar = cocos2d::Sprite::create("healthDisplay.png");
     if (!playerHealthBar) {
         CCLOG("HealthBar missing!");
         return false;
@@ -59,13 +59,13 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
 
     // 创建护盾图标
     playerDefend = cocos2d::Sprite::create("block.png");
-    playerDefend->setPosition(cocos2d::Vec2(0.1193125 * screenSize.width,
+    playerDefend->setPosition(cocos2d::Vec2(0.1493125 * screenSize.width,
         0.3263157 * screenSize.height));
     this->addChild(playerDefend);
 
     // 创建护盾标签
     playerBlockLabel = cocos2d::Label::createWithSystemFont(std::to_string(0), "Arial", 20);
-    playerBlockLabel->setPosition(cocos2d::Vec2(0.1193125 * screenSize.width,
+    playerBlockLabel->setPosition(cocos2d::Vec2(0.1493125 * screenSize.width,
         0.3263157 * screenSize.height));
     playerBlockLabel->setColor(cocos2d::Color3B::BLACK);  // 设置文字颜色
     this->addChild(playerBlockLabel);
@@ -95,7 +95,7 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
 
 
         // 创建血条底部
-        monsterHealthBackground.push_back(cocos2d::Sprite::create("testground.png"));
+        monsterHealthBackground.push_back(cocos2d::Sprite::create("healthground.png"));
         if (!monsterHealthBackground[i])
         {
             CCLOG("Healthbackground missing!");
@@ -105,7 +105,7 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
         this->addChild(monsterHealthBackground[i]);
 
         // 创建血条进度条
-        auto monsterHealthBar = cocos2d::Sprite::create("testbar.png");
+        auto monsterHealthBar = cocos2d::Sprite::create("healthDisplay.png");
         if (!monsterHealthBar) {
             CCLOG("HealthBar missing!");
             return false;
@@ -125,7 +125,7 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
         this->addChild(monsterHealthLabel[i]);
 
         // 创建护盾图标
-        monsterPosition.x -= 0.076 * screenSize.width;
+        monsterPosition.x -= 0.045 * screenSize.width;
         monsterBlock.push_back(cocos2d::Sprite::create("block.png"));
         monsterBlock[i]->setPosition(monsterPosition);
         this->addChild(monsterBlock[i]);
