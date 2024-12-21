@@ -63,26 +63,27 @@ void CombatSystem::init(int type)
 	Monsters_.clear();
 	if (type == ELITE)
 	{
-		int numMonsters = 3;
-		for (int i = 0; i < numMonsters; i++)
+		// 获取怪物类型
+		auto monster = RandomGenerator::getInstance()->getRandomMonster(ELITE);
+		for (int i = 0; i < monster->getMonsterNum(); i++)
 		{
-			Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster(ELITE));
+			Monsters_.push_back(MonsterRegistry::createMonster(monster->getName()));
 		}
 	}
 	else if (type == BOSS)
 	{
-		int numMonsters = 1;
-		for (int i = 0; i < numMonsters; i++)
+		auto monster = RandomGenerator::getInstance()->getRandomMonster(BOSS);
+		for (int i = 0; i < monster->getMonsterNum(); i++)
 		{
-			Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster(BOSS));
+			Monsters_.push_back(MonsterRegistry::createMonster(monster->getName()));
 		}
 	}
 	else
 	{
-		int numMonsters = 2;
-		for (int i = 0; i < numMonsters; i++)
+		auto monster = RandomGenerator::getInstance()->getRandomMonster(NORMAL);
+		for (int i = 0; i < monster->getMonsterNum(); i++)
 		{
-			Monsters_.push_back(RandomGenerator::getInstance()->getRandomMonster(NORMAL));
+			Monsters_.push_back(MonsterRegistry::createMonster(monster->getName()));
 		}
 	}
 }

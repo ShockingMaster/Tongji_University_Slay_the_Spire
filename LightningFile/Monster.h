@@ -5,12 +5,13 @@
 class Monster : public Creature
 {
 public:
-	Monster(int type, int fullhealth, std::string name) :
+	Monster(int type, int fullhealth, std::string name, int monster_num) :
 		type_(type) {
 		max_health_ = fullhealth;
 		health_ = fullhealth;
 		name_ = name;
 		block_ = 0;
+		monster_num_ = monster_num;
 	};
 	void startTurn();
 
@@ -31,6 +32,10 @@ public:
 		return attack_numeric_value;
 	};
 
+	int getMonsterNum() const {
+		return monster_num_;
+	}
+
 	virtual void takeEffect();
 
 	virtual std::string intentionDisplay();
@@ -41,6 +46,7 @@ public:
 	cocos2d::Vec2 position;
 	cocos2d::Rect area;  // 定义一个矩形区域用于判断
 	int type_;
+	int monster_num_ = 1;
 	int tag = 0; //怪物行动tag
 	int round_num = 1;
 	int attack_times = 0;
