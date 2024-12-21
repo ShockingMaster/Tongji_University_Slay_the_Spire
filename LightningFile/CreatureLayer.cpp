@@ -142,11 +142,33 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
 // 执行攻击动作
 void CreatureLayer::attackAction(std::shared_ptr<Creature> creature)
 {
-
+    int playerFlag = 0;
+    cocos2d::Sprite* sprite = nullptr;
     if (creature == Player::getInstance())
     {
-
+        sprite = playerModel;
+        playerFlag = 1;
     }
+    else
+    {
+        for (int i = 0; i < CombatSystem::getInstance()->Monsters_.size(); i++)
+        {
+            if (CombatSystem::getInstance()->Monsters_[i] == creature)
+            {
+                sprite = monsterModel[i];
+            }
+        }
+    }
+    float attackDistance = 50.0f; // 移动距离
+    auto moveBy = cocos2d::MoveBy::create(0.2f,
+        creature == Player::getInstance()
+        ? cocos2d::Vec2(attackDistance, 0)
+        : cocos2d::Vec2(-attackDistance, 0));
+    auto moveBack = moveBy->reverse(); // 回到原位置
+    auto attackSequence = cocos2d::Sequence::create(moveBy, moveBack, nullptr);
+
+    // 运行动作
+    sprite->runAction(attackSequence);
 }
 
 void CreatureLayer::updateDisplay()
@@ -246,6 +268,7 @@ void CreatureLayer::updateDisplay()
                 layer->monsterHealth[i]->setVisible(false);
                 layer->monsterHealthLabel[i]->setVisible(false);
                 layer->monsterBlockLabel[i]->setVisible(false);
+                layer->monsterModel[i]->setVisible(false);
             }
         }
 

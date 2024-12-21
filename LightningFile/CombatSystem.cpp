@@ -122,10 +122,10 @@ void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Crea
 	if (!isForIntentionUpdate)
 	{
 		takeDamage(target, numeric_value_);
+		auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+		scene->creatureLayer->attackAction(user);
 	}
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->attackAction(user);
 
 	// 此处不能进行更新，会出现循环调用
 	/*
@@ -578,6 +578,20 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 
 	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 	scene->creatureLayer->updateDisplay();
+}
+
+/*
+* 函数名称：addToDiscardPile
+* 功能：将一定数量的卡牌置入弃牌堆
+*/
+void CombatSystem::addToDiscardPile(std::shared_ptr<Card> card, int num)
+{
+	for (int i = 0; i < num; i++)
+	{
+		discardPile.push(card);
+	}
+	// 完成显示更新
+	HandPileLayer::getInstance()->updateDiscardPileDisplay();
 }
 
 void CombatSystem::onDeath(std::shared_ptr<Creature> creature)
