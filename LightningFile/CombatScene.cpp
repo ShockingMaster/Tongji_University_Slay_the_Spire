@@ -69,14 +69,6 @@ bool CombatScene::init()
         static_pointer_cast<Monster>(combat->Monsters_[i])->
             setRect(cocos2d::Vec2(0.83 * screenSize.width + combat->Monsters_.size() * 0.12207 * screenSize.width / 2 - (i + 1) * 0.12207 * screenSize.width, 0.526315 * screenSize.height), 0.09765 * screenSize.width, 0.315789 * screenSize.height);
         cocos2d::Rect monsterRect = monster->getRect();
-
-        /*
-        // 仅测试使用，画出可打出卡牌区域 
-        auto drawNode = cocos2d::DrawNode::create();
-        // 用红色绘制矩形
-        drawNode->drawRect(monsterRect.origin, cocos2d::Vec2(monsterRect.origin.x + monsterRect.size.width, monsterRect.origin.y + monsterRect.size.height), cocos2d::Color4F(1, 0, 0, 1));
-        this->addChild(drawNode,100);  // 将 DrawNode 添加到场景中
-        */
     }
 
     auto player = EventSystem::getInstance();

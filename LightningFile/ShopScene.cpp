@@ -47,7 +47,7 @@ bool ShopScene::init() {
     this->addChild(background0);
 
     // 使用 DelayTime 来创建延迟
-    auto delay = DelayTime::create(1.5f); 
+    auto delay = DelayTime::create(0.5f); 
 
     // 创建一个回调函数，在延迟时间后执行
     auto showLayerCallback = CallFunc::create([this]() {
@@ -203,8 +203,19 @@ bool ShopScene::init() {
                 auto player = EventSystem::getInstance();
                 EventSystem::getInstance()->changeCoins(-deleteprice);
                 deleteprice += 25;
-                auto cardLayer = CardLayer::create(player->cards_, 2);
-                Director::getInstance()->getRunningScene()->addChild(cardLayer);
+
+                // 延迟0.5秒
+                auto delay = DelayTime::create(0.35f);
+                auto callFunc = CallFunc::create([=]() {
+                    // 延迟执行的操作
+                    auto cardLayer = CardLayer::create(player->cards_, 2);
+                    Director::getInstance()->getRunningScene()->addChild(cardLayer);
+                    });
+
+                // 将延迟和回调函数一起顺序执行
+                auto sequence = Sequence::create(delay, callFunc, nullptr);
+                Director::getInstance()->getRunningScene()->runAction(sequence);
+
                 return true;
             }
 

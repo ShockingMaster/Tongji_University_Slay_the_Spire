@@ -38,9 +38,8 @@ Scene* MapScene::createScene() {
 void MapScene::onEnter() {
     Scene::onEnter();
     audioPlayer("menu.ogg", true);
-    static int i = 0;
     CCLOG("onEnter called!");  // 调试输出
-    if (i) {
+    if (1) {
         auto headbar = dynamic_cast<HeaderBar*>(this->getChildByName("HeaderBar"));
         if (headbar) {
             auto player = EventSystem::getInstance();
@@ -48,7 +47,6 @@ void MapScene::onEnter() {
             headbar->level = currentLevel - 1;
         }
     }
-    i++;
 }
 /**
  * 初始化 MapScene
@@ -61,6 +59,7 @@ bool MapScene::init() {
     }
     auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
+    headbar->level = 1;
     headbar->setName("HeaderBar");  // 设置名称
     headbar->setPosition(Vec2(50, 750));
     this->addChild(headbar);
