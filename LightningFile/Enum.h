@@ -1,3 +1,4 @@
+
 #pragma once
 enum CanBePlayed
 {
@@ -14,7 +15,7 @@ enum stackType
     DURATION,
     EFFECT_LAYERS
 };
-enum Enemy 
+enum Enemy
 {
     NORMAL,
     ELITE,

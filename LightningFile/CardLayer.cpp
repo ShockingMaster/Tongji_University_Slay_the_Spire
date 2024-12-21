@@ -151,7 +151,7 @@ void CardLayer::displayCards() {
             };
 
         // 鼠标点击事件
-        cardListener->onMouseDown = [this, cardSprite, cardContainer](cocos2d::Event* event) {
+        cardListener->onMouseDown = [this, cardSprite, cardContainer, cardListener](cocos2d::Event* event) {
             cocos2d::EventMouse* mouseEvent = dynamic_cast<cocos2d::EventMouse*>(event);
             if (mouseEvent) {
                 // 获取鼠标点击的位置
@@ -169,10 +169,12 @@ void CardLayer::displayCards() {
                     // 只有在鼠标点击卡牌时，才执行相应操作
                     if (operation == 2 || operation == 3) {
                         // 创建一个弹出层（Popup Layer）
+                        cardListener->setEnabled(false);
                         auto popupLayer = cocos2d::LayerColor::create(cocos2d::Color4B(0, 0, 0, 250)); // 半透明黑色背景
                         popupLayer->setContentSize(cocos2d::Size(2100, 1200)); // 设置弹出层大小
                         popupLayer->setPosition(cocos2d::Vec2(0, -140)); // 设置弹出层位置
-                        this->addChild(popupLayer, 500); // 添加到场景，确保它在最上层
+                        this->addChild(popupLayer, 500); // 添加到场景，确保它在最上层、
+                        
                         /*auto card = static_cast<Card*>(cardSprite->getUserData());
                         auto selected = CardSpriteGenerator::createCardSprite(card);
                         selected->setPosition(500, 500); // 设置卡牌显示位置
@@ -234,7 +236,7 @@ void CardLayer::displayCards() {
 
                         popupLayer->addChild(confirmButton);
 
-                        event->stopPropagation();  // 阻止事件传播，防止其他事件触发
+                        event->stopPropagation(); 
                     }
                 }
             }

@@ -15,7 +15,7 @@ bool Buff::operator<(const Buff& other) const
 class StrengthBuff : public Buff
 {
 public:
-    StrengthBuff() : Buff("Strength", "", 0, 0, true,0, YES, DURATION) {}
+    StrengthBuff() : Buff("Strength", "", 0, 0, true, 0, YES, DURATION) {}
     void onAttack(int& numeric_value_, std::string cardName,
         std::shared_ptr<Creature> user, std::shared_ptr<Creature> target)
     {
@@ -34,7 +34,7 @@ public:
     void onAttack(int& numeric_value_, std::string cardName,
         std::shared_ptr<Creature> user, std::shared_ptr<Creature> target)
     {
-        if (cardName == "Blade" || cardName =="Blade+")
+        if (cardName == "Blade" || cardName == "Blade+")
         {
             numeric_value_ += 4;
         }
@@ -59,7 +59,7 @@ class ArtificialProducts :public Buff
 {
 public:
     ArtificialProducts() : Buff("ArtificialProducts", "", 0, 0, true, 0, YES, EFFECT_LAYERS) {}
-    void addBuff(std::shared_ptr<Buff> buff, int &numeric_value)
+    void addBuff(std::shared_ptr<Buff> buff, int& numeric_value)
     {
         //负面buff才会执行
         if (buff->is_positive_ == false) {

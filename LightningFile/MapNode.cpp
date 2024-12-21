@@ -296,7 +296,7 @@ void MapNode::onClick() {
                     else if (type == Elite)
                         CombatSystem::getInstance()->init(ELITE);
                     else
-                        CombatSystem::getInstance()->init(ELITE);
+                        CombatSystem::getInstance()->init(BOSS);
                     auto nextScene = CombatScene::create(); 
                     Director::getInstance()->pushScene(TransitionFade::create(0.5f, nextScene));
                     }, 1.0f, "LoadNextScene");

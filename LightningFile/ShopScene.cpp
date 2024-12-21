@@ -21,8 +21,6 @@ bool ShopScene::init() {
 
     // 播放背景音效
     audioPlayer("event.ogg", true);
-
-
     auto player = EventSystem::getInstance();
     auto headbar = HeaderBar::create(player);
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
@@ -47,7 +45,7 @@ bool ShopScene::init() {
     this->addChild(background0);
 
     // 使用 DelayTime 来创建延迟
-    auto delay = DelayTime::create(0.1f); 
+    auto delay = DelayTime::create(0.5f); 
 
     // 创建一个回调函数，在延迟时间后执行
     auto showLayerCallback = CallFunc::create([this]() {

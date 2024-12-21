@@ -184,7 +184,7 @@ private:
     }();
     */
 
-// 药水注册，效果同上
+    // 药水注册，效果同上
 class PotionRegistry {
 public:
     using PotionFactory = std::function<std::shared_ptr<Potion>()>;

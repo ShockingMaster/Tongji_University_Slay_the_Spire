@@ -49,15 +49,16 @@ bool event3::init() {
     button1->setPosition(Vec2(1600, 100));
     button1->addClickEventListener([=](Ref* sender) {
         // 这里添加按钮点击事件的处理代码
-        
-
-
-
-
-
-
-
-
+        auto randomRelic = RandomGenerator::getInstance()->getRandomRelic();    
+        audioPlayer("gold.ogg", false);
+        EventSystem::getInstance()->relics_.push_back(randomRelic);
+        headbar->updateHeader(EventSystem::getInstance());
+        int ran =rand();
+        if (ran % 4 == 0) {
+            CombatSystem::getInstance()->init(ELITE);
+            auto nextScene = CombatScene::create();
+            Director::getInstance()->pushScene(nextScene);
+        }
         auto returnButton = HoverButton::create("button4(1).png", "button4(2).png", "button4(1).png");
         returnButton->setPosition(Vec2(1000, 100));
         returnButton->addClickEventListener([this](Ref* sender) {

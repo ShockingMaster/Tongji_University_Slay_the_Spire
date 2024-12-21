@@ -21,14 +21,14 @@ void CombatSystem::init(int type)
 {
 	// 对角色进行初始化
 	Player::getInstance()->init();
-	
+
 	// 清空抽牌堆、弃牌堆和手牌
 	std::queue<std::shared_ptr<Card>> emptyQueue;
 	std::vector<std::shared_ptr<Card>> emptyVector;
 	drawPile = emptyQueue;
 	hand = emptyVector;
 	discardPile = emptyQueue;
-	
+
 	// 获得一份卡组的复制
 	std::vector<std::shared_ptr<Card>> tempVector;
 	for (int i = 0; i < EventSystem::getInstance()->cards_.size(); i++)
@@ -43,7 +43,7 @@ void CombatSystem::init(int type)
 		drawPile.push(tempVector[i]);
 	}
 	/*
-	// 测试卡牌注册及功能 
+	// 测试卡牌注册及功能
 	std::vector<std::string>  tempDeck = CardRegistry::getAllCardNames();
 	if (tempDeck.empty())
 	{
@@ -95,7 +95,7 @@ void CombatSystem::init(int type)
  * 参数：攻击者指针，被攻击者指针，攻击原数值，卡牌名称（为了判断卡牌是否为特殊类型）
  * 功能：完成攻击者的攻击相关的buff结算，触发攻击类buff并改写攻击数值
  */
-void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Creature> target, 
+void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Creature> target,
 	int& numeric_value_, std::string cardName, bool isForIntentionUpdate)
 {
 	//首先遍历使用者的buff列表，触发所有buff的onAttack效果
@@ -186,7 +186,7 @@ void CombatSystem::combatEnd()
 			Relic->onCombatEnd();
 	}
 	auto blackLayer = LayerColor::create(Color4B(0, 0, 0, 200));
-	Director::getInstance()->getRunningScene()->addChild(blackLayer,100000);
+	Director::getInstance()->getRunningScene()->addChild(blackLayer, 100000);
 
 	// 创建 RewardLayer
 	auto rewardLayer = RewardLayer::create(true, true, false, false, true);
@@ -269,7 +269,7 @@ void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_valu
 			for (auto Relic : EventSystem::getInstance()->relics_)
 			{
 				if (Relic != nullptr)
-					Relic-> onLoseHealth(healthLoss);
+					Relic->onLoseHealth(healthLoss);
 			}
 		}
 		audioPlayer("DefenseBreakSound.ogg", false);
@@ -347,7 +347,7 @@ void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_
  * 功能：消耗特定卡牌
  */
 
-void CombatSystem::exhaustCard(int num, std::string cardName) 
+void CombatSystem::exhaustCard(int num, std::string cardName)
 {
 	if (num < 0 || num >= hand.size()) {
 		CCLOG("Error: Invalid card index %d", num);
@@ -436,7 +436,7 @@ void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
 
 
 	// 消耗相应位置
-    hand.erase(std::remove(hand.begin(), hand.end(), card), hand.end());
+	hand.erase(std::remove(hand.begin(), hand.end(), card), hand.end());
 }
 
 
@@ -460,7 +460,7 @@ void CombatSystem::upgradeCard(std::shared_ptr<Card> card)
 		card->upgrade();
 
 		// 查看卡牌是否在手牌中，如果在手牌中需要更新显示
-		for (int i = 0; i < hand.size();i++)
+		for (int i = 0; i < hand.size(); i++)
 		{
 			if (hand[i] == card)
 			{
@@ -496,7 +496,7 @@ void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 		}
 	}
 
-	
+
 	// 判断是否为玩家，如果是玩家，那么需要进行操作
 	// 1.失去所有格挡
 	// 2.获得能量上限的能量
@@ -568,7 +568,7 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
  */
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 {
-	
+
 	tem_card = card;
 	for (auto Buff : Player::getInstance()->buffs_)
 	{
@@ -631,7 +631,7 @@ void CombatSystem::onDeath(std::shared_ptr<Creature> creature)
 	else
 	{
 		int is_all_monster_dead = 1;
-		for (int i = 0;i < Monsters_.size();i++)
+		for (int i = 0; i < Monsters_.size(); i++)
 		{
 			if (Monsters_[i]->getHealth() > 0)
 				is_all_monster_dead = 0;
@@ -673,7 +673,7 @@ std::shared_ptr<Creature> CombatSystem::getMonsterPointer(Creature* creature)
 	{
 		return nullptr;
 	}
-	for (int i = 0;i < Monsters_.size();i++)
+	for (int i = 0; i < Monsters_.size(); i++)
 	{
 		if (Monsters_[i].get() == creature)
 		{
@@ -723,9 +723,9 @@ void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creatu
 
 
 /*
-* 
-* 
-* 
+*
+*
+*
 */
 void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 {
@@ -763,13 +763,13 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 * 函数名称：addBuff
 * 参数：增加的Buff种类，
 */
-void CombatSystem::addBuff(std::shared_ptr<Buff> buff,int numeric_value,std::shared_ptr<Creature> target)
+void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value, std::shared_ptr<Creature> target)
 {
 	//遍历目标的buff列表，触发所有buff的addBuff效果
 	for (auto Buff : target->buffs_)
 	{
 		if (Buff != nullptr)
-			Buff->addBuff( buff, numeric_value);
+			Buff->addBuff(buff, numeric_value);
 	}
 	int tag = 0;
 	//buff能否被叠加
@@ -864,7 +864,7 @@ void CombatSystem::drawCard(int num)
 			Relic->onDrawCard(tempNum);
 		}
 	}
-	for (int i = 0;i < tempNum;i++)
+	for (int i = 0; i < tempNum; i++)
 	{
 		for (auto Buff : Player::getInstance()->buffs_)
 		{
@@ -900,7 +900,7 @@ void CombatSystem::drawCard(int num)
 	scene->creatureLayer->updateDisplay();
 }
 
-void CombatSystem::shuffleDeck() 
+void CombatSystem::shuffleDeck()
 {
 	// 临时容器：存储弃牌堆的卡牌
 	std::vector<std::shared_ptr<Card>> discardCards;
@@ -956,5 +956,3 @@ int CombatSystem::getDiscardPileNumber()
 {
 	return discardPile.size();
 }
-
-

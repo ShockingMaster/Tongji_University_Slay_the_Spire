@@ -101,39 +101,54 @@ bool RewardLayer::init(bool coins, bool potion, bool relic, bool singlecard, boo
     label->setPosition(300,100);  // 设置标签位置
     label->setTextColor(cocos2d::Color4B::WHITE);  // 设置字体颜色为白色
     this->addChild(label,1000);
-    
+
+    bool clickedone = false;
+    bool clickedtwo = false;
+    bool clickedthree = false;
+
     // 创建通用触摸监听器
     auto listener = EventListenerTouchOneByOne::create();
-    listener->onTouchBegan = [this, background4, background5, background6,singlecard,selectcard,potion,relic](Touch* touch, Event* event) {
+    listener->onTouchBegan = [this, background4, background5, background6,&clickedone,&clickedtwo,&clickedthree,singlecard,selectcard,potion,relic](Touch* touch, Event* event) {
         Vec2 touchLocation = touch->getLocation();
 
         // 检测触摸目标是否是指定的 Sprite
         if (background4->getBoundingBox().containsPoint(touchLocation)) {
-            auto showLayer = ShowLayer::create(1);
-            this->addChild(showLayer, 3000);
-            return true;
+            if (clickedone==false) {
+                clickedone = true;
+                auto showLayer = ShowLayer::create(1);
+                this->addChild(showLayer, 3000);
+                return true;
+            }
         }
         if (background5->getBoundingBox().containsPoint(touchLocation)) {
-            if (singlecard) {
-                auto showLayer = ShowLayer::create(2);
-                this->addChild(showLayer, 3000);
-            }
-            if (selectcard) {
-                auto showLayer = ShowLayer::create(4);
-                this->addChild(showLayer, 3000);
+            if (clickedtwo==false) {
+                if (singlecard) {
+                    auto showLayer = ShowLayer::create(2);
+                    this->addChild(showLayer, 3000);
+                }
+                if (selectcard) {
+                    auto showLayer = ShowLayer::create(4);
+                    this->addChild(showLayer, 3000);
+                }
+                clickedtwo = true;
+               
             }
             return true;
         }
         if (background6->getBoundingBox().containsPoint(touchLocation)) {
-            if (relic) {
-                auto showLayer = ShowLayer::create(3);
-                this->addChild(showLayer, 3000);
+            if (clickedthree==false) {
+                if (relic) {
+                    auto showLayer = ShowLayer::create(3);
+                    this->addChild(showLayer, 3000);
+                }
+                if (potion) {
+                    auto showLayer = ShowLayer::create(5);
+                    this->addChild(showLayer, 3000);
+                }
+
+                return true;
+                
             }
-            if (potion) {
-                auto showLayer = ShowLayer::create(5);
-                this->addChild(showLayer, 3000);
-            }
-            return true;
         }
 
         return false;  // 未点击任何目标
