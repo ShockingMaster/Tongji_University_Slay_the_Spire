@@ -45,7 +45,7 @@ cocos2d::Rect Monster::getRect()
 class Mandibular_worm : public Monster
 {
 public:
-    Mandibular_worm() : Monster(NORMAL, 40) {}
+    Mandibular_worm() : Monster(NORMAL, 2, "Mandibular_worm") {}
     void takeEffect() {
         std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         
@@ -108,10 +108,10 @@ public:
 AUTO_REGISTER_MONSTER(Mandibular_worm)
 
 
-class sentinel : public Monster
+class Sentinel : public Monster
 {
 public:
-    sentinel() : Monster(NORMAL, 38) {}
+    Sentinel() : Monster(NORMAL, 2, "Sentinel") {}
     void takeEffect() {
         if (tag == 0) {
             std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
@@ -143,14 +143,14 @@ public:
     }
 };
 
-AUTO_REGISTER_MONSTER(sentinel)
+AUTO_REGISTER_MONSTER(Sentinel)
 
 
 
 class Six_Fire_Souls : public Monster
 {
 public:
-    Six_Fire_Souls() : Monster(NORMAL, 2) {}
+    Six_Fire_Souls() : Monster(NORMAL, 2, "Six_Fire_Souls") {}
     void takeEffect() {
         std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
         if (tag == 0) {

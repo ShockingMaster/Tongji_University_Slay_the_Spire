@@ -18,6 +18,8 @@ public:
 
     vector<std::shared_ptr<Buff>> buffs_;//生物buff列表
 
+    std::string getName() const;
+
     void addBlock(int numeric_value);
 
     void loseBlock(int numeric_value);                    

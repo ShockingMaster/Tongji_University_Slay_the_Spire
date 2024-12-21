@@ -1,5 +1,9 @@
 #include "IncludeAll.h"
 #include "Enum.h"
+std::string Creature::getName() const
+{
+	return name_;
+}
 void Creature::addBlock(int numeric_value)
 {
 	block_ += numeric_value;

@@ -17,7 +17,7 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
     }
     const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
     // 首先通过PLayer进行创建人物
-    auto playerModel = cocos2d::Sprite::create("Defect.png");
+    playerModel = cocos2d::Sprite::create("Defect.png");
     // 如果没有找到的话直接失效
     if (!playerModel) {
         CCLOG("Strongest Character missing!");
@@ -73,11 +73,26 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
 
     for (int i = 0;i < CombatSystem::getInstance()->Monsters_.size();i++)
     {
+
         auto& monster = static_pointer_cast<Monster>(CombatSystem::getInstance()->Monsters_[i]);
         cocos2d::Vec2 monsterPosition = monster->getRect().origin;
-
         monsterPosition.x += screenSize.width * 100 / 2048;
         monsterPosition.y -= screenSize.height * 50 / 950;
+
+        auto tempMonsterModel = cocos2d::Sprite::create("Monster/" + monster->getName() + ".png");
+        
+        // 如果没有找到的话直接失效
+        if (!tempMonsterModel) {
+            CCLOG("Monster Painting missing!");
+            return false;
+        }
+        auto originalSize = tempMonsterModel->getScale();
+        originalSize *= 1.5;
+        tempMonsterModel->setScale(originalSize);
+        monsterModel.push_back(tempMonsterModel);
+        monsterModel[i]->setPosition(monsterPosition.x, monsterPosition.y + screenSize.height * 0.2);
+        this->addChild(monsterModel[i]);
+
 
         // 创建血条底部
         monsterHealthBackground.push_back(cocos2d::Sprite::create("testground.png"));
@@ -122,6 +137,16 @@ bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters)
         this->addChild(monsterBlockLabel[i]);
     }
     return true;
+}
+
+// 执行攻击动作
+void CreatureLayer::attackAction(std::shared_ptr<Creature> creature)
+{
+
+    if (creature == Player::getInstance())
+    {
+
+    }
 }
 
 void CreatureLayer::updateDisplay()
@@ -238,6 +263,7 @@ void CreatureLayer::updateDisplay()
         }
         attack_value_list.clear();  // 清空容器
 
+        
         // 2. 添加新的怪物图标
         auto combat = CombatSystem::getInstance();
         for (int i = 0; i < combat->Monsters_.size(); i++)
@@ -246,7 +272,7 @@ void CreatureLayer::updateDisplay()
 
             // 如果怪物生命值不足，那么不进行添加
             if (monster->getHealth() <= 0)
-                break;
+                continue;
 
             std::string png_path = monster->intentionDisplay();
 
@@ -288,6 +314,7 @@ void CreatureLayer::updateDisplay()
                 intent.push_back(sprite);
             }
         }
+        
     }
 }
 

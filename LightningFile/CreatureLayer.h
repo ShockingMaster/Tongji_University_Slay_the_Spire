@@ -27,9 +27,13 @@ public:
 	// 对生物层进行初始化
 	bool CreatureLayer::init(std::vector<std::shared_ptr<Creature>>& monsters);
 
+	// 执行攻击动作
+	void attackAction(std::shared_ptr<Creature> creature);
+
 	// 更新生物层显示
 	void updateDisplay();
 private:
+	cocos2d::Sprite* playerModel;
 	cocos2d::ProgressTimer* playerHealth;
 	cocos2d::Label* playerHealthLabel;
 	cocos2d::Label* playerBlockLabel;
@@ -41,4 +45,5 @@ private:
 	std::vector<cocos2d::Label*> monsterBlockLabel;
 	std::vector<cocos2d::Sprite*> intent;
 	std::vector<cocos2d::Label*> attack_value_list;
+	std::vector<cocos2d::Sprite*> monsterModel;
 };

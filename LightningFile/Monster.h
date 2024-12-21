@@ -5,10 +5,11 @@
 class Monster : public Creature
 {
 public:
-	Monster(int type, int fullhealth) :
+	Monster(int type, int fullhealth, std::string name) :
 		type_(type) {
 		max_health_ = fullhealth;
 		health_ = fullhealth;
+		name_ = name;
 		block_ = 0;
 	};
 	void startTurn();
@@ -44,6 +45,5 @@ public:
 	int round_num = 1;
 	int attack_times = 0;
 	int attack_numeric_value = 0;
-
 	virtual ~Monster() {};
 };
