@@ -40,13 +40,16 @@ bool RestScene::init() {
     background->setScale(1.4f);
     background->setOpacity(100);
     this->addChild(background);
+    auto smithButton = HoverButton::create("smith.png", "smith.png", "smith.png");
 
     // 创建休息按钮
     auto restButton = HoverButton::create("sleep.png", "sleep.png", "sleep.png");
     restButton->setPosition(Vec2(Director::getInstance()->getVisibleSize().width / 4,
         Director::getInstance()->getVisibleSize().height / 2));
 
-    restButton->addClickEventListener([this, headbar](Ref* sender) {
+    restButton->addClickEventListener([this, headbar, restButton,smithButton](Ref* sender) {
+        restButton->setEnabled(false);
+        smithButton->setEnabled(false);
         audioPlayer("addhealth.ogg", false); 
         auto player = EventSystem::getInstance();
         // 恢复最大生命值的 30%
@@ -82,11 +85,12 @@ bool RestScene::init() {
     this->addChild(restButton);
 
     // 创建锻造卡牌按钮
-    auto smithButton = HoverButton::create("smith.png", "smith.png", "smith.png");
     smithButton->setPosition(Vec2(3 * Director::getInstance()->getVisibleSize().width / 4,
         Director::getInstance()->getVisibleSize().height / 2));
-    smithButton->addClickEventListener([this](Ref* sender) {
+    smithButton->addClickEventListener([this,smithButton,restButton](Ref* sender) {
         // 升级一张卡牌
+        restButton->setEnabled(false);
+        smithButton->setEnabled(false);
         auto player = EventSystem::getInstance();
         auto cardLayer = CardLayer::create(player->cards_, 3); 
         Director::getInstance()->getRunningScene()->addChild(cardLayer); // 使用更高的层级，确保在 Header

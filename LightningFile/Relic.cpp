@@ -32,7 +32,7 @@ public:
     void onAddCard(std::shared_ptr<Card> card) override {
         if (card) {
             int goldGain = 9;
-            
+            EventSystem::getInstance()->changeCoins(goldGain);
         }
     }
 };
@@ -44,14 +44,14 @@ private:
 public:
     PenNib()
         : Relic("PenNib",
-            "Every 10th Attack you play deals double damage",
+            "Every 10th Attack you play upgrade that card",
             1), attackCounter_(0) {}
 
     void onCardPlayed(std::shared_ptr<Card> card) override {
         if (card && card->getType()==ATTACK) { // 假设 Card 类有 isAttackCard 方法
             attackCounter_++;
             if (attackCounter_ == 10) {
-               
+                CombatSystem::getInstance()->upgradeCard(card);
                 attackCounter_ = 0;
             }
         }

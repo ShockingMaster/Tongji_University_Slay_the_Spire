@@ -122,7 +122,9 @@ public:
         }
         else if (tag == 1) {
             //Íæ¼ÒÊÖÖÐÈûÅÆ
-            CombatSystem::getInstance()->addToDiscardPile(CardRegistry::createCard("dazed"),2);
+            //CombatSystem::getInstance()->discardPile.push(CardRegistry::createCard("dazed"));
+            //HandPileLayer::getInstance()->updateDiscardPileDisplay();
+            CombatSystem::getInstance()->addToDiscardPile(CardRegistry::createCard("dazed"), 2);
             tag = 0;
         }
     }

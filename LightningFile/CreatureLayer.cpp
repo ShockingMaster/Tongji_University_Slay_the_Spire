@@ -168,12 +168,13 @@ void CreatureLayer::attackAction(std::shared_ptr<Creature> creature)
             : cocos2d::Vec2(-attackDistance, 0));
         auto moveBack = moveBy->reverse(); // 回到原位置
         auto attackSequence = cocos2d::Sequence::create(moveBy, moveBack, nullptr);
-
         if (!sprite->getActionByTag(100)) { // 检查特定标签的动作是否存在
             attackSequence->setTag(100);   // 为动作设置标签
             sprite->runAction(attackSequence);
         }
     }
+
+    // 运行动作
 }
 
 void CreatureLayer::updateDisplay()

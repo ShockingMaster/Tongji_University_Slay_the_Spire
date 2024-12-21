@@ -47,7 +47,7 @@ bool ShopScene::init() {
     this->addChild(background0);
 
     // 使用 DelayTime 来创建延迟
-    auto delay = DelayTime::create(0.5f); 
+    auto delay = DelayTime::create(0.1f); 
 
     // 创建一个回调函数，在延迟时间后执行
     auto showLayerCallback = CallFunc::create([this]() {
