@@ -122,8 +122,7 @@ public:
         }
         else if (tag == 1) {
             //玩家手中塞牌
-            //CombatSystem::getInstance()->discardPile.push(CardRegistry::createCard("dazed"));
-            //HandPileLayer::getInstance()->updateDiscardPileDisplay();
+            CombatSystem::getInstance()->addToDiscardPile(CardRegistry::createCard("dazed"),2);
             tag = 0;
         }
     }
@@ -158,6 +157,7 @@ public:
             CombatSystem::getInstance()->onAttack(thisMonster, Player::getInstance(),
                 basic_attack_value, "");
             //塞入一张灼热
+            CombatSystem::getInstance()->addToDiscardPile(CardRegistry::createCard("burn"), 1);
             round_num++;
         }
         else if (tag == 1) {
@@ -180,6 +180,7 @@ public:
                     basic_attack_value, "");
             }
             //塞入三张灼热
+            CombatSystem::getInstance()->addToDiscardPile(CardRegistry::createCard("burn"), 3);
             round_num++;
         }
         if (round_num % 7 == 1 || round_num % 7 == 3 || round_num % 7 == 6) {
