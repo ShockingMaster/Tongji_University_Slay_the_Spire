@@ -22,12 +22,12 @@ public:
     string name_;
     string description_;
     int stack_type_;                                                   //叠加方式：持续时间（DURATION）或是效果层数（EFFECT_LAYERS）
-    int duration_;                                                     //buff持续时间
+    int duration_=0;                                                     //buff持续时间
     int trigger_type_;                                                 //buff触发方式
     int priority_;                                                     //buff触发优先级
     bool is_stackable_;                                                //buff是否能被叠加
     bool is_positive_;                                                 //区分正负面buff
-    int effect_layers;                                                //buff的效果层数
+    int effect_layers=0;                                                //buff的效果层数
 
     virtual void onCardPlayed(std::shared_ptr<Card> card) {};          //在打出一张牌时触发
 
