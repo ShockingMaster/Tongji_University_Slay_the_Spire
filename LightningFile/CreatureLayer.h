@@ -44,6 +44,10 @@ private:
 	std::vector<cocos2d::Label*> monsterHealthLabel;
 	std::vector<cocos2d::Label*> monsterBlockLabel;
 	std::vector<cocos2d::Sprite*> intent;
+	std::vector<cocos2d::Sprite*> monsterBuff;
+	std::vector<cocos2d::Sprite*> playerBuff;
+	std::vector<cocos2d::Label*> monsterBuff_value;
+	std::vector<cocos2d::Label*> playerBuff_value;
 	std::vector<cocos2d::Label*> attack_value_list;
 	std::vector<cocos2d::Sprite*> monsterModel;
 };

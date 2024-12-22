@@ -42,5 +42,6 @@ void Player::init()
     block_ = 0;
     currentEnergy_ = 0;
     maxEnergy_ = 4;
+    
 }
 

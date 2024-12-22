@@ -549,24 +549,31 @@ void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 
 //更新buff
 void CombatSystem::updateBuff(std::shared_ptr<Creature> creature) {
-	for (auto Buff : creature->buffs_)
-	{
-		//只有持续时间buff会更新
-		if (Buff->stack_type_ != EFFECT_LAYERS)
-		{
+	for (auto it = creature->buffs_.begin(); it != creature->buffs_.end(); ) {
+		auto Buff = *it;
+		if (Buff->stack_type_ != EFFECT_LAYERS) {
 			Buff->duration_--;
-			//移除buff
 			if (Buff->duration_ == 0) {
-				creature->buffs_.erase(std::remove(creature->buffs_.begin(), creature->buffs_.end(), Buff), creature->buffs_.end());
+				it = creature->buffs_.erase(it); // 移除元素并更新迭代器
+				continue; // 跳过迭代器的递增操作
 			}
 		}
+		++it; // 仅在未移除时递增迭代器
 	}
-	//显示更新
-
 	for (auto Buff : creature->buffs_)
 	{
-		CCLOG("update::have buff: %s. num is %d", typeid(*Buff).name(), Buff->duration_);
+		if (Buff->stack_type_ != EFFECT_LAYERS) {
+			CCLOG("update::have buff: %s. num is %d", typeid(*Buff).name(), Buff->duration_);
+		}
+		else {
+			CCLOG("update::have buff: %s. num is %d", typeid(*Buff).name(), Buff->effect_layers);
+		}
+		
 	}
+	//显示更新
+	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+	scene->creatureLayer->updateDisplay();
+	
 }
 
 /*
@@ -838,7 +845,8 @@ void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value, std::s
 					Buff->effect_layers += numeric_value;
 				}
 				//更新
-
+				auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+				scene->creatureLayer->updateDisplay();
 				tag = 1;
 				break;
 			}
@@ -853,7 +861,11 @@ void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value, std::s
 				buff->effect_layers = numeric_value;
 			}
 			target->buffs_.push_back(buff);
+			//更新
+			auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+			scene->creatureLayer->updateDisplay();
 		}
+
 	}
 	//测试
 	for (auto Buff : target->buffs_)

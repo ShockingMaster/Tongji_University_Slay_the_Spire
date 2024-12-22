@@ -45,7 +45,8 @@ cocos2d::Rect Monster::getRect()
 class Mandibular_worm : public Monster
 {
 public:
-    Mandibular_worm() : Monster(NORMAL, 20, "Mandibular_worm", 2) {}
+    Mandibular_worm() : Monster(NORMAL, 20, "Mandibular_worm", 2) {
+    }
     void takeEffect() {
         
         std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);

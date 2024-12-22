@@ -75,6 +75,8 @@ public:
             }
         }
         //¸üÐÂ
+        auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+        scene->creatureLayer->updateDisplay();
     }
 };
 AUTO_REGISTER_BUFF(ArtificialProducts);

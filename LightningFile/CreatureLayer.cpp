@@ -237,6 +237,57 @@ void CreatureLayer::updateDisplay()
             PlayerBlockLabel->setString(std::to_string(block));  // 更新标签内容
         }
 
+        for (auto sprite : playerBuff_value)
+        {
+            sprite->removeFromParent();  // 从场景中移除
+        }
+        playerBuff_value.clear();  // 清空容器
+        for (auto sprite : playerBuff)
+        {
+            sprite->removeFromParent();  // 从场景中移除
+        }
+        playerBuff.clear();  // 清空容器
+
+
+        //更新buff显示
+        int num = 0;
+        for (auto buff : Player::getInstance()->buffs_) {
+            
+            std::string png_path = buff->name_;
+            png_path = png_path + ".jpg";
+            // 计算图标位置
+            const float rectX = 0.765 * screenSize.width;
+            const float rectY = 0.72 * screenSize.height;
+
+            // 计算图标位置：怪物区域的下方
+            const float spriteX = rectX - 0.57 * screenSize.width + num * 0.04 * screenSize.width;  // 中心位置
+            const float spriteY = rectY - 0.45 * screenSize.height; // 下方位置，偏移一个矩形高度
+            auto sprite = cocos2d::Sprite::create(png_path);
+
+            //添加数字
+            std::string buffValue = to_string(buff->duration_ + buff->effect_layers);
+            auto label = cocos2d::Label::createWithSystemFont(buffValue, "Arial", 24);
+            if (label)
+            {
+                // 设置Label的位置，放置在sprite右边
+                label->setPosition(cocos2d::Vec2(spriteX + 0.02 * screenSize.width, spriteY));
+                // 将Label添加到场景中
+                this->addChild(label, 104);  // 设置层级为102，确保在sprite上方
+                playerBuff_value.push_back(label);
+            }
+
+            if (sprite)
+            {
+                // 设置Sprite位置，将其放置在怪物区域的上方
+                sprite->setPosition(cocos2d::Vec2(spriteX, spriteY));
+                this->addChild(sprite, 103);  // 将Sprite添加到场景中，确保在DrawNode之上
+                // 将新添加的Sprite保存到容器中
+                playerBuff.push_back(sprite);
+            }
+            num++;
+        }
+
+
 
         for (int i = 0; i < CombatSystem::getInstance()->Monsters_.size(); i++)
         {
@@ -253,7 +304,7 @@ void CreatureLayer::updateDisplay()
             // 更新血量显示
             auto monsterHealthLabel = layer->monsterHealthLabel[i];
             monsterHealthLabel->setString(std::to_string(monsterHealth) + "/" + std::to_string(monsterFullHealth));
-
+            
             // 更新护盾显示
             auto monsterBlockLabel = layer->monsterBlockLabel[i];
             auto monsterBlockSprite = layer->monsterBlock[i];
@@ -276,6 +327,8 @@ void CreatureLayer::updateDisplay()
                 layer->monsterBlockLabel[i]->setVisible(false);
                 layer->monsterModel[i]->setVisible(false);
             }
+
+            
         }
 
 
@@ -291,6 +344,14 @@ void CreatureLayer::updateDisplay()
             sprite->removeFromParent();  // 从场景中移除
         }
         attack_value_list.clear();  // 清空容器
+        for (auto sprite : monsterBuff) {
+            sprite->removeFromParent();  // 从场景中移除
+        }
+        monsterBuff.clear();  // 清空容器
+        for (auto sprite : monsterBuff_value) {
+            sprite->removeFromParent();  // 从场景中移除
+        }
+        monsterBuff_value.clear();  // 清空容器
 
         
         // 2. 添加新的怪物图标
@@ -302,6 +363,44 @@ void CreatureLayer::updateDisplay()
             // 如果怪物生命值不足，那么不进行添加
             if (monster->getHealth() <= 0)
                 continue;
+
+            int num = 0;
+            for (auto buff : monster->buffs_) {
+                std::string png_path = buff->name_;
+                png_path = png_path + ".jpg";
+
+                // 计算图标位置
+                const float rectX = 0.765 * screenSize.width;
+                const float rectY = 0.72 * screenSize.height;
+
+                // 计算图标位置：怪物区域的下方
+                const float spriteX = rectX - (i - (combat->Monsters_.size() - 1) / 2.0) * 0.12 * screenSize.width+ num * 0.04* screenSize.width;  // 中心位置
+                const float spriteY = rectY - 0.45 * screenSize.height; // 下方位置，偏移一个矩形高度
+                auto sprite = cocos2d::Sprite::create(png_path);
+
+                //添加数字
+                std::string buffValue = to_string(buff->duration_ + buff->effect_layers);
+                auto label = cocos2d::Label::createWithSystemFont(buffValue, "Arial", 24);
+                if (label)
+                {
+                    // 设置Label的位置，放置在sprite右边
+                    label->setPosition(cocos2d::Vec2(spriteX + 0.02 * screenSize.width, spriteY));
+                    // 将Label添加到场景中
+                    this->addChild(label, 102);  // 设置层级为102，确保在sprite上方
+                    monsterBuff_value.push_back(label);
+                }
+
+                if (sprite)
+                {
+                    // 设置Sprite位置，将其放置在怪物区域的上方
+                    sprite->setPosition(cocos2d::Vec2(spriteX, spriteY));
+                    this->addChild(sprite, 101);  // 将Sprite添加到场景中，确保在DrawNode之上
+                    // 将新添加的Sprite保存到容器中
+                    monsterBuff.push_back(sprite);
+                }
+                num++;
+            }
+
 
             std::string png_path = monster->intentionDisplay();
 
@@ -342,6 +441,7 @@ void CreatureLayer::updateDisplay()
                 // 将新添加的Sprite保存到容器中
                 intent.push_back(sprite);
             }
+            
         }
         
     }
