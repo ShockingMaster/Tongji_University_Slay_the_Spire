@@ -551,7 +551,7 @@ void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 void CombatSystem::updateBuff(std::shared_ptr<Creature> creature) {
 	for (auto it = creature->buffs_.begin(); it != creature->buffs_.end(); ) {
 		auto Buff = *it;
-		if (Buff->stack_type_ != EFFECT_LAYERS) {
+		if (Buff->stack_type_ == DURATION) {
 			Buff->duration_--;
 			if (Buff->duration_ == 0) {
 				it = creature->buffs_.erase(it); // 移除元素并更新迭代器
@@ -827,13 +827,13 @@ void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value, std::s
 	for (auto it = target->buffs_.begin(); it != target->buffs_.end(); ) {
 		auto Buff = *it;
 		Buff->addBuff(buff, numeric_value);
-		CCLOG("111111111111111111111%d", numeric_value);
-		if (Buff->effect_layers == 0) {
+		if (Buff->effect_layers == 0&& Buff->duration_ == 0) {
 			it = target->buffs_.erase(it); // 移除元素并更新迭代器
 			continue; // 跳过迭代器的递增操作
 		}
 		++it; // 仅在未移除时递增迭代器
 	}
+	
 	if (numeric_value > 0) {
 		int tag = 0;
 		//buff能否被叠加

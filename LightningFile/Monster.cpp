@@ -70,7 +70,7 @@ public:
             }
         }
         else if (tag == 1) {
-            //CombatSystem::getInstance()->addBuff(std::make_shared<Mandibular_worm>(), Player::getInstance(),11, "Attack");  //增加buff
+            CombatSystem::getInstance()->addBuff(BuffRegistry::createBuff("StrengthBuff"), 3, thisMonster);
             if (randomValue < 0.45) {
                 tag = 0; // 45% 的概率赋值为 0
             }
