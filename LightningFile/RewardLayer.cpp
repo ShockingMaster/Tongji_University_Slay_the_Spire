@@ -85,7 +85,7 @@ bool RewardLayer::init(bool coins, bool potion, bool relic, bool singlecard, boo
 
     if (relic) {
         background6 = Sprite::create("relic_link.png");
-        background6->setScale(1.0f);
+        background6->setScale(3.0f);
         background6->setPosition(Vec2(visibleSize.width / 2 - 200, visibleSize.height / 2 - 300));
         this->addChild(background6, 2000);
     }
@@ -114,9 +114,14 @@ bool RewardLayer::init(bool coins, bool potion, bool relic, bool singlecard, boo
             return true;
         }
         if (background5->getBoundingBox().containsPoint(touchLocation)) {
+            if (singlecard) {
+                auto showLayer = ShowLayer::create(2);
+                this->addChild(showLayer, 3000);
+            }
+            if (selectcard) {
                 auto showLayer = ShowLayer::create(4);
                 this->addChild(showLayer, 3000);
-            
+            }
             return true;
         }
         if (background6->getBoundingBox().containsPoint(touchLocation)) {
