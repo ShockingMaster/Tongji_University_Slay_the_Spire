@@ -26,7 +26,7 @@ bool EndingScene::init(bool isVictory) {
 
     // 创建背景图片
     auto backgroundSprite = Sprite::create("ending.jpg");  // 确保背景图片路径正确
-    backgroundSprite->setPosition(Director::getInstance()->getVisibleSize() / 2);  // 设置背景位置为屏幕中央
+    backgroundSprite->setPosition(Vec2(1000, 0));  // 设置背景位置为屏幕中央
     this->addChild(backgroundSprite);  // 将背景添加到层中
 
     // 创建文本标签
