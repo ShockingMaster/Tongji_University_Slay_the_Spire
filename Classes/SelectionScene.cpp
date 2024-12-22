@@ -2,7 +2,7 @@
 #include "MenuScene.h"
 #include "HoverButton.h"
 #include "MapScene.h"
-#include "const.h"
+#include "enum.h"
 #include "AudioPlayer.h"
 #include <locale>
 #include <codecvt>

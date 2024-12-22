@@ -3,7 +3,7 @@
 #include "AudioPlayer.h"
 #include "StartScene.h"
 #include "HelloWorldScene.h"
-#include "const.h"
+#include "Enum.h"
 #include "Player.h"
 #include "HeaderBar.h"
 #include "CardLayer.h"

@@ -4,7 +4,7 @@
 #include "SettingsScene.h"               // 引入设置场景
 #include "SelectionScene.h"              // 引入选择场景
 #include "HoverButton.h"                 // 引入HoverButton类，用于按钮的悬停效果
-#include "const.h"
+#include "enum.h"
 #include "Player.h"
 #include "AudioPlayer.h"
 

@@ -1,7 +1,7 @@
 #include "cocos2d.h"
 #include "EndingScene.h"
 #include "AudioPlayer.h"
-#include "const.h"
+#include "enum.h"
 using namespace std;
 using namespace cocos2d;
 
