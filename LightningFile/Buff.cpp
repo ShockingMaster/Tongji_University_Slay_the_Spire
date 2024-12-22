@@ -66,8 +66,9 @@ public:
         //负面buff才会执行
         if (buff->is_positive_ == false) {
             if (effect_layers <= numeric_value) {
-                effect_layers = 0;                        //人工制品层数归零
+                
                 numeric_value -= effect_layers;           //debuff层数减少
+                effect_layers = 0;                        //人工制品层数归零
             }
             else {
                 effect_layers -= numeric_value;           //人工制品层数减少
@@ -87,7 +88,7 @@ AUTO_REGISTER_BUFF(ArtificialProducts);
 class vulnerability :public Buff
 {
 public:
-    vulnerability() : Buff("vulnerability", "", 0, 0, true, 0, YES, DURATION) {}
+    vulnerability() : Buff("vulnerability", "", 0, 0, false, 0, YES, DURATION) {}
     void onAttacked(int& numeric_value_,std::shared_ptr<Creature> user, std::shared_ptr<Creature> target)
     {
         numeric_value_ *= 1.5;

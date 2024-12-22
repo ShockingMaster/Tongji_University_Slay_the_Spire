@@ -118,7 +118,7 @@ public:
     //赋予两层人工制品
     Sentinel() : Monster(ELITE, 40, "Sentinel", 3) {
         std::shared_ptr<Buff> buff = BuffRegistry::createBuff("ArtificialProducts");
-        buff->effect_layers = 2;
+        buff->effect_layers = 3;
         buffs_.push_back(buff);
     }
     

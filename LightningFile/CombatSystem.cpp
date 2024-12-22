@@ -824,48 +824,55 @@ void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value, std::shared_ptr<Creature> target)
 {
 	//遍历目标的buff列表，触发所有buff的addBuff效果
-	for (auto Buff : target->buffs_)
-	{
-		if (Buff != nullptr)
-			Buff->addBuff(buff, numeric_value);
+	for (auto it = target->buffs_.begin(); it != target->buffs_.end(); ) {
+		auto Buff = *it;
+		Buff->addBuff(buff, numeric_value);
+		CCLOG("111111111111111111111%d", numeric_value);
+		if (Buff->effect_layers == 0) {
+			it = target->buffs_.erase(it); // 移除元素并更新迭代器
+			continue; // 跳过迭代器的递增操作
+		}
+		++it; // 仅在未移除时递增迭代器
 	}
-	int tag = 0;
-	//buff能否被叠加
-	if (buff->is_stackable_ == true) {
-		for (auto Buff : target->buffs_)
-		{
-			//已经存在同种buff
-			if (Buff->name_ == buff->name_) {
+	if (numeric_value > 0) {
+		int tag = 0;
+		//buff能否被叠加
+		if (buff->is_stackable_ == true) {
+			for (auto Buff : target->buffs_)
+			{
+				//已经存在同种buff
+				if (Buff->name_ == buff->name_) {
+					//持续时间
+					if (Buff->stack_type_ == DURATION) {
+						Buff->duration_ += numeric_value;
+					}
+					//效果层数
+					else {
+						Buff->effect_layers += numeric_value;
+					}
+					//更新
+					auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+					scene->creatureLayer->updateDisplay();
+					tag = 1;
+					break;
+				}
+			}
+			if (tag == 0) {
 				//持续时间
-				if (Buff->stack_type_ == DURATION) {
-					Buff->duration_ += numeric_value;
+				if (buff->stack_type_ == DURATION) {
+					buff->duration_ = numeric_value;
 				}
 				//效果层数
 				else {
-					Buff->effect_layers += numeric_value;
+					buff->effect_layers = numeric_value;
 				}
+				target->buffs_.push_back(buff);
 				//更新
 				auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
 				scene->creatureLayer->updateDisplay();
-				tag = 1;
-				break;
 			}
-		}
-		if (tag == 0) {
-			//持续时间
-			if (buff->stack_type_ == DURATION) {
-				buff->duration_ = numeric_value;
-			}
-			//效果层数
-			else {
-				buff->effect_layers = numeric_value;
-			}
-			target->buffs_.push_back(buff);
-			//更新
-			auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-			scene->creatureLayer->updateDisplay();
-		}
 
+		}
 	}
 	//测试
 	for (auto Buff : target->buffs_)

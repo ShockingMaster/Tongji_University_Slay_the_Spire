@@ -46,6 +46,7 @@ bool EventSystem::init()
         this->addCard(DefenseCard);
     }
     this->addCard(CardRegistry::createCard("Apotheosis"));
+    this->addCard(CardRegistry::createCard("trounce"));
     return true;
 }
 

@@ -218,3 +218,34 @@ public:
     }
 };
 AUTO_REGISTER_CARD(burn)
+
+
+/*
+* 卡牌名称：痛击
+* 效果：造成8点伤害。给予2层易伤。
+*/
+class trounce :public Card
+{
+public:
+    trounce() : Card("trounce", "Causing 8 points of damage. Give 2 layers of vulnerability.",
+        2, 40, RARE, PLAYABLE, ATTACK, YES, NO, NO) {};
+    void upgrade() {
+        is_upgraded_ = 1;
+        name_ += '+';
+        description_ = "Causing 10 points of damage. Give 3 layers of vulnerability.";
+    }
+    void takeEffect(std::shared_ptr<Creature> target)
+    {
+        int temp_attack = 8;
+        int numeric_value = 2;
+        if (is_upgraded_)
+        {
+            temp_attack += 2;
+            numeric_value += 1;
+        }
+        CombatSystem::getInstance()->onAttack(Player::getInstance(), target,
+            temp_attack, "Attack");
+        CombatSystem::getInstance()->addBuff(BuffRegistry::createBuff("vulnerability"), numeric_value, target);
+    }
+};
+AUTO_REGISTER_CARD(trounce)
