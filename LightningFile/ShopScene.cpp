@@ -131,7 +131,7 @@ bool ShopScene::init() {
             Vec2 touchLocation = touch->getLocation();
 
             // 判断点击是否发生在card1上
-            if (card1->getBoundingBox().containsPoint(touchLocation)) {
+            if (card1->getBoundingBox().containsPoint(touchLocation)&& randomCard1->getMoneyCost()< EventSystem::getInstance()->getCoins()) {
                 CCLOG("Card 1 clicked!");
                 // 执行card1的相关逻辑
                 audioPlayer("gold.ogg", false);
@@ -142,7 +142,7 @@ bool ShopScene::init() {
             }
 
             // 判断点击是否发生在card2上
-            if (card2->getBoundingBox().containsPoint(touchLocation)) {
+            if (card2->getBoundingBox().containsPoint(touchLocation)&&randomCard2->getMoneyCost() < EventSystem::getInstance()->getCoins()) {
                 CCLOG("Card 2 clicked!");
                 // 执行card2的相关逻辑
                 audioPlayer("gold.ogg", false);
@@ -153,7 +153,7 @@ bool ShopScene::init() {
             }
 
             // 判断点击是否发生在card3上
-            if (card3->getBoundingBox().containsPoint(touchLocation)) {
+            if (card3->getBoundingBox().containsPoint(touchLocation)&&randomCard3->getMoneyCost() < EventSystem::getInstance()->getCoins()) {
                 CCLOG("Card 3 clicked!");
                 audioPlayer("gold.ogg", false);
                 EventSystem::getInstance()->changeCoins(-randomCard3->getMoneyCost());
@@ -164,7 +164,7 @@ bool ShopScene::init() {
             }
 
             // 判断点击是否发生在card4上
-            if (card4->getBoundingBox().containsPoint(touchLocation)) {
+            if (card4->getBoundingBox().containsPoint(touchLocation)&&randomCard4->getMoneyCost() < EventSystem::getInstance()->getCoins()) {
                 CCLOG("Card 4 clicked!");
                 audioPlayer("gold.ogg", false);
                 EventSystem::getInstance()->changeCoins(-randomCard4->getMoneyCost());
@@ -176,7 +176,7 @@ bool ShopScene::init() {
             }
 
             // 判断点击是否发生在card5上
-            if (card5->getBoundingBox().containsPoint(touchLocation)) {
+            if (card5->getBoundingBox().containsPoint(touchLocation)&& randomCard5->getMoneyCost() < EventSystem::getInstance()->getCoins()) {
                 CCLOG("Card 5 clicked!");
                 audioPlayer("gold.ogg", false);
                 EventSystem::getInstance()->changeCoins(-randomCard5->getMoneyCost());
@@ -185,7 +185,7 @@ bool ShopScene::init() {
                 return true;
             }
 
-            if (card6->getBoundingBox().containsPoint(touchLocation)) {
+            if (card6->getBoundingBox().containsPoint(touchLocation)&&randomCard6->getMoneyCost() < EventSystem::getInstance()->getCoins()) {
                 CCLOG("Card 6 clicked!");
                 audioPlayer("gold.ogg", false);
                 EventSystem::getInstance()->changeCoins(-randomCard6->getMoneyCost());
@@ -195,7 +195,7 @@ bool ShopScene::init() {
             }
 
             // 判断点击是否发生在deleteCardService上
-            if (deleteCardService->getBoundingBox().containsPoint(touchLocation)) {
+            if (deleteCardService->getBoundingBox().containsPoint(touchLocation)&& deleteprice < EventSystem::getInstance()->getCoins()) {
                 CCLOG("Delete Card Service clicked!");
                 // 执行删除卡片服务按钮的相关逻辑
                 auto player = EventSystem::getInstance();
