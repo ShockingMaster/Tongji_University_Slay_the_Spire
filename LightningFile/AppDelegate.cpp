@@ -111,8 +111,7 @@ bool AppDelegate::applicationDidFinishLaunching() {
     // 设置初始场景为 TestScene
     //auto testScene = TestScene::create();
     RandomGenerator::getInstance()->initializeGenerators();
-    auto testScene = InitialScene::create();
-    //auto testScene = StartScene::create();
+    auto testScene = StartScene::create();
 
     cocos2d::Director::getInstance()->runWithScene(testScene);
 

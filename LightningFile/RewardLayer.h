@@ -18,10 +18,10 @@ public:
     RewardLayer();
     ~RewardLayer();
     // 创建 RewardLayer 层
-    static RewardLayer* create(bool coins, bool singlecard, bool selectcard, bool potion, bool relic);
+    static RewardLayer* create(bool coins, bool potion, bool relic, bool singlecard, bool selectcard);
 
     // 初始化 RewardLayer
-    virtual bool init(bool coins, bool singlecard, bool selectcard, bool potion, bool relic);
+    virtual bool init(bool coins, bool potion, bool relic, bool singlecard, bool selectcard);
 
     // 按钮点击事件回调
     void onCloseButtonClicked(cocos2d::Ref* sender);

@@ -1,3 +1,4 @@
+
 #include "RewardLayer.h"
 #include "cocos2d.h"
 #include "Card.h"
@@ -85,7 +86,7 @@ bool RewardLayer::init(bool coins, bool potion, bool relic, bool singlecard, boo
 
     if (relic) {
         background6 = Sprite::create("relic_link.png");
-        background6->setScale(3.0f);
+        background6->setScale(2.0f);
         background6->setPosition(Vec2(visibleSize.width / 2 - 200, visibleSize.height / 2 - 300));
         this->addChild(background6, 2000);
     }

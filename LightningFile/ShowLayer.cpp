@@ -25,10 +25,10 @@ ShowLayer* ShowLayer::create(int op) {
 }
 
 
-bool ShowLayer::init( int op) {
+bool ShowLayer::init(int op) {
     if (!Layer::init()) {
         return false;
-    } 
+    }
     auto headbar = HeaderBar::create(EventSystem::getInstance());
     headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
     this->addChild(headbar);
@@ -46,7 +46,7 @@ bool ShowLayer::init( int op) {
 
     // 创建关闭按钮
     auto closeButton = cocos2d::MenuItemImage::create(
-        "cancelButton.png", "cancelButtonOutline.png",CC_CALLBACK_1(ShowLayer::closeLayerCallback, this)
+        "cancelButton.png", "cancelButtonOutline.png", CC_CALLBACK_1(ShowLayer::closeLayerCallback, this)
     );
     closeButton->setPosition(cocos2d::Vec2(1940, 50));
     closeButton->setScale(1.3f);
@@ -60,13 +60,13 @@ bool ShowLayer::init( int op) {
     this->addChild(returnLabel, 6000);  // Label的层级高于按钮
     if (op == 1) {
         // 创建返回Label
-       auto background4 = Sprite::create("gold.png");
+        auto background4 = Sprite::create("gold.png");
         background4->setScale(6.0f);
-        background4->setPosition(Vec2(1000,400));
+        background4->setPosition(Vec2(1000, 400));
         this->addChild(background4, 2000);
         // 生成随机数
         int random_number = RandomGenerator::getInstance()->getRandomNumber(10, 20);
-        auto Label1 = cocos2d::Label::createWithSystemFont(u8"恭喜获得金币"+to_string(random_number)+u8"枚", "Arial", 60);
+        auto Label1 = cocos2d::Label::createWithSystemFont(u8"恭喜获得金币" + to_string(random_number) + u8"枚", "Arial", 60);
         Label1->setTextColor(cocos2d::Color4B::WHITE);
         Label1->setPosition(cocos2d::Vec2(1000, 60));  // 设置Label的位置，使其在按钮上方
         this->addChild(Label1, 103);  // Label的层级高于按钮
@@ -77,7 +77,7 @@ bool ShowLayer::init( int op) {
     if (op == 2) {
         // 创建返回Label
         auto randomCard = RandomGenerator::getInstance()->getRandomCard();
-        auto background4=CardSpriteGenerator::createCardSprite(randomCard);
+        auto background4 = CardSpriteGenerator::createCardSprite(randomCard);
         background4->setScale(1.2f);
         background4->setPosition(Vec2(1000, 400));
         this->addChild(background4, 2000);
@@ -90,14 +90,15 @@ bool ShowLayer::init( int op) {
         headbar->updateHeader(EventSystem::getInstance());
     }
     if (op == 3) {
-        // 创建返回Label
-        auto background4 = Sprite::create("bell.png");
-        background4->setScale(4.0f);
-        background4->setPosition(Vec2(1000, 400));
-        this->addChild(background4, 2000);
+        
         // 生成随机数
         auto randomRelic = RandomGenerator::getInstance()->getRandomRelic();
         auto Label1 = cocos2d::Label::createWithSystemFont(u8"恭喜获得新遗物", "Arial", 60);
+        // 创建返回Label
+        auto background4 = RelicSpriteGenerator::createCardSprite(randomRelic);
+        background4->setScale(3.0f);
+        background4->setPosition(Vec2(1000, 400));
+        this->addChild(background4, 2000);
         Label1->setTextColor(cocos2d::Color4B::WHITE);
         Label1->setPosition(cocos2d::Vec2(1000, 60));  // 设置Label的位置，使其在按钮上方
         this->addChild(Label1, 103);  // Label的层级高于按钮
@@ -174,7 +175,7 @@ bool ShowLayer::init( int op) {
 
 
     if (op == 5) {
-       
+
         // 生成随机数
         auto randomPotion = RandomGenerator::getInstance()->getRandomPotion();
         auto background4 = PotionSpriteGenerator::createCardSprite(randomPotion);

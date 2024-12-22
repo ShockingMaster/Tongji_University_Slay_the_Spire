@@ -55,10 +55,24 @@ bool ChestScene::init() {
 
             // 更换宝箱的图像为已打开状态
             chest->setTexture("largeChestOpened.png");  // 替换为已打开的宝箱图像
+            auto seed = RandomGenerator::getInstance()->getInitialSeed();
+            std::mt19937 engine(seed);
 
+            // 创建一个分布（例如，生成 0 到 100之间的随机整数）
+            std::uniform_int_distribution<int> distribution(0, 100);
+
+            // 生成随机数
+            int randomNumber = rand();
             // 创建 RewardLayer 并显示奖励
-            RewardLayer* rewardLayer = RewardLayer::create(true,true,false,false,true);
-            Director::getInstance()->getRunningScene()->addChild(rewardLayer);  // 将 RewardLayer 添加到当前场景
+            if (randomNumber%2==0) {
+                RewardLayer* rewardLayer = RewardLayer::create(true, false, true, false, true);
+                Director::getInstance()->getRunningScene()->addChild(rewardLayer);
+            }
+            else {
+                RewardLayer* rewardLayer = RewardLayer::create(true, true,false, false, true);
+                Director::getInstance()->getRunningScene()->addChild(rewardLayer);
+
+            }
         }
         event->stopPropagation();
         };
