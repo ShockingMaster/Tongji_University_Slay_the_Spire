@@ -116,8 +116,9 @@ class Sentinel : public Monster
 public:
     //赋予两层人工制品
     Sentinel() : Monster(ELITE, 40, "Sentinel", 3) {
-        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
-        CombatSystem::getInstance()->addBuff(BuffRegistry::createBuff("ArtificialProducts"), 2, thisMonster);
+        std::shared_ptr<Buff> buff = BuffRegistry::createBuff("ArtificialProducts");
+        buff->effect_layers = 2;
+        buffs_.push_back(buff);
     }
     
     void takeEffect() {
