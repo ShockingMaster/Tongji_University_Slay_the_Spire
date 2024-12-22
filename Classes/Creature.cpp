@@ -1,5 +1,6 @@
 #include "IncludeAll.h"
-#include "Enum.h"
+#include "
+"
 std::string Creature::getName() const
 {
 	return name_;

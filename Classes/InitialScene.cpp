@@ -4,7 +4,7 @@
 #include "InitialScene.h"
 #include "HoverButton.h"
 #include "relic.h"
-#include "enum.h"
+#include "Enum.h"
 #include "AudioPlayer.h"
 #include "Player.h"
 #include "potion.h"

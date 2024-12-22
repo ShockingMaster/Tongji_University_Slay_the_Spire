@@ -1,7 +1,7 @@
 #include "event1.h"
 #include "HoverButton.h"  
 #include "AudioPlayer.h"
-#include "enum.h"
+#include "Enum.h"
 #include "Player.h"
 #include "HeaderBar.h"
 
