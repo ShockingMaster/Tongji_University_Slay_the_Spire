@@ -2,14 +2,14 @@
 #include "ui/CocosGUI.h"  
 #include "Card.h"
 #include "Player.h"
-
+#include "EventSystem.h"
+#include "SpriteGenerator.h"
 CardLayer::CardLayer() : _cards({}), _scrollView(nullptr), _background(nullptr) {
 }
 
-CardLayer::~CardLayer() {
-}
+CardLayer::~CardLayer() {}
 
-CardLayer* CardLayer::create(std::vector<Card*> cards,int op) {
+CardLayer* CardLayer::create(std::vector<std::shared_ptr<Card>> cards,int op) {
     CardLayer* ret = new CardLayer();
     if (ret && ret->init(cards,op)) {
         ret->autorelease();
@@ -19,23 +19,24 @@ CardLayer* CardLayer::create(std::vector<Card*> cards,int op) {
     return nullptr;
 }
 
-bool CardLayer::init(std::vector<Card*> cards, int op) {
+bool CardLayer::init(std::vector<std::shared_ptr<Card>> cards, int op) {
     if (!Layer::init()) {
         return false;
     }
+
+    _cards = cards;
+
     operation = op;
     // 加载背景
     _background = cocos2d::Sprite::create("cardlayer.png");
     if (_background) {
         _background->setScale(1.0f);
         _background->setColor(cocos2d::Color3B(240, 240, 240));
-        _background->setPosition(cocos2d::Vec2(1000, 720));
+        _background->setPosition(cocos2d::Vec2(1000, 520));
         _background->setAnchorPoint(cocos2d::Vec2(0.5, 0.5));
         this->addChild(_background, 100);
     }
 
-    // 初始化卡牌
-    _cards = cards;
 
     // 创建 ScrollView
     _scrollView = cocos2d::ui::ScrollView::create();
@@ -52,7 +53,7 @@ bool CardLayer::init(std::vector<Card*> cards, int op) {
         "cancelButton.png", "cancelButtonOutline.png",
         CC_CALLBACK_1(CardLayer::closeLayerCallback, this)
     );
-    closeButton->setPosition(cocos2d::Vec2(1940, 190));
+    closeButton->setPosition(cocos2d::Vec2(1940, -10));
     closeButton->setScale(1.3f);
     auto menu = cocos2d::Menu::create(closeButton, nullptr);
     menu->setPosition(cocos2d::Vec2::ZERO);
@@ -60,25 +61,25 @@ bool CardLayer::init(std::vector<Card*> cards, int op) {
     // 创建返回Label
     auto returnLabel = cocos2d::Label::createWithSystemFont(u8"返回", "Arial", 60);
     returnLabel->setTextColor(cocos2d::Color4B::WHITE);
-    returnLabel->setPosition(cocos2d::Vec2(1790, 260));  // 设置Label的位置，使其在按钮上方
+    returnLabel->setPosition(cocos2d::Vec2(1790, 60));  // 设置Label的位置，使其在按钮上方
     this->addChild(returnLabel, 103);  // Label的层级高于按钮
 
     if (operation == 1) {
         auto inform = cocos2d::Label::createWithSystemFont(u8"当前\n牌组", "fonts/Marker Felt", 70);
         inform->setTextColor(cocos2d::Color4B::WHITE);
-        inform->setPosition(cocos2d::Vec2(1790, 700));  // 设置Label的位置，使其在按钮上方
+        inform->setPosition(cocos2d::Vec2(1720, 500));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
     if (operation == 2) {
         auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被删除", "fonts/Marker Felt", 70);
         inform->setTextColor(cocos2d::Color4B::WHITE);
-        inform->setPosition(cocos2d::Vec2(1750, 700));  // 设置Label的位置，使其在按钮上方
+        inform->setPosition(cocos2d::Vec2(1700, 500));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
     if (operation == 3) {
         auto inform = cocos2d::Label::createWithSystemFont(u8"请选择\n一张牌\n被升级", "fonts/Marker Felt", 70);
         inform->setTextColor(cocos2d::Color4B::WHITE);
-        inform->setPosition(cocos2d::Vec2(1750, 700));  // 设置Label的位置，使其在按钮上方
+        inform->setPosition(cocos2d::Vec2(1700, 500));  // 设置Label的位置，使其在按钮上方
         this->addChild(inform, 103);  // Label的层级高于按钮
     }
     return true;
@@ -97,18 +98,20 @@ void CardLayer::displayCards() {
     // 遍历卡牌并添加到容器中
     for (size_t i = 0; i < cardCount; ++i) {
         auto card = _cards[i];
-        auto cardSprite = cocos2d::Sprite::create("hitcard.png");
+        auto cardSprite = CardSpriteGenerator::createCardSprite(card);
+
+        cardSprite->setScale(1.3f);
 
         if (i % 4 == 0 && i != 0) {
             startY -= 400;
         }
 
         cardSprite->setPosition(startX + 350 * (i % 4), startY);
-        cardSprite->setScale(0.8f);
+        
         cardContainer->addChild(cardSprite, 200);  // 初始设置
 
         // 为每个卡牌精灵设置与卡牌的关联
-        cardSprite->setUserData(static_cast<void*>(card));
+        cardSprite->setUserData(static_cast<void*>(card.get()));
 
         // 将每个卡牌的精灵添加到容器中，并存储卡牌的指针以便之后使用
         _cardSprites.push_back(cardSprite);
@@ -136,19 +139,19 @@ void CardLayer::displayCards() {
                 // 判断鼠标是否在卡牌的扩展范围内
                 if (extendedBoundingBox.containsPoint(mousePosition)) {
                     // 放大卡牌
-                    cardSprite->setScale(0.9f);
+                    cardSprite->setScale(1.5f);
                     cardSprite->setLocalZOrder(300);  // 提高 zOrder，确保它显示在上层
                 }
                 else {
                     // 恢复原尺寸
-                    cardSprite->setScale(0.8f);  // 恢复到原尺寸
+                    cardSprite->setScale(1.3f);  // 恢复到原尺寸
                     cardSprite->setLocalZOrder(200);  // 恢复初始 zOrder
                 }
             }
             };
 
         // 鼠标点击事件
-        cardListener->onMouseDown = [this, cardSprite, cardContainer](cocos2d::Event* event) {
+        cardListener->onMouseDown = [this, cardSprite, cardContainer, cardListener](cocos2d::Event* event) {
             cocos2d::EventMouse* mouseEvent = dynamic_cast<cocos2d::EventMouse*>(event);
             if (mouseEvent) {
                 // 获取鼠标点击的位置
@@ -166,20 +169,21 @@ void CardLayer::displayCards() {
                     // 只有在鼠标点击卡牌时，才执行相应操作
                     if (operation == 2 || operation == 3) {
                         // 创建一个弹出层（Popup Layer）
+                        cardListener->setEnabled(false);
                         auto popupLayer = cocos2d::LayerColor::create(cocos2d::Color4B(0, 0, 0, 250)); // 半透明黑色背景
                         popupLayer->setContentSize(cocos2d::Size(2100, 1200)); // 设置弹出层大小
-                        popupLayer->setPosition(cocos2d::Vec2(0, 60)); // 设置弹出层位置
-                        this->addChild(popupLayer, 500); // 添加到场景，确保它在最上层
-
-                        // 创建并添加卡牌到弹出层左边
-                        auto selectedCard = cocos2d::Sprite::create("hitcard.png");
-                        selectedCard->setPosition(500, 700); // 设置卡牌显示位置
-                        selectedCard->setScale(1.2f); // 放大卡牌
-                        popupLayer->addChild(selectedCard);
+                        popupLayer->setPosition(cocos2d::Vec2(0, -140)); // 设置弹出层位置
+                        this->addChild(popupLayer, 500); // 添加到场景，确保它在最上层、
+                        
+                        /*auto card = static_cast<Card*>(cardSprite->getUserData());
+                        auto selected = CardSpriteGenerator::createCardSprite(card);
+                        selected->setPosition(500, 500); // 设置卡牌显示位置
+                        selected->setScale(1.2f); // 放大卡牌
+                        popupLayer->addChild(selected);*/
 
                         // 创建右边的文本说明，使用默认字体
                         auto label = cocos2d::Label::createWithSystemFont(u8"是否确定选中", "fonts/Marker Felt", 70);
-                        label->setPosition(1790, 850);  // 设置标签位置
+                        label->setPosition(1700, 650);  // 设置标签位置
                         label->setTextColor(cocos2d::Color4B::WHITE);  // 设置字体颜色为白色
                         popupLayer->addChild(label, 600);  // 添加到弹出层，并确保它在较高层级
 
@@ -188,29 +192,32 @@ void CardLayer::displayCards() {
                         confirmButton->setTitleText(u8"确认");
                         confirmButton->setTitleFontSize(24);
                         confirmButton->setScale(1.5f);
-                        confirmButton->setPosition(cocos2d::Vec2(1750, 600)); // 设置按钮位置
+                        confirmButton->setPosition(cocos2d::Vec2(1750, 400)); // 设置按钮位置
                         // 按钮点击事件
                         confirmButton->addClickEventListener([this, popupLayer, cardSprite](cocos2d::Ref* sender) {
                             // 获取卡牌对象
 
+                            
+                            // std::shared_ptr<Card> deleteCard(card);  
                             auto card = static_cast<Card*>(cardSprite->getUserData());
 
-                            // 根据操作类型进行删除或其他操作
+                             // 根据操作类型进行删除或其他操作
                             if (operation == 2) {
                                 // 删除该卡牌对象
-                                auto it = std::find(_cards.begin(), _cards.end(), card);
-                                if (it != _cards.end()) {
-                                    _cards.erase(it);  // 删除卡牌
-                                    // 移除该精灵
-                                    cardSprite->removeFromParent();                           
-                                    _cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
-                                    CCLOG("删除卡牌成功");
-                                    Player* player = Player::getInstance();
-                                    player->cards_ = _cards;
-                                }
+                                EventSystem::getInstance()->deleteCard(card);
+                                // _cards.erase(it);  // 删除卡牌
+                                 // 移除该精灵
+                                cardSprite->removeFromParent();
+                                _cardSprites.erase(std::remove(_cardSprites.begin(), _cardSprites.end(), cardSprite), _cardSprites.end());
+                                CCLOG("删除卡牌成功");
+
+
+
                             }
+                            
                             else if (operation == 3) {
                                 // 执行升级操作
+                                EventSystem::getInstance()->upgradeCard(card);
                                 CCLOG("执行卡牌升级操作");
                             }
 
@@ -229,7 +236,7 @@ void CardLayer::displayCards() {
 
                         popupLayer->addChild(confirmButton);
 
-                        event->stopPropagation();  // 阻止事件传播，防止其他事件触发
+                        event->stopPropagation(); 
                     }
                 }
             }
@@ -250,7 +257,7 @@ void CardLayer::displayCards() {
 
     // 设置滚动视图的尺寸和位置
     _scrollView->setContentSize(cocos2d::Size(1600, 1200));
-    _scrollView->setPosition(cocos2d::Vec2(800, 600));
+    _scrollView->setPosition(cocos2d::Vec2(800, 300));
 
     // 设置滚动视图内容区域的位置
     _scrollView->setInnerContainerPosition(cocos2d::Vec2(0, 0));

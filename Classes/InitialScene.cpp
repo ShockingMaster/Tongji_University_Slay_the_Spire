@@ -1,11 +1,13 @@
 #include <locale>
 #include <codecvt>
+#include <memory>
 #include "InitialScene.h"
 #include "HoverButton.h"
+#include "relic.h"
 #include "const.h"
 #include "AudioPlayer.h"
 #include "Player.h"
-#include "HelloWorldScene.h"
+#include "potion.h"
 #include "MenuScene.h"
 
 // 白色颜色定义
@@ -15,8 +17,8 @@ constexpr int WHITE_B = 255; // 白色 B 通道
 
 // 常量定义
 constexpr char START_SCENE_BACKGROUND[] = "scene1.jpg";              // 背景图片路径
-constexpr char INPUT_FONT[] = "../Resources/Fonts/FangZhengZhaoGeYuan.ttf"; // 字体文件路径
-constexpr char START_MUSIC[] = "../Resources/start.ogg";             // 背景音乐路径
+constexpr char INPUT_FONT[] = "Fonts/FangZhengZhaoGeYuan.ttf"; // 字体文件路径
+constexpr char START_MUSIC[] = "start.ogg";             // 背景音乐路径
 constexpr char CLICK_SOUND[] = "ClickSoundEffect.mp3";               // 点击音效路径
 
 using namespace std;
@@ -53,13 +55,13 @@ bool InitialScene::init()
 
     // 创建并设置背景图片
     const auto background = Sprite::create(START_SCENE_BACKGROUND);
-    background->setPosition(Vec2(screenSize.width / 2 + 50, screenSize.height / 2 - 200));
+    background->setPosition(Vec2(screenSize.width / 2 + 150, screenSize.height / 2 - 400));
     this->addChild(background);
 
     // 创建文本框，用于用户输入昵称
     auto textField = cocos2d::ui::TextField::create(
         u8"点击输入您的游戏昵称", INPUT_FONT, 80); // 默认提示文字
-    textField->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 + 300));
+    textField->setPosition(Vec2(screenSize.width / 2+50, screenSize.height / 2 + 100));
     textField->setMaxLength(20);  // 限制最大长度
     textField->setOpacity(150);   // 设置透明度
     textField->setMaxLengthEnabled(true); // 开启长度限制
@@ -68,7 +70,7 @@ bool InitialScene::init()
 
     // 创建提示标签
     auto promptLabel = Label::createWithTTF("", INPUT_FONT, 80);
-    promptLabel->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 + 150));
+    promptLabel->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 -50));
     promptLabel->setOpacity(150);
     promptLabel->setTextColor(cocos2d::Color4B(WHITE_R, WHITE_G, WHITE_B, 255));
     this->addChild(promptLabel);
@@ -88,11 +90,11 @@ bool InitialScene::init()
     auto startButton = HoverButton::create("button1 (3).png",
         "button1 (2).png",
         "button1 (1).png");
-    startButton->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 - 120));
+    startButton->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 - 320));
 
     // 创建错误提示标签（默认隐藏）
     auto nameLabel = Label::createWithTTF("", INPUT_FONT, 80);
-    nameLabel->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 + 30));
+    nameLabel->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 -170));
     nameLabel->setVisible(false);
     nameLabel->setOpacity(150);
     nameLabel->setTextColor(cocos2d::Color4B(WHITE_R, WHITE_G, WHITE_B, 255));
@@ -120,14 +122,9 @@ bool InitialScene::init()
                     }, 1.0, "HideInvalidPromptLabel");
             }
             else {
-                Player* player = Player::getInstance();
+                auto player = EventSystem::getInstance();
                 player->name_ = nickname;
-                player->character_ = "战士";
-                player->coins_ = 100;
-                player->health_ = 50;
-                player->fullhealth_ = 100;
-                player->potions_ = { NULL,NULL };
-
+               
                 this->scheduleOnce([](float dt) {
                     // 跳转到下一个场景
                     auto nextScene = MenuScene::createScene();

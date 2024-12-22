@@ -1,303 +1,224 @@
 #include "IncludeAll.h"
+#include "string"
 
-HandPileLayer* HandPileLayer::instance_ = nullptr;
 
-HandPileLayer* HandPileLayer::getInstance()
+cocos2d::Scene* CombatScene::createScene()
 {
-    if (instance_ == nullptr)
-    {
-        instance_ = new HandPileLayer(); // 创建唯一实例  
-    }
-    return instance_;
+    auto scene = Scene::create();          // 创建一个空白场景
+    auto layer = CombatScene::create();     
+    scene->addChild(layer);                // 将层添加到场景
+    return scene;
 }
 
-bool HandPileLayer::init()
-{
-    combatSystem = CombatSystem::getInstance();
+void CombatScene::onEnter() {
+    Scene::onEnter();
 
+    // 初始检查
+    this->scheduleOnce([this](float dt) {
+        checkScene(); // 调用检查函数
 
-    //创建手牌堆引用
-    hand = CombatSystem::getInstance()->getHandPile();
-    discardPile = CombatSystem::getInstance()->discardPile;
-
-
-    return true;
-}
-
-void HandPileLayer::updateHandPile()
-{
-    // 清除现有的卡牌精灵
-    for (auto sprite : cardSprites)
-    {
-        sprite->removeFromParent();
-    }
-    cardSprites.clear();
-
-    // 获取当前手牌
-    auto& hand = CombatSystem::getInstance()->getHandPile();
-
-    // 将手牌中的卡牌显示出来
-    float xPos = 100;  // 卡牌初始的X位置
-    for (const auto& card : hand)
-    {
-        auto cardSprite = CardSpriteGenerator::createCardSprite(card);
-        cardSprite->setPosition(cocos2d::Vec2(xPos, 300));  // 设置卡牌显示的位置
-        this->addChild(cardSprite);
-        cardSprites.push_back(cardSprite);
-        xPos += 100;  // 卡牌之间的间距
-    }
-}
-
-void HandPileLayer::enableCardDrag(Sprite* cardSprite, std::shared_ptr<Card> card)
-{
-    auto listener = EventListenerTouchOneByOne::create();
-    listener->setSwallowTouches(true);
-
-    listener->onTouchBegan = [=](Touch* touch, Event* event) -> bool {
-        auto location = touch->getLocation();
-        if (cardSprite->getBoundingBox().containsPoint(location)) {
-            return true;
+        if (isMyTurn == 0) {
+            isMyTurn = 1;
+            CombatSystem::getInstance()->combatStart();
+            CombatSystem::getInstance()->startTurn(Player::getInstance());
+            creatureLayer->updateDisplay();
+            this->updateEnergyDisplay();
         }
-        return false;
-        };
+        }, 0.5f, "CheckSceneAfterDelay");
 
-    listener->onTouchMoved = [=](Touch* touch, Event* event) {
-        auto location = touch->getLocation();
-        cardSprite->setPosition(location);
-        };
-
-    auto playArea = Rect(500, 500, 400, 200); // 设置打出区域
-    listener->onTouchEnded = [=](Touch* touch, Event* event) {
-        auto location = touch->getLocation();
-        if (playArea.containsPoint(location)) {
-            CCLOG("Played card: %s", card->getName().c_str());
-            CCLOG("Take Effect: %s", card->getDescription().c_str());
-            discardPile.push(card);
-            hand.erase(std::remove(hand.begin(), hand.end(), card), hand.end());
-            cardSprite->removeFromParent();
-
-        }
-        adjustHandPile();
-        };
-
-    // 添加拖动监听
-    _eventDispatcher->addEventListenerWithSceneGraphPriority(listener, cardSprite);
-
-    // 使用卡牌地址作为唯一 tag
-    cardSprite->setTag(reinterpret_cast<intptr_t>(card.get()));
 }
 
-void HandPileLayer::drawCard(std::shared_ptr<Card> card)
-{
-    // 创建精灵
-    auto cardSprite = CardSpriteGenerator::createCardSprite(card);
-    cardSprite->setPosition(Vec2(400, 300)); // 初始位置
-    this->addChild(cardSprite);
+void CombatScene::checkScene() {
+    auto currentScene = Director::getInstance()->getRunningScene();
 
-    // 启用拖动
-    enableCardDrag(cardSprite, card);
+    if (currentScene) {
+        CCLOG("Current running scene: %s", typeid(*currentScene).name());
+    }
+    else {
+        CCLOG("No running scene.");
+    }
 
-    adjustHandPile();
-}
-
-void HandPileLayer::adjustHandPile()
-{
-    // 手牌中心位置
-    Vec2 handCenter = Vec2(500, 150);
-    float cardSpacing = 100.0f; // 卡牌间距
-    float totalWidth = (hand.size() - 1) * cardSpacing;
-
-    auto& newhand = CombatSystem::getInstance()->hand;
-    CCLOG("now my hand has %d cards", newhand.size());
-    for (size_t i = 0; i < newhand.size(); ++i)
-    {
-        // 假设每个手牌对应的精灵用 hand[i] 的地址作为唯一 tag
-        auto cardSprite = this->getChildByTag(reinterpret_cast<intptr_t>(newhand[i].get()));
-        if (cardSprite) {
-
-            // 根据手牌数量调整位置，确保居中显示
-            float xOffset = i * cardSpacing;
-
-            Vec2 newPosition = handCenter + Vec2(xOffset, 0);
-
-            //Vec2 newPosition = Vec2(400, 300);
-            // 使用动作移动到新位置，显得更平滑
-            cardSprite->runAction(MoveTo::create(0.2f, newPosition));
+    // 尝试将当前场景转换为 CombatScene
+    CombatScene* scene = dynamic_cast<CombatScene*>(currentScene);
+    if (scene) {
+        CCLOG("Successfully cast to CombatScene.");
+        // 调用 updateDisplay
+        if (creatureLayer) {
+            creatureLayer->updateDisplay();
         }
     }
+    else {
+        CCLOG("Failed to cast to CombatScene. Retrying...");
+        // 如果失败了，隔一段时间再尝试
+        this->scheduleOnce([this](float dt) {
+            checkScene(); // 递归调用自己继续检查
+            }, 0.05f, "RetryCheckScene");
+    }
 }
 
-
-bool CombatScene::init()
+bool CombatScene::init() 
 {
+    // 先进行战斗系统初始化
+    // CombatSystem::getInstance()->init();
+    const cocos2d::Size screenSize = cocos2d::Director::getInstance()->getWinSize();
+    auto combat = CombatSystem::getInstance();
+    for (int i = 0;i < combat->Monsters_.size();i++)
+    {
+        auto monster = static_pointer_cast<Monster>(combat->Monsters_[i]);
+
+        // 设定怪物区域
+        static_pointer_cast<Monster>(combat->Monsters_[i])->
+            setRect(cocos2d::Vec2(0.83 * screenSize.width + combat->Monsters_.size() * 0.12207 * screenSize.width / 2 - (i + 1) * 0.12207 * screenSize.width, 0.526315 * screenSize.height), 0.09765 * screenSize.width, 0.315789 * screenSize.height);
+        cocos2d::Rect monsterRect = monster->getRect();
+    }
+
+    auto player = EventSystem::getInstance();
+    headbar = HeaderBar::create(player);
+    headbar->setPosition(Vec2(0, 750));          // 设置位置（在屏幕上部）
+    this->addChild(headbar,1);
+
     // 创建并设置背景图像
     auto background = cocos2d::Sprite::create("combatScene.png");
-    if (background) {
-        background->setContentSize(Size(1648, 1500)); // 设置卡牌大小
-        background->setPosition(cocos2d::Vec2(750, 200));
+    if (background) 
+    {
+        background->setContentSize(Size(1.1 * screenSize.width, 1.5 * screenSize.height)); // 设置背景大小
+        background->setPosition(cocos2d::Vec2(screenSize.width / 2 + 0.05 * screenSize.width, 
+            screenSize.height / 2 - 0.25 * screenSize.height));
         this->addChild(background);
     }
-    else {
+    else{
         CCLOG("Can't find: combatScene.png!");
     }
-
-    // 创建抽牌堆图标
-    auto drawPileIcon = cocos2d::Sprite::create("drawPileIcon.png");
-    if (drawPileIcon) {
-        drawPileIcon->setPosition(cocos2d::Vec2(100, 100));
-        this->addChild(drawPileIcon);
+    //创建能量标志
+    auto energyLayer1 = Sprite::create("energyLayer1.png");
+    if (energyLayer1) {
+        energyLayer1->setContentSize(Size(200, 200));
+        energyLayer1->setPosition(cocos2d::Vec2(0.0976525 * screenSize.width, 0.390625 * screenSize.height));
+        this->addChild(energyLayer1);
     }
     else {
-        CCLOG("Can't find: drawPileIcon.png");
+        CCLOG("Can't find: energyLayer1.png!");
     }
-
-    // 创建弃牌堆图标
-    auto discardPileIcon = cocos2d::Sprite::create("discardPileIcon.png");
-    if (discardPileIcon) {
-        discardPileIcon->setPosition(cocos2d::Vec2(1300, 100));
-        this->addChild(discardPileIcon);
+    auto energyLayer2 = Sprite::create("energyGreenVFX.png");
+    if (energyLayer2) {
+        energyLayer2->setContentSize(Size(120, 120));
+        energyLayer2->setPosition(cocos2d::Vec2(0.0976525 * screenSize.width, 0.390625 * screenSize.height));
+        this->addChild(energyLayer2);
     }
     else {
-        CCLOG("Can't find: discardPileIcon.png");
+        CCLOG("Can't find: energyGreenVFX.png!");
     }
 
-    const auto screenSize = cocos2d::Director::getInstance()->getVisibleSize();
+    // 创建显示能量的数字
+    energyLabel = cocos2d::Label::createWithSystemFont(std::to_string(0) + "/" + std::to_string(0), "Arial", 24);
+    energyLabel->setPosition(cocos2d::Vec2(0.0976525 * screenSize.width, 0.390625 * screenSize.height));  // 设置在能量图标的中心
+    energyLabel->setColor(cocos2d::Color3B::BLACK);  // 设置文字颜色
+    this->addChild(energyLabel);
 
+    // 对能量进行更新
+    updateEnergyDisplay();
 
-    isMyTurn = 1;
+    //战斗开始时，先设定不为我方回合
+    isMyTurn = 0;
+
     //创建回合结束按钮,当点击回合结束按钮之后，丢弃所有的卡牌
     auto endTurnButton = HoverButton::create("endTurnButton.png", "endTurnButtonGlow.png", "endTurnButton.png");
     endTurnButton->setTitleText(u8"回合结束");
     endTurnButton->setScale(1.5f);
     endTurnButton->setTitleFontSize(20);
-    endTurnButton->setPosition(Vec2(screenSize.width - 200, screenSize.height - 650));
+    endTurnButton->setPosition(Vec2(0.906525 * screenSize.width, 0.25625 * screenSize.height));
 
-    //测试使用，回合开始按钮，当点击回合开始按钮之后，
+    //测试使用，回合开始按钮，当点击回合开始按钮之后，可以抽5张牌
     auto startTurnButton = HoverButton::create("endTurnButton.png", "endTurnButtonGlow.png", "endTurnButton.png");
     startTurnButton->setTitleText(u8"回合开始");
     startTurnButton->setScale(1.5f);
     startTurnButton->setTitleFontSize(20);
-    startTurnButton->setPosition(Vec2(screenSize.width - 1200, screenSize.height - 650));
-
+    startTurnButton->setPosition(Vec2(0.0976525 * screenSize.width, 0.25625 * screenSize.height));
+    
     // 结束回合按钮
     endTurnButton->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
         if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
-            if (isMyTurn)
+            if(isMyTurn)
             {
-                CCLOG("End Turn clicked!%d", isMyTurn);  // 打印日志
+                isMyTurn = 0;
+                CCLOG("End Turn clicked!");  // 打印日志
+                CombatSystem::getInstance()->endTurnCardPlayed();
+                CombatSystem::getInstance()->endTurn(Player::getInstance());//执行玩家回合结束效果
+                
+                for (int i = 0; i < CombatSystem::getInstance()->Monsters_.size(); i++)
+                {
+                    auto monster = static_pointer_cast<Monster>(CombatSystem::getInstance()->Monsters_[i]);
+                    if (monster->getHealth() > 0)
+                    {
+                        CombatSystem::getInstance()->startTurn(monster);
+                        monster->takeEffect();
+                        CombatSystem::getInstance()->endTurn(monster);
+                    }
+                }
             }
-            isMyTurn = 0;
+            CombatSystem::getInstance()->startTurn(Player::getInstance());
+            isMyTurn = 1;
         }
         });
 
     // 开始回合按钮
     startTurnButton->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
-        if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+        if (type == cocos2d::ui::Widget::TouchEventType::ENDED ) {
             if (!isMyTurn)
             {
-                CCLOG("Start Turn clicked!%d", isMyTurn);  // 打印日志
-                CombatSystem::getInstance()->drawCard(5);
+                CCLOG("Start Turn clicked!");  // 打印日志
+                CombatSystem::getInstance()->startTurn(Player::getInstance());// 执行玩家回合开始效果
             }
             isMyTurn = 1;
         }
         });
     this->addChild(endTurnButton);
-    this->addChild(startTurnButton);
 
 
+    // 在你的场景或 Layer 中创建战斗结束按钮
+    auto endBattleButton = cocos2d::ui::Button::create("endTurnButton.png", "endTurnButton.png");  // 设置按钮的常态和按下态图片
+    endBattleButton->setPosition(cocos2d::Vec2(400, 800));  // 设置按钮位置
+    endBattleButton->setTitleText("End Battle");  // 设置按钮文本
+    // 添加按钮到当前层
+    this->addChild(endBattleButton);
+    // 设置触摸事件监听器
+    endBattleButton->addTouchEventListener([&](cocos2d::Ref* sender, cocos2d::ui::Widget::TouchEventType type) {
+        if (type == cocos2d::ui::Widget::TouchEventType::ENDED) {
+            CCLOG("End Battle button clicked!");  // 打印日志
+            CombatSystem::getInstance()->endTurn(Player::getInstance());
+            // 结束战斗，弹出当前场景并返回上一个场景
+            isMyTurn = 0;
+            Director::getInstance()->popScene();
+        }
+        });
+
+
+
+    HandPileLayer::getInstance()->init();
     //测试使用：创建一个能打出牌的区域，当卡牌被拖动到这个区域时被打出
-    playArea = Rect(500, 500, 400, 200); // 设置打出区域
+    playArea = Rect(screenSize.width / 2 - 0.15 * screenSize.width, screenSize.height / 2,
+        0.3 * screenSize.width, 0.3 * screenSize.height);
     auto playAreaNode = DrawNode::create();
     playAreaNode->drawRect(playArea.origin, playArea.origin + playArea.size, Color4F::GRAY);
     this->addChild(playAreaNode);
 
     this->addChild(HandPileLayer::getInstance());
+
+    // 创建
+    creatureLayer = CreatureLayer::create(CombatSystem::getInstance()->Monsters_);
+    this->addChild(creatureLayer);
+    
     return true;
 }
 
-cocos2d::Scene* CombatScene::createScene() {
-    auto scene = Scene::create();          // 创建一个空白场景
-    auto layer = CombatScene::create();
-    scene->addChild(layer);                // 将层添加到场景
-    return scene;
-}
-
-/*#include "CombatScene.h"
-#include "AudioPlayer.h"
-#include "NodeConnection.h"
-#include "Player.h"
-#include "HeaderBar.h"
-#include "HoverButton.h"
-#include "CardLayer.h"
-#include "EnergyBall.h"
-
-using namespace cocos2d;
-
-// 创建场景
-
-
-bool CombatScene::init() {
-    if (!Scene::init()) {
-        return false;
-    }
-
-    //能量图像
-    auto energyBall = EnergyBall::create();
-    energyBall->setPosition(Vec2(200, 200)); // 设置位置
-    energyBall->setEnergy(3, 3);             // 设置当前能量和总能量
-    this->addChild(energyBall, 100);       // 添加到场景
-
-    auto Button1 = HoverButton::create(
-        "base.png",  // 默认图片
-        "base.png",  // 按钮悬停时的图片
-        "base.png"   // 按钮点击时的图片
-    );
-    // 设置按钮位置
-    Button1->setScale(2.0f);
-    Button1->setPosition(Vec2(100, 280));
-    this->addChild(Button1,10000);
-    // 添加按钮点击事件监听器
-    Button1->addClickEventListener([=](Ref* sender) {
-                    
-
-        });
-
-    auto Button2 = HoverButton::create(
-        "base2.png",  // 默认图片
-        "base2.png",  // 按钮悬停时的图片
-        "base2.png"   // 按钮点击时的图片
-    );
-
-    // 设置按钮位置
-    Button2->setScale(2.0f);
-    Button2->setPosition(Vec2(1800, 280));
-    this->addChild(Button2, 10000);
-
-    // 添加按钮点击事件监听器
-    Button2->addClickEventListener([=](Ref* sender) {
-        // 执行 popScene 操作，返回上一个场景
-
-        });
-
-    
-    Player* player = Player::getInstance();
-    auto headbar = HeaderBar::create(player);
-    headbar->setPosition(Vec2(0, 1150));          // 设置位置（在屏幕上部）
-    this->addChild(headbar);
-    headbar->setLocalZOrder(100);
-
-    // 背景图像
-    const auto background = Sprite::create("scene3.png");
-    background->setPosition(Vec2(1100, 500));
-    background->setScale(1.05f);
-    this->addChild(background);
-
-  
-    
-
-    return true;
-   
-
-}
-
+/*
+* 函数名称：updateEnergyDisplay
+* 功能：根据Player唯一实例的最大能量和当前能量进行更新
 */
+void CombatScene::updateEnergyDisplay()
+{
+    const int currentEnergy = Player::getInstance()->getCurrentEnergy();
+    const int maxEnergy = Player::getInstance()->getMaxEnergy();
+    energyLabel->setString(std::to_string(currentEnergy) + "/" + std::to_string(maxEnergy));  // 更新标签文本为当前能量值
+}
+

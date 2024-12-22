@@ -16,13 +16,13 @@ public:
     CardLayer();
     ~CardLayer();
     int operation;          //要进行的行为
-    static CardLayer* create(std::vector<Card*> cards, int op);
-    bool init(std::vector<Card*> cards, int op);
+    static CardLayer* create(std::vector<std::shared_ptr<Card>> cards, int op);
+    bool init(std::vector<std::shared_ptr<Card>> cards, int op);
     void displayCards();
     void updateCardBoundingBoxes();
     void closeLayerCallback(cocos2d::Ref* sender);
     void onMouseScroll(cocos2d::EventMouse* event);
-    std::vector<Card*> _cards;
+    std::vector<std::shared_ptr<Card>> _cards;
 private:
     std::vector<cocos2d::Sprite*>_cardSprites;
     cocos2d::ui::ScrollView* _scrollView;  // 卡牌的滚动视图

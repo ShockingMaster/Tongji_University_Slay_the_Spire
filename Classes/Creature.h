@@ -9,40 +9,31 @@ class Buff;
 class Creature
 {
 public:
+    string name_;//当前血量
+    string description_;//描述
+    int health_;//当前生命值
+    int max_health_;//最大生命值
+    int block_;//当前格挡
+    int can_end_turn_;//是否能够结束回合
 
-    string name_;
+    vector<std::shared_ptr<Buff>> buffs_;//生物buff列表
 
-    string description_;
+    std::string getName() const;
 
-    int health_;
+    void addBlock(int numeric_value);
 
-    int fullhealth_;
+    void loseBlock(int numeric_value);                    
 
-    int block_;
+    void loseHealth(int numeric_value);
 
-    int can_end_turn_;
+    void addHealth(int numeric_value);
 
-    vector<Buff*> buffs_;
+    int getBlockValue() const;
 
-    void updateHealth();                                                    //需要调用本体的updateHealth()
+    int getHealth() const;
 
-    void updateBuff();                                                      //需要调用本体的updateBuff()
+    int getMaxHealth() const;
 
-    void updateBlock();
-
-    void addBuff(Buff* buff);
-
-    void takeDamage(int numeric_value);                                     //这个是即将受到伤害时进行的效果判定
-
-    void show_info();
-
-    void loseBlock(int numeric_value) {};
-
-    void loseHealth(int numeric_value) {};
-
-    void take_damage(int damage);
-
-    int getBlockValue();
 
     virtual void startTurn() {};
 

@@ -35,20 +35,12 @@ bool StartScene::init() {
     }
 
     // 播放背景音乐
-    audioPlayer("../Resources/start.ogg", true);
+    audioPlayer("start.ogg", true);
 
     // 获取屏幕尺寸
     const auto screenSize = cocos2d::Director::getInstance()->getVisibleSize();
 
-    // 加载背景图片
-    const auto background0 = Sprite::create("title4.png");
-    background0->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
-    this->addChild(background0);
-
-    const auto background1 = Sprite::create("title5.png");
-    background1->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2));
-    this->addChild(background1);
-
+  
     const auto background2 = Sprite::create("scene0.jfif");
 
     // 计算缩放比例并调整背景大小
@@ -56,17 +48,17 @@ bool StartScene::init() {
     float scaleY = screenSize.height / background2->getContentSize().height;
     float scale = std::min(scaleX, scaleY); // 确保背景适配屏幕
     background2->setScale(scale);
-    background2->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 + 200));
+    background2->setPosition(Vec2(screenSize.width / 2+60, screenSize.height / 2));
     this->addChild(background2);
 
     // 创建加载进度条
     auto progressBar = cocos2d::ui::LoadingBar::create("StartupLoadingBar.png");
-    progressBar->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 - 200));
+    progressBar->setPosition(Vec2(screenSize.width / 2, screenSize.height / 2 - 400));
     progressBar->setPercent(0); // 初始为 0%
     this->addChild(progressBar);
 
     // 创建加载进度文本
-    auto progressLabel = Label::createWithTTF("0%", "../Resources/Fonts/arial.ttf", 50);
+    auto progressLabel = Label::createWithTTF("0%", "Fonts/arial.ttf", 50);
     progressLabel->setPosition(Vec2(progressBar->getPosition().x, progressBar->getPosition().y));
     progressLabel->setVisible(true);
     this->addChild(progressLabel);

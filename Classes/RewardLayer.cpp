@@ -8,18 +8,19 @@
 #include "HoverButton.h"
 USING_NS_CC;
 
-RewardLayer::RewardLayer()
-{
+RewardLayer::RewardLayer() {
+
 }
 
 RewardLayer::~RewardLayer()
 {
 }
 
-RewardLayer* RewardLayer::create()
+RewardLayer* RewardLayer::create(bool coins, bool potion, bool relic, bool singlecard, bool selectcard)
 {
+
     RewardLayer* ret = new RewardLayer();
-    if (ret && ret->init())
+    if (ret && ret->init(coins, potion, relic, singlecard, selectcard))
     {
         ret->autorelease();
         return ret;
@@ -31,8 +32,15 @@ RewardLayer* RewardLayer::create()
     }
 }
 
-bool RewardLayer::init()
+bool RewardLayer::init(bool coins, bool potion, bool relic, bool singlecard, bool selectcard)
 {
+    this->coins = coins;
+    this->potion = potion;
+    this->relic = relic;
+    this->singlecard = singlecard;
+    this->selectcard = selectcard;
+
+
     // 判断是否成功初始化
     if (!Layer::init())
     {
@@ -46,46 +54,57 @@ bool RewardLayer::init()
     // 背景图像
     auto background = Sprite::create("rewardScreenSheet.png");
     background->setScale(1.2f);
-    background->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 300));
+    background->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 100));
     this->addChild(background);
-   
+
     auto background1 = Sprite::create("rewardListItemPanel.png");
     background1->setScale(1.2f);
-    background1->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 500));
+    background1->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 100));
     this->addChild(background1);
 
     auto background4 = Sprite::create("gold.png");
     background4->setScale(2.0f);
-    background4->setPosition(Vec2(visibleSize.width / 2 -200, visibleSize.height / 2 + 500));
+    background4->setPosition(Vec2(visibleSize.width / 2 - 200, visibleSize.height / 2 + 100));
     this->addChild(background4, 2000);
     auto background2 = Sprite::create("rewardListItemPanel.png");
     background2->setScale(1.2f);
-    background2->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 300));
+    background2->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 100));
     this->addChild(background2);
 
     auto background5 = Sprite::create("bossCardReward.png");
     background5->setScale(2.0f);
-    background5->setPosition(Vec2(visibleSize.width / 2-200, visibleSize.height / 2 + 300));
+    background5->setPosition(Vec2(visibleSize.width / 2 - 200, visibleSize.height / 2 - 100));
     this->addChild(background5, 2000);
+
 
     auto background3 = Sprite::create("rewardListItemPanel.png");
     background3->setScale(1.2f);
-    background3->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 + 100));
+    background3->setPosition(Vec2(visibleSize.width / 2, visibleSize.height / 2 - 300));
     this->addChild(background3);
+    Sprite* background6;
 
-    auto background6 = Sprite::create("relic_link.png");
-    background6->setScale(2.0f);
-    background6->setPosition(Vec2(visibleSize.width / 2 -200, visibleSize.height / 2 + 100));
-    this->addChild(background6, 2000);
+    if (relic) {
+        background6 = Sprite::create("relic_link.png");
+        background6->setScale(3.0f);
+        background6->setPosition(Vec2(visibleSize.width / 2 - 200, visibleSize.height / 2 - 300));
+        this->addChild(background6, 2000);
+    }
+    else if (potion) {
+        background6 = Sprite::create("potion_s_glass.png");
+        background6->setScale(2.0f);
+        background6->setColor(cocos2d::Color3B::RED);
+        background6->setPosition(Vec2(visibleSize.width / 2 - 200, visibleSize.height / 2 - 300));
+        this->addChild(background6, 2000);
+    }
 
-    auto label = cocos2d::Label::createWithSystemFont(u8" 点击图标接收宝藏", "Arial", 60);
-    label->setPosition(1000,300);  // 设置标签位置
+    auto label = cocos2d::Label::createWithSystemFont(u8" 点击图标接收", "Arial", 60);
+    label->setPosition(300, 100);  // 设置标签位置
     label->setTextColor(cocos2d::Color4B::WHITE);  // 设置字体颜色为白色
-    this->addChild(label,1000);
-    
+    this->addChild(label, 1000);
+
     // 创建通用触摸监听器
     auto listener = EventListenerTouchOneByOne::create();
-    listener->onTouchBegan = [this, background4, background5, background6](Touch* touch, Event* event) {
+    listener->onTouchBegan = [this, background4, background5, background6, singlecard, selectcard, potion, relic](Touch* touch, Event* event) {
         Vec2 touchLocation = touch->getLocation();
 
         // 检测触摸目标是否是指定的 Sprite
@@ -95,13 +114,25 @@ bool RewardLayer::init()
             return true;
         }
         if (background5->getBoundingBox().containsPoint(touchLocation)) {
-            auto showLayer = ShowLayer::create(2);
-            this->addChild(showLayer, 3000);
+            if (singlecard) {
+                auto showLayer = ShowLayer::create(2);
+                this->addChild(showLayer, 3000);
+            }
+            if (selectcard) {
+                auto showLayer = ShowLayer::create(4);
+                this->addChild(showLayer, 3000);
+            }
             return true;
         }
         if (background6->getBoundingBox().containsPoint(touchLocation)) {
-            auto showLayer = ShowLayer::create(3);
-            this->addChild(showLayer, 3000);
+            if (relic) {
+                auto showLayer = ShowLayer::create(3);
+                this->addChild(showLayer, 3000);
+            }
+            if (potion) {
+                auto showLayer = ShowLayer::create(5);
+                this->addChild(showLayer, 3000);
+            }
             return true;
         }
 
