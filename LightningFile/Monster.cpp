@@ -47,7 +47,9 @@ class Mandibular_worm : public Monster
 public:
     Mandibular_worm() : Monster(NORMAL, 20, "Mandibular_worm", 2) {}
     void takeEffect() {
+        
         std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
+       
         
         std::random_device rd;               // 用于生成随机种子
         std::mt19937 gen(rd());              // 随机数引擎
@@ -112,7 +114,12 @@ AUTO_REGISTER_MONSTER(Mandibular_worm)
 class Sentinel : public Monster
 {
 public:
-    Sentinel() : Monster(ELITE, 40, "Sentinel", 3) {}
+    //赋予两层人工制品
+    Sentinel() : Monster(ELITE, 40, "Sentinel", 3) {
+        std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);
+        CombatSystem::getInstance()->addBuff(BuffRegistry::createBuff("ArtificialProducts"), 2, thisMonster);
+    }
+    
     void takeEffect() {
         if (tag == 0) {
             std::shared_ptr<Creature> thisMonster = CombatSystem::getInstance()->getMonsterPointer(this);

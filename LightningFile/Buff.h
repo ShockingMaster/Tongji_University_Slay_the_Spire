@@ -44,7 +44,7 @@ public:
 
     virtual void onGetBlock(int& numeric_value_) {};                   //在得到格挡时触发，主要应用于修改：敏捷
 
-    virtual void onAttacked(int& numeric_value_, std::shared_ptr<Creature>, std::shared_ptr<Creature>) {};
+    virtual void onAttacked(int& numeric_value_, std::shared_ptr<Creature> user, std::shared_ptr<Creature> target) {};
 
     virtual void onTakeDamage(int& numeric_value_) {};
 

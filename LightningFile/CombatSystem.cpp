@@ -547,6 +547,28 @@ void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 	scene->creatureLayer->updateDisplay();
 }
 
+//更新buff
+void CombatSystem::updateBuff(std::shared_ptr<Creature> creature) {
+	for (auto Buff : creature->buffs_)
+	{
+		//只有持续时间buff会更新
+		if (Buff->stack_type_ != EFFECT_LAYERS)
+		{
+			Buff->duration_--;
+			//移除buff
+			if (Buff->duration_ == 0) {
+				creature->buffs_.erase(std::remove(creature->buffs_.begin(), creature->buffs_.end(), Buff), creature->buffs_.end());
+			}
+		}
+	}
+	//显示更新
+
+	for (auto Buff : creature->buffs_)
+	{
+		CCLOG("update::have buff: %s. num is %d", typeid(*Buff).name(), Buff->duration_);
+	}
+}
+
 /*
  * 函数名称：endTurn
  * 参数：正在进行回合结束的生物的指针
@@ -561,6 +583,7 @@ void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
 			Buff->onTurnEnd();
 		}
 	}
+	updateBuff(creature);
 	if (creature == Player::getInstance())
 	{
 		for (auto Relic : EventSystem::getInstance()->relics_)

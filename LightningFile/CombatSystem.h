@@ -35,6 +35,8 @@ public:
 
 	void exhaustCard(int num, std::string cardName = "");
 
+	void updateBuff(std::shared_ptr<Creature> creature);
+
 	void exhaustCard();
 
 	void exhaustCard(std::shared_ptr<Card> card);

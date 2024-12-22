@@ -15,7 +15,7 @@ bool Buff::operator<(const Buff& other) const
 class StrengthBuff : public Buff
 {
 public:
-    StrengthBuff() : Buff("Strength", "", 0, 0, true, 0, YES, DURATION) {}
+    StrengthBuff() : Buff("Strength", "", 0, 0, true, 0, YES, EFFECT_LAYERS) {}
     void onAttack(int& numeric_value_, std::string cardName,
         std::shared_ptr<Creature> user, std::shared_ptr<Creature> target)
     {
@@ -25,7 +25,7 @@ public:
 //进行卡牌注册
 AUTO_REGISTER_BUFF(StrengthBuff);
 
-
+/*
 //精准Buff，效果为当卡牌名称为小刀时，造成更多伤害
 class Accuracy : public Buff
 {
@@ -42,6 +42,7 @@ public:
 };
 AUTO_REGISTER_BUFF(Accuracy);
 
+
 //荆棘，效果为当受到攻击（由攻击牌触发）时，对伤害来源造成一定伤害
 class Thorns :public Buff
 {
@@ -53,6 +54,7 @@ public:
     }
 };
 AUTO_REGISTER_BUFF(Thorns);
+*/
 
 //人工制品，效果为当被叠加debuff的时候，消耗一层并抵消
 class ArtificialProducts :public Buff
@@ -76,3 +78,17 @@ public:
     }
 };
 AUTO_REGISTER_BUFF(ArtificialProducts);
+
+
+
+//易伤，效果为从 攻击 受到的伤害增加 50% .持续 X 回合。
+class vulnerability :public Buff
+{
+public:
+    vulnerability() : Buff("vulnerability", "", 0, 0, true, 0, YES, DURATION) {}
+    void onAttacked(int& numeric_value_,std::shared_ptr<Creature> user, std::shared_ptr<Creature> target)
+    {
+        numeric_value_ *= 1.5;
+    }
+};
+AUTO_REGISTER_BUFF(vulnerability);

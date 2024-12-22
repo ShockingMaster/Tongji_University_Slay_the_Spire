@@ -52,4 +52,5 @@ public:
 	int attack_times = 0;
 	int attack_numeric_value = 0;
 	virtual ~Monster() {};
+	
 };
