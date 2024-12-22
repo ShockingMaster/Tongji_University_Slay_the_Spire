@@ -15,8 +15,7 @@ public:
             0) {}
 
     void onCombatEnd() override {
-       
-       
+        EventSystem::getInstance()->changeHealth(6); 
     }
 };
 AUTO_REGISTER_RELIC(BurningBlood);

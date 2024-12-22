@@ -124,12 +124,7 @@ bool InitialScene::init()
             else {
                 auto player = EventSystem::getInstance();
                 player->name_ = nickname;
-                player->coins_ = 100;
-                player->health_ = 50;
-                player->fullHealth_ = 100;
-                player->relics_ = { RelicRegistry::createRelic("CeramicFish"),RelicRegistry::createRelic("BurningBlood") };
                
-
                 this->scheduleOnce([](float dt) {
                     // 跳转到下一个场景
                     auto nextScene = MenuScene::createScene();

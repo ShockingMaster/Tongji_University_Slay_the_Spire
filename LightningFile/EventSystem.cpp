@@ -33,6 +33,7 @@ bool EventSystem::init()
     cards_.clear();
     potions_.clear();
     relics_.clear();
+    this->relics_ = { RelicRegistry::createRelic("BurningBlood") };
 
     for (int i = 0;i < 5;i++)
     {

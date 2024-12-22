@@ -147,7 +147,7 @@ bool MapScene::init() {
         int ran;
         while (1) {
             ran = rand();
-            if (ran < 40 && ran>-40) {
+            if (ran < 100 && ran>-100) {
                 break;
             }
         }
