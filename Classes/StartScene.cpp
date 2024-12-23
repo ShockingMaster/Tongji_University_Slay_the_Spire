@@ -1,5 +1,5 @@
 #include "ui/CocosGUI.h"
-#include "const.h"
+#include "Enum.h"
 #include "AudioPlayer.h"
 #include "StartScene.h"
 #include "InitialScene.h"

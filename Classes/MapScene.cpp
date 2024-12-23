@@ -5,7 +5,7 @@
 #include "MenuScene.h"
 #include "SelectionScene.h"
 #include "HoverButton.h"
-#include "const.h"
+#include "Enum.h"
 #include "AudioPlayer.h"
 #include "NodeConnection.h"
 #include "Player.h"

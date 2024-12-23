@@ -37,6 +37,8 @@ enum CardType
     SKILL,
 };
 
+constexpr int DEFAULT_MUSIC_SIGN = 0.3f;
+
 #define AUTO_REGISTER_CARD(className)                          \
     const bool className##Registered = []() {                  \
         CardRegistry::registerCard(#className, []() {          \
