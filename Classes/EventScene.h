@@ -13,7 +13,7 @@ public:
     static EventScene* create(const std::string& backgroundImage, const std::string& eventImage,
         const std::string& eventText, const std::vector<std::pair<std::string, std::function<void()>>>& buttons);
 
-private:
+protected:
     std::string backgroundImage_;
     std::string eventImage_;
     std::string eventText_;
