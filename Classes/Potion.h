@@ -16,15 +16,14 @@ public:
         rarity_(rarity),
         is_enabled_(is_enabled)
     {};
+
+
+    // 使用智能指针：目标是Creature类的shared_ptr
+    virtual void take_effect();  // 处理单个目标
     string name_;
     string description_;
     int numeric_value_;  // 药水的数值
     int money_cost_;     // 商店的花费
     int rarity_;         // 稀有度
     bool is_enabled_;    // 有的药水只有在自己的回合内能使用，有的药水全局都可以使用
-
-    // 使用智能指针：目标是Creature类的shared_ptr
-    virtual void take_effect();  // 处理单个目标
-
-
 };

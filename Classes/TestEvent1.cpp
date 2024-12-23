@@ -9,7 +9,6 @@ void Event1::onGiveGold()
          continueLabel->setPosition(Vec2(1200, 200));
          continueLabel->setColor(Color3B::WHITE);
          this->addChild(continueLabel);
-         CCLOG("Get the fuck off");
      }
      else {
          // 获得遗物逻辑待更新
@@ -19,7 +18,6 @@ void Event1::onGiveGold()
              });
          auto sequence = Sequence::create(delay, pop, nullptr);
          this->runAction(sequence);
-         CCLOG("Get the fuck off");
      }
 }
 void Event1::onLeave()

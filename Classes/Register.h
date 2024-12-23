@@ -60,17 +60,6 @@ private:
     }
 };
 
-// 卡牌自动注册
-#define AUTO_REGISTER_CARD(className)                          \
-    const bool className##Registered = []() {                  \
-        CardRegistry::registerCard(#className, []() {          \
-           return std::make_shared<className>();               \
-        });                                                    \
-        return true;                                           \
-    }();
-
-
-
 // Buff注册
 class BuffRegistry {
 public:
@@ -106,14 +95,7 @@ private:
     }
 };
 
-// Buff自动注册
-#define AUTO_REGISTER_BUFF(className)                          \
-    const bool className##Registered = []() {                  \
-        BuffRegistry::registerBuff(#className, []() {          \
-            return std::make_shared<className>();              \
-        });                                                    \
-        return true;                                           \
-    }();
+
 
 // 遗物注册，方式同上
 class RelicRegistry {
@@ -147,57 +129,8 @@ private:
     }
 };
 
-#define AUTO_REGISTER_RELIC(className)                          \
-    const bool className##Registered = []() {                  \
-        RelicRegistry::registerRelic(#className, []() {          \
-           return std::make_shared<className>();               \
-        });                                                    \
-        return true;                                           \
-    }();
 
-/*
-// buff注册，方法同上
-class BuffRegistry {
-public:
-    using BuffFactory = std::function<std::shared_ptr<Buff>()>;
-    static void registerBuff(const std::string& name, BuffFactory factory) {
-        getRegistry()[name] = factory;
-    }
-
-    static std::shared_ptr<Buff> createBuff(const std::string& name) {
-        auto& registry = getRegistry();
-        auto it = registry.find(name);
-        if (it != registry.end()) {
-            return it->second();
-        }
-        throw std::runtime_error("Buff not found: " + name);
-    }
-
-    static std::vector<std::string> getAllBuffNames() {
-        std::vector<std::string> names;
-        for (const auto& pair : getRegistry()) {
-            names.push_back(pair.first);
-        }
-        return names;
-    }
-
-private:
-    static std::map<std::string, BuffFactory>& getRegistry() {
-        static std::map<std::string, BuffFactory> registry;
-        return registry;
-    }
-};
-
-#define AUTO_REGISTER_BUFF(className)                          \
-    const bool className##Registered = []() {                  \
-        RelicRegistry::registerBuff(#className, []() {          \
-           return std::make_shared<className>();               \
-        });                                                    \
-        return true;                                           \
-    }();
-    */
-
-    // 药水注册，效果同上
+// 药水注册，效果同上
 class PotionRegistry {
 public:
     using PotionFactory = std::function<std::shared_ptr<Potion>()>;
@@ -229,13 +162,7 @@ private:
     }
 };
 
-#define AUTO_REGISTER_POTION(className)                        \
-    const bool className##Registered = []() {                  \
-        PotionRegistry::registerPotion(#className, []() {      \
-           return std::make_shared<className>();               \
-        });                                                    \
-        return true;                                           \
-    }();
+
 
 
 // 怪物注册，效果同上
@@ -270,10 +197,3 @@ private:
     }
 };
 
-#define AUTO_REGISTER_MONSTER(className)                       \
-    const bool className##Registered = []() {                  \
-        MonsterRegistry::registerMonster(#className, []() {    \
-           return std::make_shared<className>();               \
-        });                                                    \
-        return true;                                           \
-    }();

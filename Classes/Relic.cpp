@@ -6,6 +6,16 @@ int Relic::getRarity() const
     return rarity_;
 }
 
+std::string Relic::getName() const
+{
+    return name_;
+}
+
+std::string Relic::getDescription() const
+{
+    return description_;
+}
+
 
 class BurningBlood : public Relic {
 public:
@@ -15,7 +25,7 @@ public:
             0) {}
 
     void onCombatEnd() override {
-        EventSystem::getInstance()->changeHealth(6); 
+        CombatSystem::getInstance()->addHealth(Player::getInstance(), 6); 
     }
 };
 AUTO_REGISTER_RELIC(BurningBlood);

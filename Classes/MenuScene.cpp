@@ -53,7 +53,7 @@ bool MenuScene::init() {
     
 
     shared_ptr<Player> player = Player::getInstance();
-    auto playerNameLabel = Label::createWithTTF("Player: "+player->name_,
+    auto playerNameLabel = Label::createWithTTF("Player: "+player->getName(),
         "Fonts/FangZhengZhaoGeYuan.ttf", 40);
     playerNameLabel->setPosition(Vec2(20, screenSize.height + 150)); // 设置在左上角位置
     playerNameLabel->setAnchorPoint(Vec2(0, 1));                      // 设置锚点为左上角

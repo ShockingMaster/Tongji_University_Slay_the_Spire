@@ -179,7 +179,7 @@ bool HeaderBar::init(EventSystem* eventSystem) {
     for (auto relic : relics) {
         // 创建一个按钮的精灵，使用MenuItemImage代替Sprite
         cocos2d::MenuItemImage* relicMenuItem = cocos2d::MenuItemImage::create(
-           relic->name_ + ".png", relic->name_ + ".png");
+           relic->getName() + ".png", relic->getName() + ".png");
 
         // 设置药水菜单项的缩放和位置
         relicMenuItem->setScale(0.5f);
@@ -202,7 +202,7 @@ bool HeaderBar::init(EventSystem* eventSystem) {
 
             // 检查鼠标是否悬停在按钮上
             if (itemBox.containsPoint(mousePos)) {
-                descriptionLabel->setString(relic->description_); // 设置标签文本
+                descriptionLabel->setString(relic->getDescription()); // 设置标签文本
                 descriptionLabel->setVisible(true); // 显示描述标签
                 
             }
@@ -321,7 +321,7 @@ int i = 0;
 for (auto relic : relics) {
     // 创建一个按钮的精灵，使用MenuItemImage代替Sprite
     cocos2d::MenuItemImage* relicMenuItem = cocos2d::MenuItemImage::create(
-        relic->name_ + ".png", relic->name_ + ".png");
+        relic->getName() + ".png", relic->getName() + ".png");
 
     // 设置药水菜单项的缩放和位置
     relicMenuItem->setScale(0.5f);
@@ -344,7 +344,7 @@ for (auto relic : relics) {
 
         // 检查鼠标是否悬停在按钮上
         if (itemBox.containsPoint(mousePos)) {
-            descriptionLabel->setString(relic->description_); // 设置标签文本
+            descriptionLabel->setString(relic->getDescription()); // 设置标签文本
             descriptionLabel->setVisible(true); // 显示描述标签
 
             // 设置描述标签的位置为按钮的下方

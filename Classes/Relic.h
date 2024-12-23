@@ -15,13 +15,12 @@ public:
         description_(description),
         rarity_(rarity) {};
 
-    std::string name_;
-
-    string description_;
-
-    int rarity_;
 
     int getRarity() const;
+
+    std::string getName() const;
+
+    std::string getDescription() const;
 
     virtual void onCardPlayed(std::shared_ptr<Card> card) {};          //在打出一张牌时触发
 
@@ -72,6 +71,11 @@ public:
 
     virtual ~Relic() {};
 
-private:
+protected:
 
+    std::string name_;
+
+    string description_;
+
+    int rarity_;
 };

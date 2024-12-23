@@ -53,3 +53,27 @@ enum CardType
         });                                                    \
         return true;                                           \
     }();
+
+#define AUTO_REGISTER_RELIC(className)                          \
+    const bool className##Registered = []() {                  \
+        RelicRegistry::registerRelic(#className, []() {          \
+           return std::make_shared<className>();               \
+        });                                                    \
+        return true;                                           \
+    }();
+
+#define AUTO_REGISTER_POTION(className)                        \
+    const bool className##Registered = []() {                  \
+        PotionRegistry::registerPotion(#className, []() {      \
+           return std::make_shared<className>();               \
+        });                                                    \
+        return true;                                           \
+    }();
+
+#define AUTO_REGISTER_MONSTER(className)                       \
+    const bool className##Registered = []() {                  \
+        MonsterRegistry::registerMonster(#className, []() {    \
+           return std::make_shared<className>();               \
+        });                                                    \
+        return true;                                           \
+    }();

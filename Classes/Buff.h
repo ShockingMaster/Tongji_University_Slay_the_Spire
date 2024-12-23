@@ -9,16 +9,6 @@ class Card;
 class Buff
 {
 public:
-    Buff(string name, string description, int duration, int priority, bool is_positive, int effect_layers,
-        bool is_stackable = YES, int stack_type = DURATION)
-        :name_(name),
-        description_(description),
-        priority_(priority),
-        is_positive_(is_positive),
-        effect_layers(effect_layers),
-        is_stackable_(is_stackable),
-        stack_type_(stack_type) {};
-
     string name_;
     string description_;
     int stack_type_;                                                   //叠加方式：持续时间（DURATION）或是效果层数（EFFECT_LAYERS）
@@ -28,7 +18,15 @@ public:
     bool is_stackable_;                                                //buff是否能被叠加
     bool is_positive_;                                                 //区分正负面buff
     int effect_layers=0;                                                //buff的效果层数
-
+    Buff(string name, string description, int duration, int priority, bool is_positive, int effect_layers,
+        bool is_stackable = YES, int stack_type = DURATION)
+        :name_(name),
+        description_(description),
+        priority_(priority),
+        is_positive_(is_positive),
+        effect_layers(effect_layers),
+        is_stackable_(is_stackable),
+        stack_type_(stack_type) {};
     virtual void onCardPlayed(std::shared_ptr<Card> card) {};          //在打出一张牌时触发
 
     virtual void onCombatStart(std::shared_ptr<Creature> creature) {};
