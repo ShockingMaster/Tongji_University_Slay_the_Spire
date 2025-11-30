@@ -1,64 +1,70 @@
 #pragma once
+// Refactored with Dependency Injection Pattern
 #include "Potion.h"
 #include "cocos2d.h"
 #include "Player.h"
 #include "Relic.h"
 #include "Card.h"
 #include "CardLayer.h"
-#include <memory> // For smart pointers
+#include "IEventSystem.h"
+#include <memory>
 using namespace std;
 using namespace cocos2d;
 
-class EventSystem : public Node {
+/**
+ * @brief Concrete implementation of IEventSystem
+ *
+ * This class manages player state and game events.
+ * After refactoring, it now implements the IEventSystem interface,
+ * allowing it to be injected as a dependency instead of being accessed
+ * through a singleton pattern.
+ */
+class EventSystem : public Node, public IEventSystem {
 private:
-
     static EventSystem* instance;
 
 public:
-    int level;  // 当前关卡
-    string name_;                                // 玩家名称
-    string character_;                           // 玩家角色
-    int health_;                                 // 当前生命值
-    int fullHealth_;                             // 最大生命值
-    int maxPotions_;                             // 药水最大数量
-    int coins_;                                  // 金币数量
-    vector<std::shared_ptr<Potion>> potions_;    // 药水
-    vector<std::shared_ptr<Relic>> relics_;      // 遗物
-    vector<std::shared_ptr<Card>> cards_;        // 当前卡牌
-    // 构造函数和析构函数
+    int level;
+    string name_;
+    string character_;
+    int health_;
+    int fullHealth_;
+    int maxPotions_;
+    int coins_;
+    vector<std::shared_ptr<Potion>> potions_;
+    vector<std::shared_ptr<Relic>> relics_;
+    vector<std::shared_ptr<Card>> cards_;
+
     EventSystem();
     ~EventSystem();
 
-    // 初始化头栏
     bool init();
 
-    // 获取唯一实例
+    // Singleton pattern (kept for backward compatibility)
     static EventSystem* getInstance();
 
-    // 设置和获取函数
+    // Setup methods
     void setPlayerInfo(const string& name, const string& character, int fullHealth, int coins);
-
-    // 设置玩家信息的函数
     void setHealth(int health);
     void setCoins(int coins);
     void setPotions(const vector<std::shared_ptr<Potion>>& potions);
     void setLevel(int level);
     void setFullHealth(int health_);
 
-    // 获取头栏信息
-    int getCurrentHealth();
-    int getFullHealth();
-    int getCoins();
+    // Interface implementations (override from IEventSystem)
+    int getCurrentHealth() const override;
+    int getFullHealth() const override;
+    int getCoins() const override;
+    void changeHealth(int healthChange) override;
+    int changeCoins(int coinChange) override;
+    void changeMaxHealth(int maxHealthChange) override;
+    void addCard(std::shared_ptr<Card> card) override;
+    int addPotion(std::shared_ptr<Potion> potion) override;
+    void addRelic(std::shared_ptr<Relic> relic) override;
+    int upgradeCard(std::shared_ptr<Card> card) override;
+    int deleteCard(std::shared_ptr<Card> card) override;
 
-    // 事件系统
-    int changeCoins(int coinChange);                   //修改金币
-    void changeHealth(int healthChange);               //修改生命值：需要判断是否死亡
-    void changeMaxHealth(int maxHealthChange);         //修改最大生命值
-    int upgradeCard(std::shared_ptr<Card> card);       //对卡牌进行永久升级
+    // Overloaded methods (non-interface)
     int upgradeCard(Card* card);
-    int deleteCard(std::shared_ptr<Card> card);        //对卡牌进行永久删除
     int deleteCard(Card* card);
-    void addCard(std::shared_ptr<Card> card);          //添加卡牌
-    int addPotion(std::shared_ptr<Potion> potion);     //添加药水
-    void addRelic(std::shared_ptr<Relic> relic);       //添加遗物
 };

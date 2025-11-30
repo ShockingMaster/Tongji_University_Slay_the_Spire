@@ -2,8 +2,18 @@
 #include "Creature.h"
 #include "cocos2d.h"
 #include "string"
+#include <memory>
+
+// å‰å‘å£°æ˜ï¼ˆé¿å…å¾ªç¯ä¾èµ–ï¼‰
+class MonsterStateMachine;
+
 class Monster : public Creature
 {
+protected:
+	// Refactored with State Pattern
+	// çŠ¶æ€æœºï¼ˆå¯é€‰ï¼Œä½¿ç”¨Stateæ¨¡å¼çš„æ€ªç‰©å¯ä»¥ä½¿ç”¨æ­¤æˆå‘˜ï¼‰
+	std::shared_ptr<MonsterStateMachine> stateMachine_;
+
 public:
 	Monster(int type, int fullhealth, std::string name, int monster_num) :
 		type_(type) {
@@ -21,7 +31,7 @@ public:
 
     void setRect(cocos2d::Vec2 position, float width, float height);
 
-    // ÅĞ¶ÏÒ»¸öµãÊÇ·ñÔÚ¹ÖÎïÇøÓòÄÚ
+    // ï¿½Ğ¶ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ú¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     bool containsPoint(cocos2d::Vec2 point);
 
 	int getAttackTime()  const {
@@ -40,14 +50,14 @@ public:
 
 	virtual std::string intentionDisplay();
 
-    // »ñÈ¡¹ÖÎïµÄÇøÓò
+    // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 	cocos2d::Rect getRect();
 
 	cocos2d::Vec2 position;
-	cocos2d::Rect area;  // ¶¨ÒåÒ»¸ö¾ØĞÎÇøÓòÓÃÓÚÅĞ¶Ï
+	cocos2d::Rect area;  // ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ï¿½
 	int type_;
 	int monster_num_ = 1;
-	int tag = 0; //¹ÖÎïĞĞ¶¯tag
+	int tag = 0; //ï¿½ï¿½ï¿½ï¿½ï¿½Ğ¶ï¿½tag
 	int round_num = 1;
 	int attack_times = 0;
 	int attack_numeric_value = 0;
