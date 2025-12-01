@@ -4,18 +4,21 @@
 #include <queue>
 #include <vector>
 using namespace cocos2d;
+
 class Card;
-class CombatSystem;
-class CombatDeck;
+class CombatFacade;
 class Creature;
 class CreatureLayer;
 class HeaderBar;
-class CombatScene : public cocos2d::Scene
-{
+
+class CombatScene : public cocos2d::Scene {
 private:
-    //测试使用：
     cocos2d::Rect playArea;
     cocos2d::Label* energyLabel;
+
+    // Facade instance - single entry point for combat operations
+    std::unique_ptr<CombatFacade> combatFacade_;
+
 public:
     static cocos2d::Scene* createScene();
     void onEnter();
@@ -25,12 +28,11 @@ public:
     CreatureLayer* creatureLayer;
     HeaderBar* headbar;
 
-    //测试使用
     int isMyTurn;
 
-    static void onEndTurnClicked(cocos2d::Ref* sender);//当回合结束按钮被点击时
+    static void onEndTurnClicked(cocos2d::Ref* sender);
 
-    void updateEnergyDisplay();//更新能量显示
+    void updateEnergyDisplay();
 
     cocos2d::Rect getplayArea()
     {

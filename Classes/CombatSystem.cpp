@@ -1,1028 +1,941 @@
+#include "CombatDeck.h"
+#include "CombatUIController.h"
+#include "EndingScene.h"
 #include "IncludeAll.h"
 #include "RewardLayer.h"
-#include "EndingScene.h"
 CombatSystem* CombatSystem::instance_ = nullptr;
 
-// ·µ»ØCombatSytemµÄÎ¨Ò»ÊµÀı
+// ï¿½ï¿½ï¿½ï¿½CombatSytemï¿½ï¿½Î¨Ò»Êµï¿½ï¿½
 CombatSystem* CombatSystem::getInstance()
 {
-	if (instance_ == nullptr)
-	{
-		instance_ = new CombatSystem(); // ´´½¨Î¨Ò»ÊµÀı  
-	}
-	return instance_;
+    if (instance_ == nullptr) {
+        instance_ = new CombatSystem(); // ï¿½ï¿½ï¿½ï¿½Î¨Ò»Êµï¿½ï¿½
+    }
+    return instance_;
 }
 
 /*
-* º¯ÊıÃû³Æ£ºinit
-* ¹¦ÄÜ£º¶ÔÕ½¶·ÏµÍ³ÏÈ½øĞĞÇå¿Õ£¬¶Ô½ÇÉ«½øĞĞ³õÊ¼»¯£¬½«³éÅÆ¶Ñ£¬ÆúÅÆ¶Ñ£¬ÊÖÅÆÖĞµÄ¿¨ÅÆÈ«²¿½øĞĞÇå¿Õ
-* Ëæ»úÉú³É¹ÖÎï£¬½«¿¨×éÖĞËùÓĞµÄ¿¨ÅÆ½øĞĞÒ»´Î¸´ÖÆ£¬·ÅÈë³éÅÆ¶Ñ£¬µ÷ÓÃ³¡¾°µÄ³õÊ¼»¯·½·¨
-*/
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½init
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½Õ½ï¿½ï¿½ÏµÍ³ï¿½È½ï¿½ï¿½ï¿½ï¿½ï¿½Õ£ï¿½ï¿½Ô½ï¿½É«ï¿½ï¿½ï¿½Ğ³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶Ñ£ï¿½ï¿½ï¿½ï¿½Æ¶Ñ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ĞµÄ¿ï¿½ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ĞµÄ¿ï¿½ï¿½Æ½ï¿½ï¿½ï¿½Ò»ï¿½Î¸ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶Ñ£ï¿½ï¿½ï¿½ï¿½Ã³ï¿½ï¿½ï¿½ï¿½Ä³ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ */
 void CombatSystem::init(int type)
 {
-	// ¶Ô½ÇÉ«½øĞĞ³õÊ¼»¯
-	Player::getInstance()->init();
+    // ï¿½Ô½ï¿½É«ï¿½ï¿½ï¿½Ğ³ï¿½Ê¼ï¿½ï¿½
+    Player::getInstance()->init();
 
-	// Èç¹ûÊÇBOSS£¬ÄÇÃ´ÊÇ×îÖÕÕ½¶·
-	if (type == BOSS)
-	{
-		isLastCombat = 1;
-	}
-	else
-	{
-		isLastCombat = 0;
-	}
+    // ï¿½ï¿½ï¿½ï¿½ï¿½BOSSï¿½ï¿½ï¿½ï¿½Ã´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½
+    if (type == BOSS) {
+        isLastCombat = 1;
+    } else {
+        isLastCombat = 0;
+    }
 
-	// Çå¿Õ³éÅÆ¶Ñ¡¢ÆúÅÆ¶ÑºÍÊÖÅÆ
-	std::queue<std::shared_ptr<Card>> emptyQueue;
-	std::vector<std::shared_ptr<Card>> emptyVector;
-	drawPile = emptyQueue;
-	hand = emptyVector;
-	discardPile = emptyQueue;
+    // åˆ›å»ºCombatDeckå®ä¾‹
+    deckManager_ = CombatDeck::create();
+    if (!deckManager_) {
+        CCLOG("[CombatSystem] Error: Failed to create CombatDeck");
+        return;
+    }
 
-	// »ñµÃÒ»·İ¿¨×éµÄ¸´ÖÆ
-	std::vector<std::shared_ptr<Card>> tempVector;
-	for (int i = 0; i < EventSystem::getInstance()->cards_.size(); i++)
-	{
-		tempVector.push_back(CardRegistry::createCard(EventSystem::getInstance()->cards_[i]->getName()));
-	}
-	RandomGenerator::getInstance()->shuffleVector(tempVector);
+    // åˆå§‹åŒ–CombatDeck
+    deckManager_->init(Player::getInstance());
 
-	// ½«¿¨×éÖĞµÄÅÆ¼ÓÈëµ½³éÅÆ¶ÑÖĞ
-	for (int i = 0; i < tempVector.size(); i++)
-	{
-		drawPile.push(tempVector[i]);
-	}
-	/*
-	// ²âÊÔ¿¨ÅÆ×¢²á¼°¹¦ÄÜ
-	std::vector<std::string>  tempDeck = CardRegistry::getAllCardNames();
-	if (tempDeck.empty())
-	{
-		CCLOG("tempDeck is empty!");
-	}
-	for (int i = 0;i < 4;i++)
-	{
-		for (auto name : tempDeck)
-		{
-			CCLOG("%s has been added!", name.c_str());
-			drawPile.push(CardRegistry::createCard(name));
-		}
-	}
-	*/
+    /*
+    // ï¿½ï¿½ï¿½Ô¿ï¿½ï¿½ï¿½×¢ï¿½á¼°ï¿½ï¿½ï¿½ï¿½
+    std::vector<std::string>  tempDeck = CardRegistry::getAllCardNames();
+    if (tempDeck.empty())
+    {
+            CCLOG("tempDeck is empty!");
+    }
+    for (int i = 0;i < 4;i++)
+    {
+            for (auto name : tempDeck)
+            {
+                    CCLOG("%s has been added!", name.c_str());
+                    drawPile.push(CardRegistry::createCard(name));
+            }
+    }
+    */
 
-	// Çå¿Õ¹ÖÎïÁĞ±í,Ëæ»úÉú³É¹ÖÎï
-	Monsters_.clear();
-	if (type == ELITE)
-	{
-		// »ñÈ¡¹ÖÎïÀàĞÍ
-		auto monster = RandomGenerator::getInstance()->getRandomMonster(ELITE);
-		for (int i = 0; i < monster->getMonsterNum(); i++)
-		{
-			Monsters_.push_back(MonsterRegistry::createMonster(monster->getName()));
-		}
-	}
-	else if (type == BOSS)
-	{
-		auto monster = RandomGenerator::getInstance()->getRandomMonster(BOSS);
-		for (int i = 0; i < monster->getMonsterNum(); i++)
-		{
-			Monsters_.push_back(MonsterRegistry::createMonster(monster->getName()));
-		}
-	}
-	else
-	{
-		auto monster = RandomGenerator::getInstance()->getRandomMonster(NORMAL);
-		for (int i = 0; i < monster->getMonsterNum(); i++)
-		{
-			Monsters_.push_back(MonsterRegistry::createMonster(monster->getName()));
-		}
-	}
+    // ï¿½ï¿½Õ¹ï¿½ï¿½ï¿½ï¿½Ğ±ï¿½,ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½
+    Monsters_.clear();
+    if (type == ELITE) {
+        // ï¿½ï¿½È¡ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        auto monster = RandomGenerator::getInstance()->getRandomMonster(ELITE);
+        for (int i = 0; i < monster->getMonsterNum(); i++) {
+            Monsters_.push_back(MonsterRegistry::createMonster(monster->getName()));
+        }
+    } else if (type == BOSS) {
+        auto monster = RandomGenerator::getInstance()->getRandomMonster(BOSS);
+        for (int i = 0; i < monster->getMonsterNum(); i++) {
+            Monsters_.push_back(MonsterRegistry::createMonster(monster->getName()));
+        }
+    } else {
+        auto monster = RandomGenerator::getInstance()->getRandomMonster(NORMAL);
+        for (int i = 0; i < monster->getMonsterNum(); i++) {
+            Monsters_.push_back(MonsterRegistry::createMonster(monster->getName()));
+        }
+    }
 }
 
-
-
 /*
- * º¯ÊıÃû³Æ£ºonAttack
- * ²ÎÊı£º¹¥»÷ÕßÖ¸Õë£¬±»¹¥»÷ÕßÖ¸Õë£¬¹¥»÷Ô­ÊıÖµ£¬¿¨ÅÆÃû³Æ£¨ÎªÁËÅĞ¶Ï¿¨ÅÆÊÇ·ñÎªÌØÊâÀàĞÍ£©
- * ¹¦ÄÜ£ºÍê³É¹¥»÷ÕßµÄ¹¥»÷Ïà¹ØµÄbuff½áËã£¬´¥·¢¹¥»÷Ààbuff²¢¸ÄĞ´¹¥»÷ÊıÖµ
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½onAttack
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½Ô­ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Îªï¿½ï¿½ï¿½Ğ¶Ï¿ï¿½ï¿½ï¿½ï¿½Ç·ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½É¹ï¿½ï¿½ï¿½ï¿½ßµÄ¹ï¿½ï¿½ï¿½ï¿½ï¿½Øµï¿½buffï¿½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
  */
 void CombatSystem::onAttack(std::shared_ptr<Creature> user, std::shared_ptr<Creature> target,
-	int& numeric_value_, std::string cardName, bool isForIntentionUpdate)
+    int& numeric_value_, std::string cardName, bool isForIntentionUpdate)
 {
-	//Ê×ÏÈ±éÀúÊ¹ÓÃÕßµÄbuffÁĞ±í£¬´¥·¢ËùÓĞbuffµÄonAttackĞ§¹û
-	for (auto Buff : user->buffs_)
-	{
-		if (Buff != nullptr)
-			Buff->onAttack(numeric_value_, cardName, user, target);
-	}
+    // ï¿½ï¿½ï¿½È±ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ßµï¿½buffï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½ï¿½onAttackĞ§ï¿½ï¿½
+    for (auto Buff : user->buffs_) {
+        if (Buff != nullptr)
+            Buff->onAttack(numeric_value_, cardName, user, target);
+    }
 
-	//ÔÙ±éÀúÄ¿±êµÄbuffÁĞ±í£¬´¥·¢ËùÓĞbuffµÄonAttackedĞ§¹û
-	for (auto Buff : target->buffs_)
-	{
-		if (Buff != nullptr)
-			Buff->onAttacked(numeric_value_, user, target);
-	}
+    // ï¿½Ù±ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½buffï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½ï¿½onAttackedĞ§ï¿½ï¿½
+    for (auto Buff : target->buffs_) {
+        if (Buff != nullptr)
+            Buff->onAttacked(numeric_value_, user, target);
+    }
 
-	// Èç¹ûÊÇÍæ¼Ò·¢Æğ¹¥»÷£¬Ôò´¥·¢ÒÅÎïµÄonAttackĞ§¹û
-	if (user == Player::getInstance())
-	{
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			if (Relic != nullptr)
-			{
-				Relic->onAttack(numeric_value_, cardName, user, target);
-			}
-		}
-		audioPlayer("FastAttackSound.ogg", false);
-	}
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò·ï¿½ï¿½ğ¹¥»ï¿½ï¿½ï¿½ï¿½ò´¥·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½onAttackĞ§ï¿½ï¿½
+    if (user == Player::getInstance()) {
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            if (Relic != nullptr) {
+                Relic->onAttack(numeric_value_, cardName, user, target);
+            }
+        }
+        audioPlayer("FastAttackSound.ogg", false);
+    }
 
-	if (target == Player::getInstance())
-	{
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			if (Relic != nullptr)
-			{
-				Relic->onAttacked(numeric_value_, user, target);
-			}
-		}
-	}
+    if (target == Player::getInstance()) {
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            if (Relic != nullptr) {
+                Relic->onAttacked(numeric_value_, user, target);
+            }
+        }
+    }
 
-	//·ÀÖ¹±»¼õÖÁ¸ºÊı
-	numeric_value_ = max(numeric_value_, 0);
+    // ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    numeric_value_ = max(numeric_value_, 0);
 
-	if (!isForIntentionUpdate)
-	{
-		takeDamage(target, numeric_value_);
-		auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-		scene->creatureLayer->attackAction(user);
-	}
+    if (!isForIntentionUpdate) {
+        takeDamage(target, numeric_value_);
+        if (uiController_) {
+            uiController_->playAttackAnimation(user, target, numeric_value_);
+        }
+    }
 
-
-	// ´Ë´¦²»ÄÜ½øĞĞ¸üĞÂ£¬»á³öÏÖÑ­»·µ÷ÓÃ
-	/*
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
-	*/
+    // ï¿½Ë´ï¿½ï¿½ï¿½ï¿½Ü½ï¿½ï¿½Ğ¸ï¿½ï¿½Â£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ñ­ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    /*
+    auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
+    scene->creatureLayer->updateDisplay();
+    */
 }
 
 void CombatSystem::combatStart()
 {
-	auto player = Player::getInstance();
-	for (auto Buff : player->buffs_)
-	{
-		if (Buff != nullptr)
-			Buff->onCombatStart(player);
-	}
-	for (auto Relic : EventSystem::getInstance()->relics_)
-	{
-		if (Relic != nullptr)
-			Relic->onCombatStart();
-	}
+    auto player = Player::getInstance();
+    for (auto Buff : player->buffs_) {
+        if (Buff != nullptr)
+            Buff->onCombatStart(player);
+    }
+    for (auto Relic : EventSystem::getInstance()->relics_) {
+        if (Relic != nullptr)
+            Relic->onCombatStart();
+    }
 }
 
 void CombatSystem::combatEnd()
 {
-	// ÏÈ´¥·¢Ò»´Î»ØºÏ½áÊøĞ§¹û
-	auto player = Player::getInstance();
+    // ï¿½È´ï¿½ï¿½ï¿½Ò»ï¿½Î»ØºÏ½ï¿½ï¿½ï¿½Ğ§ï¿½ï¿½
+    auto player = Player::getInstance();
 
-	CombatSystem::getInstance()->endTurn(player);
-	HandPileLayer::getInstance()->clearAll();
+    CombatSystem::getInstance()->endTurn(player);
 
-	if (player->getHealth() <= 0)
-	{
-		auto endScene = EndingScene::create(0);
-		Director::getInstance()->pushScene(endScene);
-	}
-	else
-	{
-		for (auto Buff : player->buffs_)
-		{
-			if (Buff != nullptr)
-				Buff->onCombatEnd(player);
-		}
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			if (Relic != nullptr)
-				Relic->onCombatEnd();
-		}
-	}
-	// Èç¹ûÊÇ×îÖÕÕ½¶·
-	if (isLastCombat && player->getHealth()>0)
-	{
-		auto endScene = EndingScene::create(1);
-		Director::getInstance()->pushScene(endScene);
-	}
-	else
-	{
-		auto blackLayer = LayerColor::create(Color4B(0, 0, 0, 200));
-		Director::getInstance()->getRunningScene()->addChild(blackLayer, 100000);
+    if (uiController_) {
+        uiController_->clearAllHandCards();
+    }
 
-		// ´´½¨ RewardLayer
-		auto rewardLayer = RewardLayer::create(true, true, false, false, true);
-		blackLayer->addChild(rewardLayer); // ½« RewardLayer Ìí¼Óµ½ºÚÉ«±³¾°²ãÖĞ
-		auto startButton = HoverButton::create(
-			"button1 (1).png",  // Ä¬ÈÏÍ¼Æ¬
-			"button1 (2).png",  // °´Å¥ĞüÍ£Ê±µÄÍ¼Æ¬
-			"button1 (3).png"   // °´Å¥µã»÷Ê±µÄÍ¼Æ¬
-		);
+    if (player->getHealth() <= 0) {
+        if (uiController_) {
+            uiController_->showDefeatScreen();
+        }
+    } else {
+        for (auto Buff : player->buffs_) {
+            if (Buff != nullptr)
+                Buff->onCombatEnd(player);
+        }
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            if (Relic != nullptr)
+                Relic->onCombatEnd();
+        }
+    }
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ½ï¿½ï¿½
+    if (isLastCombat && player->getHealth() > 0) {
+        if (uiController_) {
+            uiController_->showVictoryScreen();
+        }
+    } else if (player->getHealth() > 0) {
+        if (uiController_) {
+            uiController_->showVictoryScreen();
+        }
+        return;
+    } else {
+        // Old code disabled
+        if (false) {
+            auto blackLayer = LayerColor::create(Color4B(0, 0, 0, 200));
+            Director::getInstance()->getRunningScene()->addChild(blackLayer, 100000);
 
-		// ÉèÖÃ°´Å¥Î»ÖÃ
-		startButton->setPosition(Vec2(1800, 500));
-		blackLayer->addChild(startButton);
+            // ï¿½ï¿½ï¿½ï¿½ RewardLayer
+            auto rewardLayer = RewardLayer::create(true, true, false, false, true);
+            blackLayer->addChild(rewardLayer); // ï¿½ï¿½ RewardLayer ï¿½ï¿½ï¿½Óµï¿½ï¿½ï¿½É«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            auto startButton = HoverButton::create(
+                "button1 (1).png", // Ä¬ï¿½ï¿½Í¼Æ¬
+                "button1 (2).png", // ï¿½ï¿½Å¥ï¿½ï¿½Í£Ê±ï¿½ï¿½Í¼Æ¬
+                "button1 (3).png" // ï¿½ï¿½Å¥ï¿½ï¿½ï¿½Ê±ï¿½ï¿½Í¼Æ¬
+            );
 
-		// Ìí¼Ó°´Å¥µã»÷ÊÂ¼ş¼àÌıÆ÷
-		startButton->addClickEventListener([=](Ref* sender) {
-			// Ö´ĞĞ popScene ²Ù×÷£¬·µ»ØÉÏÒ»¸ö³¡¾°
-			Director::getInstance()->popScene();
-			});
-	}
+            // ï¿½ï¿½ï¿½Ã°ï¿½Å¥Î»ï¿½ï¿½
+            startButton->setPosition(Vec2(1800, 500));
+            blackLayer->addChild(startButton);
+
+            // ï¿½ï¿½ï¿½Ó°ï¿½Å¥ï¿½ï¿½ï¿½ï¿½Â¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            startButton->addClickEventListener([=](Ref* sender) {
+                // Ö´ï¿½ï¿½ popScene ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+                Director::getInstance()->popScene();
+            });
+        }
+    }
 }
 
 /*
- * º¯ÊıÃû³Æ£ºtakeDamage
- * ²ÎÊı£º±»¹¥»÷ÕßÖ¸Õë£¬±»¹¥»÷µÄÊıÖµ£¬¹¥»÷ÕßµÄÖ¸Õë
- * ¹¦ÄÜ£º´¥·¢±»¹¥»÷Ààbuff²¢¸ÄĞ´±»¹¥»÷ÊıÖµ
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½takeDamage
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ë£¬ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ßµï¿½Ö¸ï¿½ï¿½
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
  */
 void CombatSystem::takeDamage(std::shared_ptr<Creature> target, int numeric_value_, std::shared_ptr<Creature> attack)
 {
-	if (target == nullptr)
-	{
-		CCLOG("TakeDamage´«ÈëÄ¿±êÎª¿Õ£¡");
-		return;
-	}
-	// ¹²ÓĞÈıÖÖÇé¿ö£º
-	// 1.Ä¿±êµÄ¸ñµ²´óÓÚµÈÓÚÉËº¦×ÜÁ¿£¬´ËÊ±²»ÄÜ»÷´©µĞ·½»¤¼×,´ËÊ±ÊÂ¼şÎª»¤¼×¼õÉÙ
-	if (numeric_value_ <= target->getBlockValue())
-	{
-		for (auto Buff : target->buffs_)
-		{
-			if (Buff != nullptr)
-				Buff->onLoseBlock(numeric_value_);
-		}
-		if (target == Player::getInstance())
-		{
-			for (auto Relic : EventSystem::getInstance()->relics_)
-			{
-				if (Relic != nullptr)
-					Relic->onLoseBlock(numeric_value_);
-			}
-		}
-		audioPlayer("AttackOnBlockSound.ogg", false);
-		target->loseBlock(numeric_value_);
-	}
+    if (target == nullptr) {
+        CCLOG("TakeDamageï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Îªï¿½Õ£ï¿½");
+        return;
+    }
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    // 1.Ä¿ï¿½ï¿½Ä¸ñµ²´ï¿½ï¿½Úµï¿½ï¿½ï¿½ï¿½Ëºï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½Ü»ï¿½ï¿½ï¿½ï¿½Ğ·ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½Ê±ï¿½Â¼ï¿½Îªï¿½ï¿½ï¿½×¼ï¿½ï¿½ï¿½
+    if (numeric_value_ <= target->getBlockValue()) {
+        for (auto Buff : target->buffs_) {
+            if (Buff != nullptr)
+                Buff->onLoseBlock(numeric_value_);
+        }
+        if (target == Player::getInstance()) {
+            for (auto Relic : EventSystem::getInstance()->relics_) {
+                if (Relic != nullptr)
+                    Relic->onLoseBlock(numeric_value_);
+            }
+        }
+        audioPlayer("AttackOnBlockSound.ogg", false);
+        target->loseBlock(numeric_value_);
+    }
 
-	// 2.Ä¿±êµÄ¸ñµ²²»Îª0£¬µ«Ğ¡ÓÚÉËº¦Öµ£¬´ËÊ±»÷´©»¤¼×£¬Ôì³ÉÉËº¦£¬´ËÊ±ÊÂ¼şÎª»¤¼×¼õÉÙ£¬ÉúÃüÖµ¼õÉÙ
-	else if (target->getBlockValue() > 0)
-	{
-		for (auto Buff : target->buffs_)
-		{
-			if (Buff != nullptr)
-				Buff->onLoseBlock(numeric_value_);
-		}
-		if (target == Player::getInstance())
-		{
-			for (auto Relic : EventSystem::getInstance()->relics_)
-			{
-				if (Relic != nullptr)
-					Relic->onLoseBlock(numeric_value_);
-			}
-		}
-		int healthLoss = numeric_value_ - target->getBlockValue();
-		target->loseBlock(target->getBlockValue());
-		for (auto Buff : target->buffs_)
-		{
-			if (Buff != nullptr)
-				Buff->onLoseHealth(healthLoss);
-		}
-		if (target == Player::getInstance())
-		{
-			for (auto Relic : EventSystem::getInstance()->relics_)
-			{
-				if (Relic != nullptr)
-					Relic->onLoseHealth(healthLoss);
-			}
-		}
-		audioPlayer("DefenseBreakSound.ogg", false);
-		target->loseHealth(healthLoss);
-	}
+    // 2.Ä¿ï¿½ï¿½Ä¸ñµ²²ï¿½Îª0ï¿½ï¿½ï¿½ï¿½Ğ¡ï¿½ï¿½ï¿½Ëºï¿½Öµï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½×£ï¿½ï¿½ï¿½ï¿½ï¿½Ëºï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Â¼ï¿½Îªï¿½ï¿½ï¿½×¼ï¿½ï¿½Ù£ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
+    else if (target->getBlockValue() > 0) {
+        for (auto Buff : target->buffs_) {
+            if (Buff != nullptr)
+                Buff->onLoseBlock(numeric_value_);
+        }
+        if (target == Player::getInstance()) {
+            for (auto Relic : EventSystem::getInstance()->relics_) {
+                if (Relic != nullptr)
+                    Relic->onLoseBlock(numeric_value_);
+            }
+        }
+        int healthLoss = numeric_value_ - target->getBlockValue();
+        target->loseBlock(target->getBlockValue());
+        for (auto Buff : target->buffs_) {
+            if (Buff != nullptr)
+                Buff->onLoseHealth(healthLoss);
+        }
+        if (target == Player::getInstance()) {
+            for (auto Relic : EventSystem::getInstance()->relics_) {
+                if (Relic != nullptr)
+                    Relic->onLoseHealth(healthLoss);
+            }
+        }
+        audioPlayer("DefenseBreakSound.ogg", false);
+        target->loseHealth(healthLoss);
+    }
 
-	// 3.Ä¿±êµÄ¸ñµ²Îª0£¬´ËÊ±ÊÂ¼şÎªÉúÃüÖµ¼õÉÙ
-	else
-	{
-		int healthLoss = numeric_value_ - target->getBlockValue();
-		for (auto Buff : target->buffs_)
-		{
-			if (Buff != nullptr)
-				Buff->onLoseHealth(healthLoss);
-		}
-		if (target == Player::getInstance())
-		{
-			for (auto Relic : EventSystem::getInstance()->relics_)
-			{
-				if (Relic != nullptr)
-					Relic->onLoseHealth(healthLoss);
-			}
-		}
-		audioPlayer("FastAttackSound.ogg", false);
-		target->loseHealth(healthLoss);
-	}
-	if (target->getHealth() < 0)
-	{
-		CombatSystem::getInstance()->onDeath(target);
-	}
+    // 3.Ä¿ï¿½ï¿½Ä¸ï¿½Îª0ï¿½ï¿½ï¿½ï¿½Ê±ï¿½Â¼ï¿½Îªï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½
+    else {
+        int healthLoss = numeric_value_ - target->getBlockValue();
+        for (auto Buff : target->buffs_) {
+            if (Buff != nullptr)
+                Buff->onLoseHealth(healthLoss);
+        }
+        if (target == Player::getInstance()) {
+            for (auto Relic : EventSystem::getInstance()->relics_) {
+                if (Relic != nullptr)
+                    Relic->onLoseHealth(healthLoss);
+            }
+        }
+        audioPlayer("FastAttackSound.ogg", false);
+        target->loseHealth(healthLoss);
+    }
+    if (target->getHealth() < 0) {
+        CombatSystem::getInstance()->onDeath(target);
+    }
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    if (uiController_) {
+        uiController_->updateCreatureDisplay(target);
+    }
 }
 
 /*
- * º¯ÊıÃû³Æ£ºAddblock
- * ²ÎÊı£º¼Ó»¤¶Ü¶ÔÏó£¬»¤¶ÜÊıÖµ£¬¿¨ÅÆÃû³Æ
- * ¹¦ÄÜ£º´¥·¢»¤¶ÜÀàbuff²¢¸ÄĞ´»¤¶ÜÖµ
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½Addblock
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó»ï¿½ï¿½Ü¶ï¿½ï¿½ó£¬»ï¿½ï¿½ï¿½ï¿½ï¿½Öµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½ï¿½ï¿½ï¿½Ğ´ï¿½ï¿½ï¿½ï¿½Öµ
  */
 
-void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_) {
-	//±éÀúÊ¹ÓÃÕßµÄbuffÁĞ±í£¬´¥·¢ËùÓĞbuffµÄAddblockĞ§¹û
-	int tempBlock = numeric_value_;
-	for (auto Buff : target->buffs_)
-	{
-		if (Buff != nullptr)
-			Buff->onGetBlock(tempBlock);
-	}
-	if (target == Player::getInstance())
-	{
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			if (Relic != nullptr)
-				Relic->onGetBlock(tempBlock);
-		}
-	}
-	//·ÀÖ¹±»¼õÖÁ¸ºÊı
-	numeric_value_ = max(numeric_value_, 0);
-	target->addBlock(numeric_value_);  //Ôö¼Ó»¤¶Ü
+void CombatSystem::Addblock(std::shared_ptr<Creature> target, int numeric_value_)
+{
+    // ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ßµï¿½buffï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½ï¿½AddblockĞ§ï¿½ï¿½
+    int tempBlock = numeric_value_;
+    for (auto Buff : target->buffs_) {
+        if (Buff != nullptr)
+            Buff->onGetBlock(tempBlock);
+    }
+    if (target == Player::getInstance()) {
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            if (Relic != nullptr)
+                Relic->onGetBlock(tempBlock);
+        }
+    }
+    // ï¿½ï¿½Ö¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    numeric_value_ = max(numeric_value_, 0);
+    target->addBlock(numeric_value_); // ï¿½ï¿½ï¿½Ó»ï¿½ï¿½ï¿½
 
-	if (numeric_value_ > 0)
-	{
-		audioPlayer("GetBlockSound.ogg", false);
-	}
-	// ½øĞĞ¸üĞÂ
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    if (numeric_value_ > 0) {
+        audioPlayer("GetBlockSound.ogg", false);
+    }
+    // UIæ›´æ–° - é€šè¿‡UIController
+    notifyUICreaturesUpdated();
 }
 
-
 /*
- * º¯ÊıÃû³Æ£ºexhuastCard
- * ²ÎÊı£ºÏûºÄµÚ¼¸ÕÅ¿¨ÅÆ£¬¿¨ÅÆÃû³Æ
- * ¹¦ÄÜ£ºÏûºÄÌØ¶¨¿¨ÅÆ
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½exhuastCard
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÄµÚ¼ï¿½ï¿½Å¿ï¿½ï¿½Æ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¶ï¿½ï¿½ï¿½ï¿½ï¿½
  */
 
 void CombatSystem::exhaustCard(int num, std::string cardName)
 {
-	if (num < 0 || num >= hand.size()) {
-		CCLOG("Error: Invalid card index %d", num);
-		return;  // Èç¹û num ÎŞĞ§£¬Ö±½Ó·µ»Ø
-	}
+    if (num < 0 || num >= hand.size()) {
+        CCLOG("Error: Invalid card index %d", num);
+        return; // ï¿½ï¿½ï¿½ num ï¿½ï¿½Ğ§ï¿½ï¿½Ö±ï¿½Ó·ï¿½ï¿½ï¿½
+    }
 
-	//±éÀúÊ¹ÓÃÕßµÄbuffÁĞ±í£¬´¥·¢ËùÓĞbuffµÄdeleteCardĞ§¹û
-	for (auto Buff : Player::getInstance()->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onExhaustCard();
-		}
-	}
-	for (auto Relic : EventSystem::getInstance()->relics_)
-	{
-		if (Relic != nullptr)
-		{
-			Relic->onExhaustCard();
-		}
-	}
+    // ï¿½ï¿½ï¿½ï¿½Ê¹ï¿½ï¿½ï¿½ßµï¿½buffï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½ï¿½deleteCardĞ§ï¿½ï¿½
+    for (auto Buff : Player::getInstance()->buffs_) {
+        if (Buff != nullptr) {
+            Buff->onExhaustCard();
+        }
+    }
+    for (auto Relic : EventSystem::getInstance()->relics_) {
+        if (Relic != nullptr) {
+            Relic->onExhaustCard();
+        }
+    }
 
-	// ´¥·¢¿¨ÅÆ±»ÏûºÄµÄĞ§¹û
-	auto card = hand[num];
-	card->takeEffectOnExhaust();
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ±ï¿½ï¿½ï¿½ï¿½Äµï¿½Ğ§ï¿½ï¿½
+    auto card = hand[num];
+    card->takeEffectOnExhaust();
 
-	// µ÷ÓÃÇ°¶ËĞ§¹û¶Ô¿¨ÅÆ½øĞĞÒÆ³ı
-	HandPileLayer::getInstance()->removeCard(card);
+    // UIæ›´æ–° - é€šè¿‡UIControllerç§»é™¤å¡ç‰Œ
+    notifyUICardRemoved(card);
 
-	// ÏûºÄÏàÓ¦Î»ÖÃ¿¨ÅÆ
-	hand.erase(hand.begin() + num);
-	CCLOG("Card '%s' at index %d has been exhuasted", cardName.c_str(), num);
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦Î»ï¿½Ã¿ï¿½ï¿½ï¿½
+    hand.erase(hand.begin() + num);
+    CCLOG("Card '%s' at index %d has been exhuasted", cardName.c_str(), num);
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    // é€šçŸ¥UIæ›´æ–°ç©å®¶çŠ¶æ€
+    notifyUIPlayerUpdated(Player::getInstance());
 }
-
 
 void CombatSystem::exhaustCard()
 {
+    // Use getSelectedCards() instead of direct HandPileLayer access
+    auto selectedCards = getSelectedCards();
+    for (auto& card : selectedCards) {
+        for (auto Buff : Player::getInstance()->buffs_) {
+            if (Buff != nullptr) {
+                Buff->onExhaustCard();
+            }
+        }
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            if (Relic != nullptr) {
+                Relic->onExhaustCard();
+            }
+        }
 
-	for (auto& card : HandPileLayer::getInstance()->select_card_list) {
-		for (auto Buff : Player::getInstance()->buffs_)
-		{
-			if (Buff != nullptr)
-			{
-				Buff->onExhaustCard();
-			}
-		}
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			if (Relic != nullptr)
-			{
-				Relic->onExhaustCard();
-			}
-		}
+        card->takeEffectOnExhaust();
 
-		card->takeEffectOnExhaust();
-
-		HandPileLayer::getInstance()->removeCard(card);
-
-	}
-
+        notifyUIRemoveCard(card);
+    }
 }
-
 
 void CombatSystem::exhaustCard(std::shared_ptr<Card> card)
 {
-	for (auto Buff : Player::getInstance()->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onExhaustCard();
-		}
-	}
-	for (auto Relic : EventSystem::getInstance()->relics_)
-	{
-		if (Relic != nullptr)
-		{
-			Relic->onExhaustCard();
-		}
-	}
-	card->takeEffectOnExhaust();
+    for (auto Buff : Player::getInstance()->buffs_) {
+        if (Buff != nullptr) {
+            Buff->onExhaustCard();
+        }
+    }
+    for (auto Relic : EventSystem::getInstance()->relics_) {
+        if (Relic != nullptr) {
+            Relic->onExhaustCard();
+        }
+    }
+    card->takeEffectOnExhaust();
 
-	HandPileLayer::getInstance()->removeCard(card);
+    notifyUIRemoveCard(card);
 
-
-	// ÏûºÄÏàÓ¦Î»ÖÃ
-	hand.erase(std::remove(hand.begin(), hand.end(), card), hand.end());
+    // æ›´æ–°å¯¹åº”ä½ç½®
+    hand.erase(std::remove(hand.begin(), hand.end(), card), hand.end());
 }
 
-
-void CombatSystem::endTurnCardPlayed() {
-	std::vector<std::shared_ptr<Card>> Hand = hand;
-	for (auto& card : Hand) {
-		card->takeeffectonturnend(card);
-	}
+void CombatSystem::endTurnCardPlayed()
+{
+    std::vector<std::shared_ptr<Card>> Hand = hand;
+    for (auto& card : Hand) {
+        card->takeeffectonturnend(card);
+    }
 }
 
 /*
-* º¯ÊıÃû³Æ£ºupgradeCard
-* ²ÎÊı£ºĞèÒªÉı¼¶µÄ¿¨ÅÆµÄÖ¸Õë
-* ¹¦ÄÜ£º½«¶ÔÓ¦¿¨ÅÆ½øĞĞÉı¼¶£¬Í¬Ê±Èç¹û¿¨ÅÆÔÚÊÖÅÆÖĞ£¬¸üĞÂÏÔÊ¾
-*/
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½upgradeCard
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Æµï¿½Ö¸ï¿½ï¿½
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½Ó¦ï¿½ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í¬Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
+ */
 void CombatSystem::upgradeCard(std::shared_ptr<Card> card)
 {
-	// Èç¹û¿¨ÅÆÃ»ÓĞ½øĞĞ¹ıÉı¼¶£¬ÄÇÃ´¶Ô¿¨ÅÆ½øĞĞÉı¼¶
-	if (!card->isUpgraded())
-	{
-		card->upgrade();
+    // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã»ï¿½Ğ½ï¿½ï¿½Ğ¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ã´ï¿½Ô¿ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    if (!card->isUpgraded()) {
+        card->upgrade();
 
-		// ²é¿´¿¨ÅÆÊÇ·ñÔÚÊÖÅÆÖĞ£¬Èç¹ûÔÚÊÖÅÆÖĞĞèÒª¸üĞÂÏÔÊ¾
-		for (int i = 0; i < hand.size(); i++)
-		{
-			if (hand[i] == card)
-			{
-				auto cardSprite = HandPileLayer::getInstance()->getChildByTag(reinterpret_cast<intptr_t>(hand[i].get()));
-				CardSpriteGenerator::updateCardSprite(card, cardSprite);
-			}
-		}
-	}
+        // ï¿½é¿´ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ğ£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê¾
+        if (uiController_) {
+            uiController_->updateCardDisplay(card);
+        }
+    }
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    if (uiController_) {
+        uiController_->updatePlayerDisplay(Player::getInstance());
+    }
 }
 
-
 /*
- * º¯ÊıÃû³Æ£ºstartTurn
- * ²ÎÊı£ºÕıÔÚ½øĞĞ»ØºÏ¿ªÊ¼µÄÉúÎïµÄÖ¸Õë
- * ¹¦ÄÜ£ºÍê³É¸ÃÉúÎïµÄ»ØºÏ¿ªÊ¼ÀàbuffµÄ½áËã£¬²¢½øĞĞ»ØºÏ¿ªÊ¼²Ù×÷
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½startTurn
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½Ğ»ØºÏ¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½É¸ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ØºÏ¿ï¿½Ê¼ï¿½ï¿½buffï¿½Ä½ï¿½ï¿½ã£¬ï¿½ï¿½ï¿½ï¿½ï¿½Ğ»ØºÏ¿ï¿½Ê¼ï¿½ï¿½ï¿½ï¿½
  */
 void CombatSystem::startTurn(std::shared_ptr<Creature> creature)
 {
-	// Ê§È¥ËùÓĞ¸ñµ²
-	creature->loseBlock(creature->getBlockValue());
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    // Ê§È¥ï¿½ï¿½ï¿½Ğ¸ï¿½
+    creature->loseBlock(creature->getBlockValue());
+    // ä½¿ç”¨UIé€šçŸ¥æ›¿ä»£ç›´æ¥UIè°ƒç”¨
+    if (uiController_) {
+        // é€šçŸ¥UIæ›´æ–°ç”Ÿç‰©æ˜¾ç¤ºï¼ˆè½¬æ¢Monsters_ä¸ºMonsterå‘é‡ï¼‰
+        std::vector<std::shared_ptr<Monster>> monsters;
+        for (const auto& creature : Monsters_) {
+            auto monster = std::dynamic_pointer_cast<Monster>(creature);
+            if (monster) {
+                monsters.push_back(monster);
+            }
+        }
+        notifyUIMonstersUpdated(monsters);
+    }
 
-	// ´¥·¢
-	for (auto Buff : creature->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onTurnStart();
-		}
-	}
+    // ï¿½ï¿½ï¿½ï¿½
+    for (auto Buff : creature->buffs_) {
+        if (Buff != nullptr) {
+            Buff->onTurnStart();
+        }
+    }
 
-
-	// ÅĞ¶ÏÊÇ·ñÎªÍæ¼Ò£¬Èç¹ûÊÇÍæ¼Ò£¬ÄÇÃ´ĞèÒª½øĞĞ²Ù×÷
-	// 1.Ê§È¥ËùÓĞ¸ñµ²
-	// 2.»ñµÃÄÜÁ¿ÉÏÏŞµÄÄÜÁ¿
-	// 3.³é5ÕÅÅÆ
-	if (creature == Player::getInstance())
-	{
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			if (Relic != nullptr)
-			{
-				Relic->onTurnStart();
-			}
-		}
-		const int energy = Player::getInstance()->getMaxEnergy();//»ñÈ¡Íæ¼ÒµÄ×î´óÄÜÁ¿ÉÏÏŞ
-		addEnergy(Player::getInstance(), energy);
-		drawCard(5);
-	}
-	scene->creatureLayer->updateDisplay();
+    // ï¿½Ğ¶ï¿½ï¿½Ç·ï¿½Îªï¿½ï¿½Ò£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ò£ï¿½ï¿½ï¿½Ã´ï¿½ï¿½Òªï¿½ï¿½ï¿½Ğ²ï¿½ï¿½ï¿½
+    // 1.Ê§È¥ï¿½ï¿½ï¿½Ğ¸ï¿½
+    // 2.ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Şµï¿½ï¿½ï¿½ï¿½ï¿½
+    // 3.ï¿½ï¿½5ï¿½ï¿½ï¿½ï¿½
+    if (creature == Player::getInstance()) {
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            if (Relic != nullptr) {
+                Relic->onTurnStart();
+            }
+        }
+        const int energy = Player::getInstance()->getMaxEnergy(); // ï¿½ï¿½È¡ï¿½ï¿½Òµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        addEnergy(Player::getInstance(), energy);
+        drawCard(5);
+        // é€šçŸ¥UIæ›´æ–°
+        notifyUIPlayerUpdated(Player::getInstance());
+    }
 }
 
-//¸üĞÂbuff
-void CombatSystem::updateBuff(std::shared_ptr<Creature> creature) {
-	for (auto it = creature->buffs_.begin(); it != creature->buffs_.end(); ) {
-		auto Buff = *it;
-		if (Buff->stack_type_ == DURATION) {
-			Buff->duration_--;
-			if (Buff->duration_ == 0) {
-				it = creature->buffs_.erase(it); // ÒÆ³ıÔªËØ²¢¸üĞÂµü´úÆ÷
-				continue; // Ìø¹ıµü´úÆ÷µÄµİÔö²Ù×÷
-			}
-		}
-		++it; // ½öÔÚÎ´ÒÆ³ıÊ±µİÔöµü´úÆ÷
-	}
-	for (auto Buff : creature->buffs_)
-	{
-		if (Buff->stack_type_ != EFFECT_LAYERS) {
-			CCLOG("update::have buff: %s. num is %d", typeid(*Buff).name(), Buff->duration_);
-		}
-		else {
-			CCLOG("update::have buff: %s. num is %d", typeid(*Buff).name(), Buff->effect_layers);
-		}
-		
-	}
-	//ÏÔÊ¾¸üĞÂ
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
-	
+// ï¿½ï¿½ï¿½ï¿½buff
+void CombatSystem::updateBuff(std::shared_ptr<Creature> creature)
+{
+    for (auto it = creature->buffs_.begin(); it != creature->buffs_.end();) {
+        auto Buff = *it;
+        if (Buff->stack_type_ == DURATION) {
+            Buff->duration_--;
+            if (Buff->duration_ == 0) {
+                it = creature->buffs_.erase(it); // ï¿½Æ³ï¿½Ôªï¿½Ø²ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½
+                continue; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+            }
+        }
+        ++it; // ï¿½ï¿½ï¿½ï¿½Î´ï¿½Æ³ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    }
+    for (auto Buff : creature->buffs_) {
+        if (Buff->stack_type_ != EFFECT_LAYERS) {
+            CCLOG("update::have buff: %s. num is %d", typeid(*Buff).name(), Buff->duration_);
+        } else {
+            CCLOG("update::have buff: %s. num is %d", typeid(*Buff).name(), Buff->effect_layers);
+        }
+    }
+    // ï¿½ï¿½Ê¾ï¿½ï¿½ï¿½ï¿½
+    if (uiController_) {
+        uiController_->updateCreatureDisplay(creature);
+    }
 }
 
 /*
- * º¯ÊıÃû³Æ£ºendTurn
- * ²ÎÊı£ºÕıÔÚ½øĞĞ»ØºÏ½áÊøµÄÉúÎïµÄÖ¸Õë
- * ¹¦ÄÜ£ºÍê³É¸ÃÉúÎïµÄ»ØºÏ½áÊøÀàbuffµÄ½áËã
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½endTurn
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ú½ï¿½ï¿½Ğ»ØºÏ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½É¸ï¿½ï¿½ï¿½ï¿½ï¿½Ä»ØºÏ½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½Ä½ï¿½ï¿½ï¿½
  */
 void CombatSystem::endTurn(std::shared_ptr<Creature> creature)
 {
-	for (auto Buff : creature->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onTurnEnd();
-		}
-	}
-	updateBuff(creature);
-	if (creature == Player::getInstance())
-	{
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			if (Relic != nullptr)
-			{
-				Relic->onTurnEnd();
-			}
-		}
-		const int energy = Player::getInstance()->getCurrentEnergy();//½«ÄÜÁ¿Çå¿Õ
-		addEnergy(Player::getInstance(), -energy);
-		for (size_t i = 0; i < hand.size();)
-		{
-			std::shared_ptr<Card> card = hand[i];
-			CombatSystem::getInstance()->discardPile.push(card);  // ½«¿¨ÅÆ¼ÓÈëÆúÅÆ¶Ñ
-			auto cardSprite = HandPileLayer::getInstance()->getChildByTag(reinterpret_cast<intptr_t>(hand[i].get()));
-			HandPileLayer::getInstance()->removeChild(cardSprite);
-			// ´ÓÊÖÅÆÖĞÉ¾³ı¿¨ÅÆ
-			hand.erase(hand.begin() + i);  // É¾³ıµ±Ç°ÔªËØ£¬i ±£³Ö²»±ä£¬ÒòÎªÔªËØ±»É¾³ıºó£¬ºóÃæµÄÔªËØ»áÇ°ÒÆ
-		}
-		// µ÷ÓÃÇ°¶ËÄÜÁ¿±ä»¯·½·¨,¶ÔÄÜÁ¿½øĞĞ¸üĞÂ
-		HandPileLayer::getInstance()->updateDiscardPileDisplay();
-	}
+    for (auto Buff : creature->buffs_) {
+        if (Buff != nullptr) {
+            Buff->onTurnEnd();
+        }
+    }
+    updateBuff(creature);
+    if (creature == Player::getInstance()) {
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            if (Relic != nullptr) {
+                Relic->onTurnEnd();
+            }
+        }
+        const int energy = Player::getInstance()->getCurrentEnergy(); // æ¸…ç©ºèƒ½é‡
+        addEnergy(Player::getInstance(), -energy);
+        for (size_t i = 0; i < hand.size();) {
+            std::shared_ptr<Card> card = hand[i];
+            CombatSystem::getInstance()->discardPile.push(card); // å°†æ‰‹ç‰ŒåŠ å…¥å¼ƒç‰Œå †
+            notifyUIRemoveCardSprite(card);
+            // ä¸å¢åŠ éå†åˆ é™¤å®¹å™¨
+            hand.erase(hand.begin() + i); // åˆ é™¤å½“å‰å…ƒç´ ï¼Œi ä¿æŒä¸å˜ï¼Œå› ä¸ºå…ƒç´ è¢«åˆ é™¤åï¼Œåé¢çš„å…ƒç´ ä¼šå‰ç§»
+        }
+        // æ¸…ç©ºå‰ç«¯ç‰Œå †å˜åŒ–å †å ,å¼ƒç‰Œå †è¿›è¡Œæ›´æ–°
+        notifyUIDiscardPileUpdated(static_cast<int>(discardPile.size()));
+    }
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
-
+    notifyUICreaturesUpdated();
 }
 
 /*
- * º¯ÊıÃû³Æ£ºcardPlayed
- * ²ÎÊı£º´ò³öµÄ¿¨ÅÆµÄÖ¸Õë
- * ¹¦ÄÜ£ºÍê³É´ò³ö¿¨ÅÆÏà¹ØbuffµÄ½áËã
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½cardPlayed
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½Æµï¿½Ö¸ï¿½ï¿½
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½É´ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½Ä½ï¿½ï¿½ï¿½
  */
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card)
 {
 
-	tem_card = card;
-	for (auto Buff : Player::getInstance()->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onCardPlayed(card);
-		}
-	}
-	for (auto Relic : EventSystem::getInstance()->relics_)
-	{
-		if (Relic != nullptr)
-		{
-			Relic->onCardPlayed(card);
-		}
-	}
+    tem_card = card;
+    for (auto Buff : Player::getInstance()->buffs_) {
+        if (Buff != nullptr) {
+            Buff->onCardPlayed(card);
+        }
+    }
+    for (auto Relic : EventSystem::getInstance()->relics_) {
+        if (Relic != nullptr) {
+            Relic->onCardPlayed(card);
+        }
+    }
 
-	card->takeEffect();
+    card->takeEffect();
 
-	int tempEnergyCost = card->getEnergyCost();
-	Player::getInstance()->energyChange(-tempEnergyCost);
-	// µ÷ÓÃÇ°¶ËÄÜÁ¿±ä»¯·½·¨,¶ÔÄÜÁ¿½øĞĞ¸üĞÂ
-	auto currentScene = Director::getInstance()->getRunningScene();
-	if (currentScene && dynamic_cast<CombatScene*>(currentScene)) { //¼ì²éÊÇ·ñÎªÕ½¶·³¡¾°
-		CombatScene* combatScene = static_cast<CombatScene*>(currentScene);
-		combatScene->updateEnergyDisplay();
-	}
+    int tempEnergyCost = card->getEnergyCost();
+    Player::getInstance()->energyChange(-tempEnergyCost);
+    // é€šè¿‡UIControlleræ›´æ–°èƒ½é‡æ˜¾ç¤º
+    if (uiController_) {
+        auto player = Player::getInstance();
+        uiController_->updateEnergyDisplay(player->getCurrentEnergy(), player->getMaxEnergy());
+    }
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    notifyUICreaturesUpdated();
 }
 
 /*
-* º¯ÊıÃû³Æ£ºaddToDiscardPile
-* ¹¦ÄÜ£º½«Ò»¶¨ÊıÁ¿µÄ¿¨ÅÆÖÃÈëÆúÅÆ¶Ñ
-*/
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½addToDiscardPile
+ * ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½Ò»ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ¶ï¿½
+ */
 void CombatSystem::addToDiscardPile(std::shared_ptr<Card> card, int num)
 {
-	for (int i = 0; i < num; i++)
-	{
-		discardPile.push(card);
-	}
-	// Íê³ÉÏÔÊ¾¸üĞÂ
-	HandPileLayer::getInstance()->updateDiscardPileDisplay();
+    // é‡æ„ï¼šä½¿ç”¨CombatDeckæ›¿ä»£ç›´æ¥æ“ä½œæ•°æ®ç»“æ„
+    if (deckManager_) {
+        deckManager_->addToDiscardPile(card, num);
+    } else {
+        CCLOG("[CombatSystem] Error: deckManager_ is null");
+    }
+    // UIæ›´æ–°å·²ç§»è‡³CombatDeckçš„äº‹ä»¶å›è°ƒä¸­å¤„ç†
 }
 
 void CombatSystem::onDeath(std::shared_ptr<Creature> creature)
 {
-	if (creature == Player::getInstance())
-	{
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			Relic->onDeath();
-		}
-		if (Player::getInstance()->getHealth() < 0)
-		{
-			this->combatEnd();
-		}
-	}
-	else
-	{
-		int is_all_monster_dead = 1;
-		for (int i = 0; i < Monsters_.size(); i++)
-		{
-			if (Monsters_[i]->getHealth() > 0)
-				is_all_monster_dead = 0;
-		}
-		if (is_all_monster_dead)
-		{
-			CombatSystem::combatEnd();
-		}
-	}
+    if (creature == Player::getInstance()) {
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            Relic->onDeath();
+        }
+        if (Player::getInstance()->getHealth() < 0) {
+            this->combatEnd();
+        }
+    } else {
+        int is_all_monster_dead = 1;
+        for (int i = 0; i < Monsters_.size(); i++) {
+            if (Monsters_[i]->getHealth() > 0)
+                is_all_monster_dead = 0;
+        }
+        if (is_all_monster_dead) {
+            CombatSystem::combatEnd();
+        }
+    }
 }
 
 void CombatSystem::tem_cardPlayed(std::shared_ptr<Card> card)
 {
-	for (auto Buff : Player::getInstance()->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onCardPlayed(card);
-		}
-	}
-	for (auto Relic : EventSystem::getInstance()->relics_)
-	{
-		if (Relic != nullptr)
-		{
-			Relic->onCardPlayed(card);
-		}
-	}
-	card->takeEffect();
+    for (auto Buff : Player::getInstance()->buffs_) {
+        if (Buff != nullptr) {
+            Buff->onCardPlayed(card);
+        }
+    }
+    for (auto Relic : EventSystem::getInstance()->relics_) {
+        if (Relic != nullptr) {
+            Relic->onCardPlayed(card);
+        }
+    }
+    card->takeEffect();
 }
 
 /*
-* º¯ÊıÃû³Æ£ºgetMonsterPointer
-* ²ÎÊı£º¹ÖÎïÂãÖ¸Õë
-* ²ÎÊı£º·µ»Ø¸ÃÖ¸ÕëÔÚCombatSystemÖĞµÄÖÇÄÜÖ¸Õë
-*/
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½getMonsterPointer
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ø¸ï¿½Ö¸ï¿½ï¿½ï¿½ï¿½CombatSystemï¿½Ğµï¿½ï¿½ï¿½ï¿½ï¿½Ö¸ï¿½ï¿½
+ */
 std::shared_ptr<Creature> CombatSystem::getMonsterPointer(Creature* creature)
 {
-	if (creature == nullptr)
-	{
-		return nullptr;
-	}
-	for (int i = 0; i < Monsters_.size(); i++)
-	{
-		if (Monsters_[i].get() == creature)
-		{
-			return Monsters_[i];
-		}
-	}
-	return nullptr;
+    if (creature == nullptr) {
+        return nullptr;
+    }
+    for (int i = 0; i < Monsters_.size(); i++) {
+        if (Monsters_[i].get() == creature) {
+            return Monsters_[i];
+        }
+    }
+    return nullptr;
 }
 
-void CombatSystem::use_tem_card() {
-	tem_card->tag = 1;
-	tem_cardPlayed(tem_card);
-
+void CombatSystem::use_tem_card()
+{
+    tem_card->tag = 1;
+    tem_cardPlayed(tem_card);
 }
-
 
 void CombatSystem::cardPlayed(std::shared_ptr<Card> card, std::shared_ptr<Creature> creature)
 {
-	for (auto Buff : Player::getInstance()->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onCardPlayed(card);
-		}
-	}
-	for (auto Relic : EventSystem::getInstance()->relics_)
-	{
-		if (Relic != nullptr)
-		{
-			Relic->onCardPlayed(card);
-		}
-	}
-	card->takeEffect(creature);
+    for (auto Buff : Player::getInstance()->buffs_) {
+        if (Buff != nullptr) {
+            Buff->onCardPlayed(card);
+        }
+    }
+    for (auto Relic : EventSystem::getInstance()->relics_) {
+        if (Relic != nullptr) {
+            Relic->onCardPlayed(card);
+        }
+    }
+    card->takeEffect(creature);
 
-	int tempEnergyCost = card->getEnergyCost();
-	Player::getInstance()->energyChange(-tempEnergyCost);
-	// µ÷ÓÃÇ°¶ËÄÜÁ¿±ä»¯·½·¨,¶ÔÄÜÁ¿½øĞĞ¸üĞÂ
-	auto currentScene = Director::getInstance()->getRunningScene();
-	if (currentScene && dynamic_cast<CombatScene*>(currentScene)) { //¼ì²éÊÇ·ñÎªÕ½¶·³¡¾°
-		CombatScene* combatScene = static_cast<CombatScene*>(currentScene);
-		combatScene->updateEnergyDisplay();
-	}
+    int tempEnergyCost = card->getEnergyCost();
+    Player::getInstance()->energyChange(-tempEnergyCost);
+    // é€šè¿‡UIControlleræ›´æ–°èƒ½é‡æ˜¾ç¤º
+    if (uiController_) {
+        auto player = Player::getInstance();
+        uiController_->updateEnergyDisplay(player->getCurrentEnergy(), player->getMaxEnergy());
+    }
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    notifyUICreaturesUpdated();
 }
 
-
 /*
-*
-*
-*
-*/
+ *
+ *
+ *
+ */
 void CombatSystem::addEnergy(std::shared_ptr<Creature> user, int numeric_value_)
 {
-	int tempEnergy = numeric_value_;
-	for (auto Buff : user->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onGetEnergy(tempEnergy);
-		}
-	}
-	if (user == Player::getInstance())
-	{
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			if (Relic != nullptr)
-			{
-				Relic->onGetEnergy(tempEnergy);
-			}
-		}
-		Player::getInstance()->energyChange(tempEnergy);
-	}
-	// µ÷ÓÃÇ°¶ËÄÜÁ¿±ä»¯·½·¨,¶ÔÄÜÁ¿½øĞĞ¸üĞÂ
-	auto currentScene = Director::getInstance()->getRunningScene();
-	if (currentScene && dynamic_cast<CombatScene*>(currentScene)) { //¼ì²éÊÇ·ñÎªÕ½¶·³¡¾°
-		CombatScene* combatScene = static_cast<CombatScene*>(currentScene);
-		combatScene->updateEnergyDisplay();
-	}
+    int tempEnergy = numeric_value_;
+    for (auto Buff : user->buffs_) {
+        if (Buff != nullptr) {
+            Buff->onGetEnergy(tempEnergy);
+        }
+    }
+    if (user == Player::getInstance()) {
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            if (Relic != nullptr) {
+                Relic->onGetEnergy(tempEnergy);
+            }
+        }
+        Player::getInstance()->energyChange(tempEnergy);
+    }
+    // é€šè¿‡UIControlleræ›´æ–°èƒ½é‡æ˜¾ç¤º
+    if (uiController_) {
+        auto player = Player::getInstance();
+        uiController_->updateEnergyDisplay(player->getCurrentEnergy(), player->getMaxEnergy());
+    }
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    notifyUICreaturesUpdated();
 }
 
 /*
-* º¯ÊıÃû³Æ£ºaddBuff
-* ²ÎÊı£ºÔö¼ÓµÄBuffÖÖÀà£¬
-*/
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Æ£ï¿½addBuff
+ * ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Óµï¿½Buffï¿½ï¿½ï¿½à£¬
+ */
 void CombatSystem::addBuff(std::shared_ptr<Buff> buff, int numeric_value, std::shared_ptr<Creature> target)
 {
-	//±éÀúÄ¿±êµÄbuffÁĞ±í£¬´¥·¢ËùÓĞbuffµÄaddBuffĞ§¹û
-	for (auto it = target->buffs_.begin(); it != target->buffs_.end(); ) {
-		auto Buff = *it;
-		Buff->addBuff(buff, numeric_value);
-		if (Buff->effect_layers == 0&& Buff->duration_ == 0) {
-			it = target->buffs_.erase(it); // ÒÆ³ıÔªËØ²¢¸üĞÂµü´úÆ÷
-			continue; // Ìø¹ıµü´úÆ÷µÄµİÔö²Ù×÷
-		}
-		++it; // ½öÔÚÎ´ÒÆ³ıÊ±µİÔöµü´úÆ÷
-	}
-	
-	if (numeric_value > 0) {
-		int tag = 0;
-		//buffÄÜ·ñ±»µş¼Ó
-		if (buff->is_stackable_ == true) {
-			for (auto Buff : target->buffs_)
-			{
-				//ÒÑ¾­´æÔÚÍ¬ÖÖbuff
-				if (Buff->name_ == buff->name_) {
-					//³ÖĞøÊ±¼ä
-					if (Buff->stack_type_ == DURATION) {
-						Buff->duration_ += numeric_value;
-					}
-					//Ğ§¹û²ãÊı
-					else {
-						Buff->effect_layers += numeric_value;
-					}
-					//¸üĞÂ
-					auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-					scene->creatureLayer->updateDisplay();
-					tag = 1;
-					break;
-				}
-			}
-			if (tag == 0) {
-				//³ÖĞøÊ±¼ä
-				if (buff->stack_type_ == DURATION) {
-					buff->duration_ = numeric_value;
-				}
-				//Ğ§¹û²ãÊı
-				else {
-					buff->effect_layers = numeric_value;
-				}
-				target->buffs_.push_back(buff);
-				//¸üĞÂ
-				auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-				scene->creatureLayer->updateDisplay();
-			}
+    // ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½buffï¿½Ğ±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½buffï¿½ï¿½addBuffĞ§ï¿½ï¿½
+    for (auto it = target->buffs_.begin(); it != target->buffs_.end();) {
+        auto Buff = *it;
+        Buff->addBuff(buff, numeric_value);
+        if (Buff->effect_layers == 0 && Buff->duration_ == 0) {
+            it = target->buffs_.erase(it); // ï¿½Æ³ï¿½Ôªï¿½Ø²ï¿½ï¿½ï¿½ï¿½Âµï¿½ï¿½ï¿½ï¿½ï¿½
+            continue; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Äµï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+        }
+        ++it; // ï¿½ï¿½ï¿½ï¿½Î´ï¿½Æ³ï¿½Ê±ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    }
 
-		}
-	}
-	//²âÊÔ
-	for (auto Buff : target->buffs_)
-	{
-		CCLOG("have buff: %s. num is %d", typeid(*Buff).name(), Buff->effect_layers);
-	}
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    if (numeric_value > 0) {
+        int tag = 0;
+        // buffï¿½Ü·ñ±»µï¿½ï¿½ï¿½
+        if (buff->is_stackable_ == true) {
+            for (auto Buff : target->buffs_) {
+                // ï¿½Ñ¾ï¿½ï¿½ï¿½ï¿½ï¿½Í¬ï¿½ï¿½buff
+                if (Buff->name_ == buff->name_) {
+                    // æ›´æ–°æŒç»­æ—¶é—´
+                    if (Buff->stack_type_ == DURATION) {
+                        Buff->duration_ += numeric_value;
+                    }
+                    // æ•ˆæœå±‚æ•°å åŠ 
+                    else {
+                        Buff->effect_layers += numeric_value;
+                    }
+                    // æ›´æ–°UI
+                    notifyUICreaturesUpdated();
+                    tag = 1;
+                    break;
+                }
+            }
+            if (tag == 0) {
+                // è®¾ç½®æŒç»­æ—¶é—´
+                if (buff->stack_type_ == DURATION) {
+                    buff->duration_ = numeric_value;
+                }
+                // æ•ˆæœå±‚æ•°å åŠ 
+                else {
+                    buff->effect_layers = numeric_value;
+                }
+                target->buffs_.push_back(buff);
+                // æ›´æ–°UI
+                notifyUICreaturesUpdated();
+            }
+        }
+    }
+    // è°ƒè¯•è¾“å‡º
+    for (auto Buff : target->buffs_) {
+        CCLOG("have buff: %s. num is %d", typeid(*Buff).name(), Buff->effect_layers);
+    }
+    notifyUICreaturesUpdated();
 }
 
 void CombatSystem::addHealth(std::shared_ptr<Creature> target, int numeric_value)
 {
-	int tempHealthRestore = numeric_value;
-	for (auto Buff : target->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onAddHealth(tempHealthRestore);
-		}
-	}
-	if (target == Player::getInstance())
-	{
-		for (auto Relic : EventSystem::getInstance()->relics_)
-		{
-			if (Relic != nullptr)
-			{
-				Relic->onAddHealth(tempHealthRestore);
-			}
-		}
-	}
-	// ·ÀÖ¹³öÏÖ¸ºÊı
-	tempHealthRestore = max(0, tempHealthRestore);
-	target->addHealth(tempHealthRestore);
+    int tempHealthRestore = numeric_value;
+    for (auto Buff : target->buffs_) {
+        if (Buff != nullptr) {
+            Buff->onAddHealth(tempHealthRestore);
+        }
+    }
+    if (target == Player::getInstance()) {
+        for (auto Relic : EventSystem::getInstance()->relics_) {
+            if (Relic != nullptr) {
+                Relic->onAddHealth(tempHealthRestore);
+            }
+        }
+    }
+    // é˜²æ­¢è´Ÿæ•°æ¢å¤
+    tempHealthRestore = max(0, tempHealthRestore);
+    target->addHealth(tempHealthRestore);
 
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+    notifyUICreaturesUpdated();
 }
 
-
 /*
-* º¯ÊıÃû³Æ£ºdrawCard
-* ²ÎÊı£º³é¿¨µÄÊıÁ¿
-* ¹¦ÄÜ£º³éÒ»¶¨ÊıÁ¿µÄÅÆ²¢Íê³É³é¿¨Ïà¹ØµÄbuff½áËã
-*/
+ * Function Name: drawCard
+ * Description: Draw cards from the deck
+ * Functionality: Draw a specified number of cards, trigger related buff/relic effects
+ */
 void CombatSystem::drawCard(int num)
 {
-	int tempNum = num;
-	for (auto Buff : Player::getInstance()->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onDrawCard(tempNum);
-		}
-	}
-	for (auto Relic : EventSystem::getInstance()->relics_)
-	{
-		if (Relic != nullptr)
-		{
-			Relic->onDrawCard(tempNum);
-		}
-	}
-	for (int i = 0; i < tempNum; i++)
-	{
-		for (auto Buff : Player::getInstance()->buffs_)
-		{
-			if (Buff != nullptr)
-			{
-				tempNum = 1;
-				Buff->onDrawCard(tempNum);
-			}
-		}
-		//µ±³éÅÆ¶ÑÎª¿ÕÊ±½øĞĞÏ´ÅÆ
-		if (drawPile.empty())
-		{
-			shuffleDeck();
-			CCLOG("No cards in my draw pile!");
-		}
+    // Refactored: Use CombatDeck's drawCards method
+    if (deckManager_) {
+        int drawn = deckManager_->drawCards(num);
+        CCLOG("Drew %d cards using CombatDeck", drawn);
 
-		//Èç¹ûÖØĞÂ½øĞĞÏ´ÅÆÖ®ºóÈÔÈ»Îª¿ÕÔò²»½øĞĞ³éÅÆ
-		if (!drawPile.empty())
-		{
-			// ³éÈ¡¿¨ÅÆ
-			auto card = drawPile.front();
-			drawPile.pop();
-			hand.push_back(card);
-			CCLOG("the hand now has %d cards", hand.size());
+        // Restore logic: Trigger Relics and Buffs for each card drawn
+        for (int i = 0; i < drawn; i++) {
+            // Trigger Relics
+            for (auto Relic : EventSystem::getInstance()->relics_) {
+                if (Relic != nullptr) {
+                    Relic->onDrawCard(1);
+                }
+            }
 
-			// µ÷ÓÃÇ°¶Ë³éÅÆ¶ÑµÄ³éÅÆĞ§¹û
-			HandPileLayer::getInstance()->drawCard(card);
-		}
-	}
-	HandPileLayer::getInstance()->adjustHandPile();
-
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
+            // Trigger Player Buffs
+            for (auto Buff : Player::getInstance()->buffs_) {
+                if (Buff != nullptr) {
+                    Buff->onDrawCard(1);
+                }
+            }
+        }
+    } else {
+        CCLOG("[CombatSystem] Error: deckManager_ is null");
+    }
+    // UI updates are handled via CombatDeck events or UIController
 }
 
 void CombatSystem::shuffleDeck()
 {
-	// ÁÙÊ±ÈİÆ÷£º´æ´¢ÆúÅÆ¶ÑµÄ¿¨ÅÆ
-	std::vector<std::shared_ptr<Card>> discardCards;
-	for (auto Buff : Player::getInstance()->buffs_)
-	{
-		if (Buff != nullptr)
-		{
-			Buff->onShuffleDeck();
-		}
-	}
-	for (auto Relic : EventSystem::getInstance()->relics_)
-	{
-		if (Relic != nullptr)
-		{
-			Relic->onShuffleDeck();
-		}
-	}
-	// ½«ÆúÅÆ¶ÑÖĞµÄ¿¨ÅÆÈ¡³ö²¢´æ´¢µ½ÁÙÊ±ÈİÆ÷ÖĞ
-	while (!discardPile.empty())
-	{
-		discardCards.push_back(discardPile.front());
-		discardPile.pop();
-	}
-	// ´òÂÒÁÙÊ±ÈİÆ÷ÖĞµÄ¿¨ÅÆË³Ğò
-	RandomGenerator::getInstance()->shuffleVector(discardCards);
-
-	// ½«´òÂÒºóµÄ¿¨ÅÆ·ÅÈë³éÅÆ¶Ñ
-	for (const auto& card : discardCards)
-	{
-		drawPile.push(card);
-	}
-
-	HandPileLayer::getInstance()->updateDrawPileDisplay();
-	HandPileLayer::getInstance()->updateDiscardPileDisplay();
-
-
-	auto scene = (CombatScene*)(Director::getInstance()->getRunningScene());
-	scene->creatureLayer->updateDisplay();
-	CCLOG("Moved all cards from discard pile to draw pile and shuffled. Draw pile now has %d cards", drawPile.size());
+    // Refactored: Use CombatDeck's shuffle method
+    if (deckManager_) {
+        deckManager_->shuffle();
+        CCLOG("Shuffled deck using CombatDeck");
+    } else {
+        CCLOG("[CombatSystem] Error: deckManager_ is null");
+    }
 }
 
 int CombatSystem::getDrawPileNumber()
 {
-	return drawPile.size();
+    // Refactored: Use CombatDeck
+    return deckManager_ ? deckManager_->getDrawPileSize() : 0;
 }
 
 int CombatSystem::getHandNumber()
 {
-	return hand.size();
+    // Refactored: Use CombatDeck
+    return deckManager_ ? deckManager_->getHandSize() : 0;
 }
 
 int CombatSystem::getDiscardPileNumber()
 {
-	return discardPile.size();
+    // Refactored: Use CombatDeck
+    return deckManager_ ? deckManager_->getDiscardPileSize() : 0;
+}
+
+// ==================== UIé€šçŸ¥æ–¹æ³•ï¼ˆFacadeæ¨¡å¼é‡æ„ï¼‰ ====================
+
+void CombatSystem::setUIController(std::shared_ptr<CombatUIController> uiController)
+{
+    uiController_ = uiController;
+    CCLOG("[CombatSystem] UI Controller set");
+}
+
+void CombatSystem::notifyUIPlayerUpdated(std::shared_ptr<Player> player)
+{
+    if (uiController_) {
+        uiController_->updatePlayerDisplay(player);
+    }
+}
+
+void CombatSystem::notifyUIMonstersUpdated(const std::vector<std::shared_ptr<Monster>>& monsters)
+{
+    if (uiController_) {
+        uiController_->updateMonstersDisplay(monsters);
+    }
+}
+
+void CombatSystem::notifyUICardDrawn(std::shared_ptr<Card> card)
+{
+    if (uiController_) {
+        uiController_->addCardToHand(card);
+    }
+}
+
+void CombatSystem::notifyUICardRemoved(std::shared_ptr<Card> card)
+{
+    if (uiController_) {
+        uiController_->removeCardFromHand(card);
+    }
+}
+
+void CombatSystem::notifyUIDrawPileUpdated(int count)
+{
+    if (uiController_) {
+        uiController_->updateDrawPileDisplay(count);
+    }
+}
+
+void CombatSystem::notifyUIDiscardPileUpdated(int count)
+{
+    if (uiController_) {
+        uiController_->updateDiscardPileDisplay(count);
+    }
+}
+
+void CombatSystem::notifyUIEnergyUpdated(int current, int max)
+{
+    if (uiController_) {
+        uiController_->updateEnergyDisplay(current, max);
+    }
+}
+
+// NEW: Additional UI notification methods for complete UI separation
+
+void CombatSystem::notifyUICreaturesUpdated()
+{
+    if (uiController_) {
+        uiController_->updateAllCreaturesDisplay();
+    }
+}
+
+void CombatSystem::notifyUIDiscardAllHandCards()
+{
+    if (uiController_) {
+        uiController_->discardAllHandCardsDisplay();
+    }
+}
+
+void CombatSystem::notifyUIRemoveCardSprite(std::shared_ptr<Card> card)
+{
+    if (uiController_) {
+        uiController_->removeCardSpriteByTag(card.get());
+    }
+}
+
+std::vector<std::shared_ptr<Card>> CombatSystem::getSelectedCards()
+{
+    if (uiController_) {
+        return uiController_->getSelectedCards();
+    }
+    // Fallback to direct access for backward compatibility
+    return HandPileLayer::getInstance()->select_card_list;
 }
