@@ -1,0 +1,44 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class CardFactory {
+    + {static} createCard(name: string) : shared_ptr<Card>
+}
+
+abstract class Card {
+    + play()
+    + upgrade()
+}
+
+class Strike {
+    + play()
+}
+
+class Defend {
+    + play()
+}
+
+class Bash {
+    + play()
+}
+
+' Dependency relationships (Coupling)
+CardFactory ..> Strike : creates >
+CardFactory ..> Defend : creates >
+CardFactory ..> Bash : creates >
+
+' Inheritance
+Strike --|> Card
+Defend --|> Card
+Bash --|> Card
+
+note right of CardFactory
+  <b>High Coupling / OCP Violation</b>
+  The Factory must include headers
+  for ALL concrete cards.
+  Adding a card requires modifying
+  the if-else logic here.
+end note
+
+@enduml
