@@ -107,6 +107,7 @@ Client (CombatScene)
 ### 3.2 Design Decisions
 
 **1. Facade as Orchestrator**
+
 - CombatFacade coordinates between subsystems
 - Clients only interact with Facade
 - All UI updates are automatic
@@ -120,10 +121,11 @@ Client (CombatScene)
 - **20+ direct UI calls replaced** with UIController delegation
 
 **3. Event Bus for Decoupling**
-- Components communicate via events (Publish-Subscribe pattern)
+- Components communicate via events (Observer pattern)
 - Easy to add new listeners (achievements, analytics, etc.)
 
 **4. Backward Compatibility**
+
 - Singletons kept for legacy code
 - Gradual migration path
 

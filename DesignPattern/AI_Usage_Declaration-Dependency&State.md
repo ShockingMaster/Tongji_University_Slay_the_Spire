@@ -12,12 +12,111 @@
 - **Interface**: Command-line interface (CLI) with interactive coding capabilities
 - **Key Features**: Code analysis, refactoring suggestions, design pattern implementation, UML generation
 
+### 1.2 Secondary AI Tool: Gemini 3.0 Pro (Google)
+
+**Tool Information:**
+- **Name**: Gemini 3.0 Pro
+- **Provider**: Google
+- **Interface**: Web-based chat interface
+- **Key Features**: Rapid codebase comprehension, high-level architecture analysis
+- **Usage**: Used specifically for Facade Pattern refactoring to quickly understand the existing combat system implementation
+
 
 ---
 
 ## 2. AI Usage Throughout the Refactoring Process
 
-### 2.1 Phase 1: Identifying Refactoring Opportunities
+### 2.1 Facade Pattern Refactoring 
+
+> **Key Principle**: Throughout the Facade Pattern refactoring, I maintained **full control and leadership** over the design decisions. AI tools served as assistants for understanding code and implementing my decisions, not as decision-makers.
+
+#### Phase 1: Codebase Comprehension (Gemini)
+
+**My Approach**:
+
+1. **I provided** Gemini with key source files (CombatSystem.cpp, CombatScene.cpp, HandPileLayer.cpp)
+2. **I asked** Gemini to explain the current architecture and data flow
+3. **I validated** Gemini's understanding against my own reading of the code
+
+**Prompt Examples**:
+
+- "Explain the relationship between CombatScene and CombatSystem"
+- "How does the current implementation handle UI updates during combat?"
+- "What are the dependencies between combat-related classes?"
+
+**My Validation**: I cross-checked Gemini's analysis by reading the actual source code, confirming:
+- ✅ CombatSystem has 20+ direct UI calls (HandPileLayer::getInstance(), scene->creatureLayer->updateDisplay())
+- ✅ CombatScene directly manipulates CombatSystem internals
+- ✅ No abstraction layer between client and subsystems
+
+#### Phase 2: Problem Identification (Human-Led)
+
+**My Role**: I led the code review process, using AI as a "second pair of eyes"
+
+| Problem | My Finding | AI Confirmation |
+|:--------|:-----------|:----------------|
+| UI/Logic Coupling | Found 20+ direct UI calls in CombatSystem | ✅ Confirmed as anti-pattern |
+| Client Complexity | CombatScene has 30+ lines for turn management | ✅ Suggested simplification |
+| Testability | Cannot test CombatSystem without Cocos2d-x | ✅ Confirmed as major issue |
+| No Abstraction | Client knows internal subsystem details | ✅ Facade Pattern applicable |
+
+**My Decision**: After reviewing all issues, **I decided** that Facade Pattern was the appropriate solution.
+
+#### Phase 3: Design Decisions
+
+**My Design Choices** (AI provided options, I made decisions):
+
+| Decision Point | Options Considered | My Choice | Rationale |
+|:---------------|:-------------------|:----------|:----------|
+| Pattern Selection | Facade, Mediator, or both | Facade + UI Controller | Simpler, addresses main issues |
+| UI Separation Method | Observer, Delegation, or Callback | Delegation via `notifyUI*()` | Cleaner, easier to mock |
+| Backward Compatibility | Break or maintain | Maintain singletons | Gradual migration, lower risk |
+
+#### Phase 4: Implementation
+
+**My Implementation Process**:
+
+1. **I defined** the interface contracts (what methods CombatFacade should have)
+2. **AI generated** boilerplate code based on my specifications
+3. **I reviewed** every generated file before accepting
+4. **I directed** specific changes when AI's implementation didn't match my vision
+
+**Example Supervision**:
+```
+AI Generated:  void CombatFacade::playCard(Card* card) { ... }
+My Correction: "Change to bool playCard(int handIndex); - safer, matches UI"
+AI Revised:    bool CombatFacade::playCard(int handIndex) { ... }
+```
+
+#### Phase 5: UI Separation Verification
+
+**My Verification Process**:
+1. **I searched** for remaining direct UI calls in CombatSystem
+2. **I found** 20+ calls that AI initially missed
+3. **I directed** AI to replace each with `notifyUI*()` delegation
+4. **I verified** the final result met my requirements
+
+**Final Verification**:
+- ✅ All 20+ direct UI calls replaced with delegation
+- ✅ CombatSystem no longer imports Cocos2d-x UI headers
+- ✅ Unit testing now possible with mock UIController
+
+#### Summary: My Leadership in Facade Refactoring
+
+| Aspect | My Role | AI Role |
+|:-------|:--------|:--------|
+| **Problem Identification** | Led code review, made final judgments | Confirmed findings |
+| **Design Decisions** | Made all architectural choices | Presented options |
+| **Implementation** | Reviewed all code, directed revisions | Generated boilerplate |
+| **Verification** | Found issues AI missed | Made fixes as directed |
+
+**Key Takeaway**: AI tools accelerated my work but did not replace my judgment. Every significant decision was mine.
+
+---
+
+### 2.2 State & Dependency Injection Refactoring
+
+#### Phase 1: Identifying Refactoring Opportunities
 
 **Task**: Analyze existing codebase to identify design pattern opportunities
 
@@ -46,7 +145,7 @@
 
 ---
 
-### 2.2 Phase 2: Proposing Design Solutions
+#### Phase 2: Proposing Design Solutions
 
 **Task**: Design architecture for implementing design patterns
 
@@ -92,7 +191,7 @@
 
 ---
 
-### 2.3 Phase 3: Transforming Source Code
+#### Phase 3: Transforming Source Code
 
 **Task**: Implement design patterns in actual code
 
@@ -150,7 +249,7 @@ public:
 
 ---
 
-### 2.4 Phase 4: Creating Documentation
+#### Phase 4: Creating Documentation
 
 **Task**: Write comprehensive refactoring documentation
 
@@ -312,6 +411,32 @@ Solution: Human review caught this, requested correction
 
 ---
 
+**3. Incomplete Code Analysis (Facade Refactoring)**
+
+**Challenge**: AI initially claimed UI separation was complete, but missed many direct UI calls
+```
+AI Claim: "CombatSystem no longer has direct UI dependencies"
+Reality: grep found 20+ remaining HandPileLayer::getInstance() calls
+Solution: I manually searched and directed AI to fix each occurrence
+```
+
+**Lesson**: Always verify AI's claims with independent checks (grep, code review).
+
+---
+
+**4. Over-Simplified Initial Assessment (Facade Refactoring)**
+
+**Challenge**: AI's initial assessment of Facade pattern was overly positive (7.5/10)
+```
+AI Assessment: "Good Facade implementation with minor issues"
+Reality: CombatSystem still had tight UI coupling, defeating the purpose
+Solution: I pushed for deeper analysis, revealing the actual problems
+```
+
+**Lesson**: Don't accept AI's first assessment; probe deeper with specific questions.
+
+---
+
 ---
 
 ### 4.2 Challenges and Solutions
@@ -348,8 +473,21 @@ PlantUML Error: Missing @startuml tag
 
 ## 5. Reflective Discussion
 
+### 5.1 Maintaining Human Leadership
 
-**Do's**:
+The Facade Pattern refactoring demonstrated a clear model of human-led AI collaboration:
+
+| Phase | Human Leadership | AI Assistance |
+|:------|:-----------------|:--------------|
+| Understanding | Validated AI's explanation against source code | Provided quick codebase overview |
+| Problem Finding | Made final judgment on what's worth fixing | Confirmed anti-patterns |
+| Design | Chose Facade + UI delegation over alternatives | Presented options |
+| Implementation | Reviewed every code change | Generated boilerplate |
+| Verification | Found issues AI missed | Made fixes as directed |
+
+**Key Insight**: The most valuable AI contribution was **accelerating** my decisions, not **making** them.
+
+### 5.2 Best Practices
 1. **Use AI for boilerplate code generation** (interfaces, documentation)
 2. **Leverage AI for pattern identification** (anti-pattern detection)
 3. **Get AI suggestions for architecture** (multiple options)
