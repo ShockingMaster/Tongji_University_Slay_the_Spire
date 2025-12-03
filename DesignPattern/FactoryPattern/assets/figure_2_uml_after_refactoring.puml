@@ -1,0 +1,50 @@
+@startuml
+skinparam classAttributeIconSize 0
+skinparam linetype ortho
+
+class CardRegistry {
+    - {static} registry : map<string, function>
+    + {static} registerCard(name: string, factory: function)
+    + {static} createCard(name: string) : shared_ptr<Card>
+    - {static} getRegistry() : map&
+}
+
+abstract class Card {
+    + play()
+    + upgrade()
+}
+
+class Attack {
+    - {static} isRegistered : bool
+    + play()
+}
+
+class Defense {
+    - {static} isRegistered : bool
+    + play()
+}
+
+' Inheritance
+Attack --|> Card
+Defense --|> Card
+
+' Registration Dependencies (Inverted Control)
+Attack ..> CardRegistry : registers self >
+Defense ..> CardRegistry : registers self >
+
+note left of CardRegistry
+  <b>Decoupled Factory</b>
+  Stores only generic functions.
+  No compile-time dependency
+  on concrete Card classes.
+end note
+
+note bottom of Attack
+  <b>Auto-Registration</b>
+  static bool isRegistered = [](){
+      CardRegistry::registerCard("Attack", ...);
+      return true;
+  }();
+end note
+
+@enduml

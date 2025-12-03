@@ -303,6 +303,53 @@ From DependencyInjectionRefactoring.md:
 
 ---
 
+---
+
+### 2.3 Factory Pattern Refactoring
+
+#### Phase 1: Problem Identification & Design
+
+**Task**: Refactor the card creation system to support easy extension without modifying central files.
+
+**AI Tool Usage:**
+- **Method**: Discussed C++ reflection-like capabilities and factory patterns.
+- **Prompt Examples**:
+  - "What is the best way to implement a factory in C++ that doesn't require modifying the factory for every new class?"
+  - "Show me how to use macros for automatic class registration."
+
+**AI Contributions:**
+1. **Pattern Recommendation**:
+   - Suggested the **Self-Registering Factory** pattern.
+   - Explained the mechanism of using static global variables to trigger registration before `main()`.
+
+2. **Code Prototyping**:
+   - Provided a prototype for `CardRegistry` using `std::map<string, function>`.
+   - Drafted the `AUTO_REGISTER_CARD` macro.
+
+**Human Decisions:**
+- **Architecture Choice**: I selected the macro-based registration over other methods (like external configuration or explicit list) to maximize developer convenience.
+- **Safety Check**: I verified that the static initialization order wouldn't cause crashes (using the "Construct On First Use" idiom for the registry map).
+
+---
+
+#### Phase 2: Implementation & Verification
+
+**Task**: Apply the pattern to the `Classes/` codebase.
+
+**AI Tool Usage:**
+- **Method**: AI assisted in writing the header files and converting existing cards.
+
+**AI Contributions:**
+- Generated the `Classes/Register.h` file with `CardRegistry`.
+- Wrote the `AUTO_REGISTER_CARD` macro in `Classes/Enum.h`.
+- Helped replace the old creation logic with the new registry lookup.
+
+**Human Decisions:**
+- **Integration**: I manually placed the macros in `Card.cpp` and other files to ensure correct registration.
+- **Error Handling**: I decided how to handle the case where a card name is not found (throwing `std::runtime_error`).
+
+---
+
 ## 3. Best Practices Learned
 
 ### 3.1 Effective AI Collaboration Strategies
