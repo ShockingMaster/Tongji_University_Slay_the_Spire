@@ -24,6 +24,11 @@
 #include "CreatureLayer.h"
 #include "AudioPlayer.h"
 #include "Monster.h"
+#include "IEffect.h"
+#include "EffectAdapter.h"
+#include "AttackEffectAdapter.h"
+#include "BlockEffectAdapter.h"
+#include "SecondWindEffectAdapter.h"
 
 using namespace std;
 USING_NS_CC;

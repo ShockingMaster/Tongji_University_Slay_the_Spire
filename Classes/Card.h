@@ -1,9 +1,11 @@
 #pragma once
 #include<vector>
 #include<string>
+#include<memory>
 using namespace std;
 class Creature;
-class Card
+class IEffect;
+class Card : public std::enable_shared_from_this<Card>
 {
 public:
     Card() {};
@@ -21,42 +23,42 @@ public:
         is_exhaust_(temp_is_exhaust_) ,
         is_upgraded_(temp_is_upgraded_){};
 
-    virtual void takeEffect() {};                    /*´ò³ö¿¨ÅÆÊ±´¥·¢Ð§¹û£¬²»ÐèÒªÑ¡ÖÐµÐÈË(¶ÔÈ«ÌåµÐÈËÔì³ÉÐ§¹û¡¢
-                                                       ¶ÔÓÚ×ÔÉíÔì³ÉÐ§¹û¡¢¶ÔÓÚËæ»úÄ¿±êÔì³ÉÐ§¹û)*/
-    virtual void takeEffect(std::shared_ptr<Creature> target) {};    //´ò³ö¿¨ÅÆÊ±´¥·¢Ð§¹û£¬ÐèÒªÑ¡ÖÐµÐÈË
+    virtual void takeEffect() {};                    /*ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÑ¡ï¿½Ðµï¿½ï¿½ï¿½(ï¿½ï¿½È«ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½
+                                                       ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½)*/
+    virtual void takeEffect(std::shared_ptr<Creature> target) {};    //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ÒªÑ¡ï¿½Ðµï¿½ï¿½ï¿½
 
-    virtual void takeeffectonturnend(std::shared_ptr<Card> card) {};                           //»ØºÏ½áÊøºó²úÉúÐ§¹û
+    virtual void takeeffectonturnend(std::shared_ptr<Card> card) {};                           //ï¿½ØºÏ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
 
-    virtual void takeEffectOnDiscard() {};                           //±»ÆúÖÃÊ±²úÉúÐ§¹û
+    virtual void takeEffectOnDiscard() {};                           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
 
-    virtual void takeEffectOnExhaust() {};                           //±»ÏûºÄÊ±²úÉúÐ§¹û
+    virtual void takeEffectOnExhaust() {};                           //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ê±ï¿½ï¿½ï¿½ï¿½Ð§ï¿½ï¿½
 
 
-    virtual void upgrade() {};                                       //¶Ô¿¨ÅÆ½øÐÐÉý¼¶
+    virtual void upgrade() {};                                       //ï¿½Ô¿ï¿½ï¿½Æ½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     
-    std::string getName() const                                      //·µ»Ø¿¨ÅÆÃû³Æ
+    std::string getName() const                                      //ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
         return name_;
     }
-    int getEnergyCost() const                                        //·µ»Ø¿¨ÅÆÏûºÄÄÜÁ¿Öµ
+    int getEnergyCost() const                                        //ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Öµ
     {
         return energy_cost_;
     }
-    int getType() const                                              //·µ»Ø¿¨ÅÆÀàÐÍ£¨¹¥»÷,¼¼ÄÜ£¬ÄÜÁ¦£©
+    int getType() const                                              //ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Í£ï¿½ï¿½ï¿½ï¿½ï¿½,ï¿½ï¿½ï¿½Ü£ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
         return type_;
     }
-    std::string getDescription() const                               //·µ»Ø¿¨ÅÆÃèÊö
+    std::string getDescription() const                               //ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     {
         return description_;
     }
-    int getMoneyCost() const {                                       //·µ»Ø¹ºÂò¿¨ÅÆÐèÒªµÄ½ð±Ò
+    int getMoneyCost() const {                                       //ï¿½ï¿½ï¿½Ø¹ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Òªï¿½Ä½ï¿½ï¿½
         return  money_cost_;
     }
-    int getRarity() const {                                          //·µ»Ø¿¨ÅÆÏ¡ÓÐ¶È
+    int getRarity() const {                                          //ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½ï¿½Ï¡ï¿½Ð¶ï¿½
         return rarity_;
     }
-    bool getCanBePlayed() const{                                     //·µ»Ø¿¨ÅÆÊÇ·ñÄÜ±»´ò³ö
+    bool getCanBePlayed() const{                                     //ï¿½ï¿½ï¿½Ø¿ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ü±ï¿½ï¿½ï¿½ï¿½
         return can_be_played_;
     }
 
@@ -71,18 +73,32 @@ public:
         return is_upgraded_;
     }
 
-    virtual ~Card() {}                                              //Îö¹¹º¯Êý
+    virtual ~Card() {}                                              //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
     int tag = 0;
     
+    // æ·»åŠ æ•ˆæžœç›¸å…³æ–¹æ³•
+    void addEffect(std::shared_ptr<IEffect> effect) {
+        effects_.push_back(effect);
+    }
+    
+    // æ‰§è¡Œæ‰€æœ‰æ•ˆæžœ
+    void executeAllEffects(std::shared_ptr<Creature> target = nullptr) {
+        int numeric_value = 0;
+        for (auto& effect : effects_) {
+            effect->execute(Player::getInstance(), target, shared_from_this(), numeric_value);
+        }
+    }
+    
 protected:
-    std::string name_;                                                //¿¨ÅÆÃû³Æ
-    std::string description_;                                         //¿¨ÅÆÃèÊö
-    int energy_cost_;                                                 //¿¨ÅÆÏûºÄÄÜÁ¿
-    int money_cost_;                                                  //ÉÌµê¹ºÂò¼Û¸ñ
-    int rarity_;                                                      //Ï¡ÓÐ¶È
-    bool can_be_played_;                                              //¿¨ÅÆÊÇ·ñÄÜ±»´ò³ö
-    int type_;                                                        //¿¨ÅÆÀàÐÍ
-    bool need_target_;                                                //ÊÇ·ñÐèÒªÑ¡ÖÐÄ¿±ê²ÅÄÜ´ò³ö
-    bool is_exhaust_;                                                 //ÊÇ·ñÎªÏûºÄÅÆ
-    bool is_upgraded_;                                                //ÊÇ·ñÊÇÉý¼¶µÄ¿¨ÅÆ
+    std::string name_;                                                //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    std::string description_;                                         //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    int energy_cost_;                                                 //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    int money_cost_;                                                  //ï¿½Ìµê¹ºï¿½ï¿½Û¸ï¿½
+    int rarity_;                                                      //Ï¡ï¿½Ð¶ï¿½
+    bool can_be_played_;                                              //ï¿½ï¿½ï¿½ï¿½ï¿½Ç·ï¿½ï¿½Ü±ï¿½ï¿½ï¿½ï¿½
+    int type_;                                                        //ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    bool need_target_;                                                //ï¿½Ç·ï¿½ï¿½ï¿½ÒªÑ¡ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½ï¿½Ü´ï¿½ï¿½
+    bool is_exhaust_;                                                 //ï¿½Ç·ï¿½Îªï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
+    bool is_upgraded_;                                                //ï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä¿ï¿½ï¿½ï¿½
+    std::vector<std::shared_ptr<IEffect>> effects_;                   // æ•ˆæžœåˆ—è¡¨
 };
