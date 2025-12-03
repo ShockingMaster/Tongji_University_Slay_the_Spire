@@ -23,42 +23,42 @@ public:
         is_exhaust_(temp_is_exhaust_) ,
         is_upgraded_(temp_is_upgraded_){};
 
-    virtual void takeEffect() {};                    /*�������ʱ����Ч��������Ҫѡ�е���(��ȫ��������Ч����
-                                                       �����������Ч�����������Ŀ�����Ч��)*/
-    virtual void takeEffect(std::shared_ptr<Creature> target) {};    //�������ʱ����Ч������Ҫѡ�е���
+    virtual void takeEffect() {};                    /*打出卡牌时触发效果，不需要选中敌人(对全体敌人造成效果、
+                                                       对于自身造成效果、对于随机目标造成效果)*/
+    virtual void takeEffect(std::shared_ptr<Creature> target) {};    //打出卡牌时触发效果，需要选中敌人
 
-    virtual void takeeffectonturnend(std::shared_ptr<Card> card) {};                           //�غϽ��������Ч��
+    virtual void takeeffectonturnend(std::shared_ptr<Card> card) {};                           //回合结束后产生效果
 
-    virtual void takeEffectOnDiscard() {};                           //������ʱ����Ч��
+    virtual void takeEffectOnDiscard() {};                           //被弃置时产生效果
 
-    virtual void takeEffectOnExhaust() {};                           //������ʱ����Ч��
+    virtual void takeEffectOnExhaust() {};                           //被消耗时产生效果
 
 
-    virtual void upgrade() {};                                       //�Կ��ƽ�������
+    virtual void upgrade() {};                                       //对卡牌进行升级
     
-    std::string getName() const                                      //���ؿ�������
+    std::string getName() const                                      //返回卡牌名称
     {
         return name_;
     }
-    int getEnergyCost() const                                        //���ؿ�����������ֵ
+    int getEnergyCost() const                                        //返回卡牌消耗能量值
     {
         return energy_cost_;
     }
-    int getType() const                                              //���ؿ������ͣ�����,���ܣ�������
+    int getType() const                                              //返回卡牌类型（攻击,技能，能力）
     {
         return type_;
     }
-    std::string getDescription() const                               //���ؿ�������
+    std::string getDescription() const                               //返回卡牌描述
     {
         return description_;
     }
-    int getMoneyCost() const {                                       //���ع�������Ҫ�Ľ��
+    int getMoneyCost() const {                                       //返回购买卡牌需要的金币
         return  money_cost_;
     }
-    int getRarity() const {                                          //���ؿ���ϡ�ж�
+    int getRarity() const {                                          //返回卡牌稀有度
         return rarity_;
     }
-    bool getCanBePlayed() const{                                     //���ؿ����Ƿ��ܱ����
+    bool getCanBePlayed() const{                                     //返回卡牌是否能被打出
         return can_be_played_;
     }
 
@@ -73,7 +73,7 @@ public:
         return is_upgraded_;
     }
 
-    virtual ~Card() {}                                              //��������
+    virtual ~Card() {}                                              //析构函数
     int tag = 0;
     
     // 添加效果相关方法
@@ -90,15 +90,15 @@ public:
     }
     
 protected:
-    std::string name_;                                                //��������
-    std::string description_;                                         //��������
-    int energy_cost_;                                                 //������������
-    int money_cost_;                                                  //�̵깺��۸�
-    int rarity_;                                                      //ϡ�ж�
-    bool can_be_played_;                                              //�����Ƿ��ܱ����
-    int type_;                                                        //��������
-    bool need_target_;                                                //�Ƿ���Ҫѡ��Ŀ����ܴ��
-    bool is_exhaust_;                                                 //�Ƿ�Ϊ������
-    bool is_upgraded_;                                                //�Ƿ��������Ŀ���
+    std::string name_;                                                //卡牌名称
+    std::string description_;                                         //卡牌描述
+    int energy_cost_;                                                 //卡牌消耗能量
+    int money_cost_;                                                  //商店购买价格
+    int rarity_;                                                      //稀有度
+    bool can_be_played_;                                              //卡牌是否能被打出
+    int type_;                                                        //卡牌类型
+    bool need_target_;                                                //是否需要选中目标才能打出
+    bool is_exhaust_;                                                 //是否为消耗牌
+    bool is_upgraded_;                                                //是否是升级的卡牌
     std::vector<std::shared_ptr<IEffect>> effects_;                   // 效果列表
 };

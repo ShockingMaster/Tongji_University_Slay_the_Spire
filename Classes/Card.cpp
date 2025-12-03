@@ -4,13 +4,13 @@
 #include "BlockEffectAdapter.h"
 #include "SecondWindEffectAdapter.h"
 /* 
- * ��ʼ�����������ƣ��������������Ʒ��ã������̵�۸񣬿���ϡ�жȣ������Ƿ��ܱ�������������ͣ������Ƿ���ҪĿ�����������Ƿ�Ϊ������
+ * 初始化：卡牌名称，卡牌描述，卡牌费用，卡牌商店价格，卡牌稀有度，卡牌是否能被打出，卡牌类型，卡牌是否需要目标打出，卡牌是否为消耗牌
  * 
  */
 
 /*
-* �������ƣ�Attack
-* Ч��������ѡ�еĵ������6���˺�
+* 卡牌名称：Attack
+* 效果：对于选中的敌人造成6点伤害
  */
 class Attack : public Card
 {
@@ -31,12 +31,12 @@ public:
         executeAllEffects(target);
     }
 };
-//���п���ע��
+//进行卡牌注册
 AUTO_REGISTER_CARD(Attack)
 
 /*
-* �������ƣ�Defense
-* Ч��������5�ط��
+* 卡牌名称：Defense
+* 效果：增加5点防御
  */
 class Defense : public Card
 {
@@ -58,13 +58,13 @@ public:
         executeAllEffects();
     }
 };
-//���п���ע��
+//进行卡牌注册
 AUTO_REGISTER_CARD(Defense)
 
 
 /*
-* �������ƣ�������
-* Ч�������ĵ�ǰ���������еķǹ����ƣ�ÿ�Ż��5���
+* 卡牌名称：重振精神
+* 效果：消耗所有非攻击牌，每张获得5点格挡
 */
 class Second_wind : public Card
 {
@@ -86,12 +86,12 @@ public:
         executeAllEffects();
     }
 };
-//���п���ע��
+// 进行卡牌注册
 AUTO_REGISTER_CARD(Second_wind)
 
 /*
-* �������ƣ�BurningContract
-* Ч��������һ�����ƣ���������
+* 卡牌名称：BurningContract
+* 效果：消耗一张手牌，抽两张牌
  */
 class BurningContract : public Card
 {
@@ -129,13 +129,13 @@ public:
         }
     }
 };
-//���п���ע��
+// 进行卡牌注册
 AUTO_REGISTER_CARD(BurningContract)
 
 
 /*
-* �������ƣ���
-* Ч������ʱ������ǰս���е�������
+* 卡牌名称：神话
+* 效果：临时升级当前战斗中的所有牌
 */
 class Apotheosis :public Card
 {
@@ -151,21 +151,21 @@ public:
     {
         
         auto combatSystem = CombatSystem::getInstance();
-        // �����ƽ�������
+        // 对手牌进行升级
         for (auto card:combatSystem->hand)
         {
             combatSystem->upgradeCard(card);
         }
         
-        // �����ƶѽ�������
+        // 对弃牌堆进行升级
         for (int i = 0;i < combatSystem->getDiscardPileNumber();i++)
         {
             auto card = combatSystem->discardPile.front();
             combatSystem->upgradeCard(card);
-            combatSystem->discardPile.push(card);// �������β��
-            combatSystem->discardPile.pop();// ������ͷ���������޸Ķ���˳��
+            combatSystem->discardPile.push(card);// 放入队列尾部
+            combatSystem->discardPile.pop();// 将队列头弹出，不修改队列
         }
-        // �Գ��ƶѽ������� 
+        // 对抽牌堆进行升级
         for (int i = 0;i < combatSystem->getDrawPileNumber();i++)
         {
             auto card = combatSystem->drawPile.front();
@@ -179,8 +179,8 @@ AUTO_REGISTER_CARD(Apotheosis)
 
 
 /*
-* �������ƣ�ѣ��
-* Ч�������ܱ����������
+* 卡牌名称：眩晕
+* 效果：不能被打出，虚无
 */
 class dazed :public Card
 {
@@ -196,8 +196,8 @@ AUTO_REGISTER_CARD(dazed)
 
 
 /*
-* �������ƣ�����
-* Ч�������ܱ�������غϽ�����������˺�
+* 卡牌名称：灼烧
+* 效果：不能被打出，回合结束造成两点伤害
 */
 class burn :public Card
 {
@@ -212,8 +212,8 @@ AUTO_REGISTER_CARD(burn)
 
 
 /*
-* �������ƣ�ʹ��
-* Ч�������8���˺�������2�����ˡ�
+* 卡牌名称：痛击
+* 效果：造成8点伤害。给予2层易伤。
 */
 class trounce :public Card
 {
