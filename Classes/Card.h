@@ -1,9 +1,11 @@
 #pragma once
 #include<vector>
 #include<string>
+#include<memory>
 using namespace std;
 class Creature;
-class Card
+class IEffect;
+class Card : public std::enable_shared_from_this<Card>
 {
 public:
     Card() {};
@@ -21,42 +23,42 @@ public:
         is_exhaust_(temp_is_exhaust_) ,
         is_upgraded_(temp_is_upgraded_){};
 
-    virtual void takeEffect() {};                    /*´ò³ö¿¨ÅÆÊ±´¥·¢Ğ§¹û£¬²»ĞèÒªÑ¡ÖĞµĞÈË(¶ÔÈ«ÌåµĞÈËÔì³ÉĞ§¹û¡¢
-                                                       ¶ÔÓÚ×ÔÉíÔì³ÉĞ§¹û¡¢¶ÔÓÚËæ»úÄ¿±êÔì³ÉĞ§¹û)*/
-    virtual void takeEffect(std::shared_ptr<Creature> target) {};    //´ò³ö¿¨ÅÆÊ±´¥·¢Ğ§¹û£¬ĞèÒªÑ¡ÖĞµĞÈË
+    virtual void takeEffect() {};                    /*æ‰“å‡ºå¡ç‰Œæ—¶è§¦å‘æ•ˆæœï¼Œä¸éœ€è¦é€‰ä¸­æ•Œäºº(å¯¹å…¨ä½“æ•Œäººé€ æˆæ•ˆæœã€
+                                                       å¯¹äºè‡ªèº«é€ æˆæ•ˆæœã€å¯¹äºéšæœºç›®æ ‡é€ æˆæ•ˆæœ)*/
+    virtual void takeEffect(std::shared_ptr<Creature> target) {};    //æ‰“å‡ºå¡ç‰Œæ—¶è§¦å‘æ•ˆæœï¼Œéœ€è¦é€‰ä¸­æ•Œäºº
 
-    virtual void takeeffectonturnend(std::shared_ptr<Card> card) {};                           //»ØºÏ½áÊøºó²úÉúĞ§¹û
+    virtual void takeeffectonturnend(std::shared_ptr<Card> card) {};                           //å›åˆç»“æŸåäº§ç”Ÿæ•ˆæœ
 
-    virtual void takeEffectOnDiscard() {};                           //±»ÆúÖÃÊ±²úÉúĞ§¹û
+    virtual void takeEffectOnDiscard() {};                           //è¢«å¼ƒç½®æ—¶äº§ç”Ÿæ•ˆæœ
 
-    virtual void takeEffectOnExhaust() {};                           //±»ÏûºÄÊ±²úÉúĞ§¹û
+    virtual void takeEffectOnExhaust() {};                           //è¢«æ¶ˆè€—æ—¶äº§ç”Ÿæ•ˆæœ
 
 
-    virtual void upgrade() {};                                       //¶Ô¿¨ÅÆ½øĞĞÉı¼¶
+    virtual void upgrade() {};                                       //å¯¹å¡ç‰Œè¿›è¡Œå‡çº§
     
-    std::string getName() const                                      //·µ»Ø¿¨ÅÆÃû³Æ
+    std::string getName() const                                      //è¿”å›å¡ç‰Œåç§°
     {
         return name_;
     }
-    int getEnergyCost() const                                        //·µ»Ø¿¨ÅÆÏûºÄÄÜÁ¿Öµ
+    int getEnergyCost() const                                        //è¿”å›å¡ç‰Œæ¶ˆè€—èƒ½é‡å€¼
     {
         return energy_cost_;
     }
-    int getType() const                                              //·µ»Ø¿¨ÅÆÀàĞÍ£¨¹¥»÷,¼¼ÄÜ£¬ÄÜÁ¦£©
+    int getType() const                                              //è¿”å›å¡ç‰Œç±»å‹ï¼ˆæ”»å‡»,æŠ€èƒ½ï¼Œèƒ½åŠ›ï¼‰
     {
         return type_;
     }
-    std::string getDescription() const                               //·µ»Ø¿¨ÅÆÃèÊö
+    std::string getDescription() const                               //è¿”å›å¡ç‰Œæè¿°
     {
         return description_;
     }
-    int getMoneyCost() const {                                       //·µ»Ø¹ºÂò¿¨ÅÆĞèÒªµÄ½ğ±Ò
+    int getMoneyCost() const {                                       //è¿”å›è´­ä¹°å¡ç‰Œéœ€è¦çš„é‡‘å¸
         return  money_cost_;
     }
-    int getRarity() const {                                          //·µ»Ø¿¨ÅÆÏ¡ÓĞ¶È
+    int getRarity() const {                                          //è¿”å›å¡ç‰Œç¨€æœ‰åº¦
         return rarity_;
     }
-    bool getCanBePlayed() const{                                     //·µ»Ø¿¨ÅÆÊÇ·ñÄÜ±»´ò³ö
+    bool getCanBePlayed() const{                                     //è¿”å›å¡ç‰Œæ˜¯å¦èƒ½è¢«æ‰“å‡º
         return can_be_played_;
     }
 
@@ -71,18 +73,32 @@ public:
         return is_upgraded_;
     }
 
-    virtual ~Card() {}                                              //Îö¹¹º¯Êı
+    virtual ~Card() {}                                              //ææ„å‡½æ•°
     int tag = 0;
     
+    // æ·»åŠ æ•ˆæœç›¸å…³æ–¹æ³•
+    void addEffect(std::shared_ptr<IEffect> effect) {
+        effects_.push_back(effect);
+    }
+    
+    // æ‰§è¡Œæ‰€æœ‰æ•ˆæœ
+    void executeAllEffects(std::shared_ptr<Creature> target = nullptr) {
+        int numeric_value = 0;
+        for (auto& effect : effects_) {
+            effect->execute(Player::getInstance(), target, shared_from_this(), numeric_value);
+        }
+    }
+    
 protected:
-    std::string name_;                                                //¿¨ÅÆÃû³Æ
-    std::string description_;                                         //¿¨ÅÆÃèÊö
-    int energy_cost_;                                                 //¿¨ÅÆÏûºÄÄÜÁ¿
-    int money_cost_;                                                  //ÉÌµê¹ºÂò¼Û¸ñ
-    int rarity_;                                                      //Ï¡ÓĞ¶È
-    bool can_be_played_;                                              //¿¨ÅÆÊÇ·ñÄÜ±»´ò³ö
-    int type_;                                                        //¿¨ÅÆÀàĞÍ
-    bool need_target_;                                                //ÊÇ·ñĞèÒªÑ¡ÖĞÄ¿±ê²ÅÄÜ´ò³ö
-    bool is_exhaust_;                                                 //ÊÇ·ñÎªÏûºÄÅÆ
-    bool is_upgraded_;                                                //ÊÇ·ñÊÇÉı¼¶µÄ¿¨ÅÆ
+    std::string name_;                                                //å¡ç‰Œåç§°
+    std::string description_;                                         //å¡ç‰Œæè¿°
+    int energy_cost_;                                                 //å¡ç‰Œæ¶ˆè€—èƒ½é‡
+    int money_cost_;                                                  //å•†åº—è´­ä¹°ä»·æ ¼
+    int rarity_;                                                      //ç¨€æœ‰åº¦
+    bool can_be_played_;                                              //å¡ç‰Œæ˜¯å¦èƒ½è¢«æ‰“å‡º
+    int type_;                                                        //å¡ç‰Œç±»å‹
+    bool need_target_;                                                //æ˜¯å¦éœ€è¦é€‰ä¸­ç›®æ ‡æ‰èƒ½æ‰“å‡º
+    bool is_exhaust_;                                                 //æ˜¯å¦ä¸ºæ¶ˆè€—ç‰Œ
+    bool is_upgraded_;                                                //æ˜¯å¦æ˜¯å‡çº§çš„å¡ç‰Œ
+    std::vector<std::shared_ptr<IEffect>> effects_;                   // æ•ˆæœåˆ—è¡¨
 };

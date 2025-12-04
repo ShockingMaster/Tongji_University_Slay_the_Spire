@@ -1,106 +1,97 @@
 #include "IncludeAll.h"
 #include "Enum.h"
+#include "AttackEffectAdapter.h"
+#include "BlockEffectAdapter.h"
+#include "SecondWindEffectAdapter.h"
 /* 
- * ³õÊ¼»¯£º¿¨ÅÆÃû³Æ£¬¿¨ÅÆÃèÊö£¬¿¨ÅÆ·ÑÓÃ£¬¿¨ÅÆÉÌµê¼Û¸ñ£¬¿¨ÅÆÏ¡ÓĞ¶È£¬¿¨ÅÆÊÇ·ñÄÜ±»´ò³ö£¬¿¨ÅÆÀàĞÍ£¬¿¨ÅÆÊÇ·ñĞèÒªÄ¿±ê´ò³ö£¬¿¨ÅÆÊÇ·ñÎªÏûºÄÅÆ
+ * åˆå§‹åŒ–ï¼šå¡ç‰Œåç§°ï¼Œå¡ç‰Œæè¿°ï¼Œå¡ç‰Œè´¹ç”¨ï¼Œå¡ç‰Œå•†åº—ä»·æ ¼ï¼Œå¡ç‰Œç¨€æœ‰åº¦ï¼Œå¡ç‰Œæ˜¯å¦èƒ½è¢«æ‰“å‡ºï¼Œå¡ç‰Œç±»å‹ï¼Œå¡ç‰Œæ˜¯å¦éœ€è¦ç›®æ ‡æ‰“å‡ºï¼Œå¡ç‰Œæ˜¯å¦ä¸ºæ¶ˆè€—ç‰Œ
  * 
  */
 
 /*
-* ¿¨ÅÆÃû³Æ£ºAttack
-* Ğ§¹û£º¶ÔÓÚÑ¡ÖĞµÄµĞÈËÔì³É6µãÉËº¦
+* å¡ç‰Œåç§°ï¼šAttack
+* æ•ˆæœï¼šå¯¹äºé€‰ä¸­çš„æ•Œäººé€ æˆ6ç‚¹ä¼¤å®³
  */
 class Attack : public Card
 {
 public:
-    Attack() : Card("Attack", "Deal 6 damage", 1, 20, COMMON, PLAYABLE, ATTACK, YES, NO, NO) {}
+    Attack() : Card("Attack", "Deal 6 damage", 1, 20, COMMON, PLAYABLE, ATTACK, YES, NO, NO) {
+        addEffect(std::make_shared<AttackEffectAdapter>(6));
+    }
     void upgrade() {
         is_upgraded_ = 1;
         name_ += '+';
         description_ = "Deal 9 damage";
+        // ç§»é™¤æ—§æ•ˆæœï¼Œæ·»åŠ æ–°æ•ˆæœ
+        effects_.clear();
+        addEffect(std::make_shared<AttackEffectAdapter>(9));
     }
     void takeEffect(std::shared_ptr<Creature> target)
     {
-        int temp_attack = 6;
-        if (is_upgraded_)
-        {
-            temp_attack += 3;
-        }
-        CombatSystem::getInstance()->onAttack(Player::getInstance(), target, 
-            temp_attack, "Attack");
+        executeAllEffects(target);
     }
 };
-//½øĞĞ¿¨ÅÆ×¢²á
+//è¿›è¡Œå¡ç‰Œæ³¨å†Œ
 AUTO_REGISTER_CARD(Attack)
 
 /*
-* ¿¨ÅÆÃû³Æ£ºAttack
-* Ğ§¹û£º¶ÔÓÚÑ¡ÖĞµÄµĞÈËÔì³É6µãÉËº¦
+* å¡ç‰Œåç§°ï¼šDefense
+* æ•ˆæœï¼šå¢åŠ 5ç‚¹é˜²å¾¡
  */
 class Defense : public Card
 {
 public:
-    Defense() : Card("Defense", "Gain 5 block", 1, 20, COMMON, PLAYABLE, SKILL, NO, NO, NO) {}
+    Defense() : Card("Defense", "Gain 5 block", 1, 20, COMMON, PLAYABLE, SKILL, NO, NO, NO) {
+        addEffect(std::make_shared<BlockEffectAdapter>(5));
+    }
     void upgrade() {
         is_upgraded_ = 1;
         name_ += '+';
         description_ = "Gain 8 block";
+        // ç§»é™¤æ—§æ•ˆæœï¼Œæ·»åŠ æ–°æ•ˆæœ
+        effects_.clear();
+        addEffect(std::make_shared<BlockEffectAdapter>(8));
     }
     void takeEffect()
     {
-        int temp_block = 5;
-        if (is_upgraded_)
-        {
-            temp_block += 3;
-        }
         CCLOG("Defense played!");
-        CombatSystem::getInstance()->Addblock(Player::getInstance(), temp_block);
+        executeAllEffects();
     }
 };
-//½øĞĞ¿¨ÅÆ×¢²á
+//è¿›è¡Œå¡ç‰Œæ³¨å†Œ
 AUTO_REGISTER_CARD(Defense)
 
 
 /*
-* ¿¨ÅÆÃû³Æ£ºÖØÕñ¾«Éñ
-* Ğ§¹û£ºÏûºÄµ±Ç°ÊÖÅÆÖĞËùÓĞµÄ·Ç¹¥»÷ÅÆ£¬Ã¿ÕÅ»ñµÃ5µã¸ñµ²
+* å¡ç‰Œåç§°ï¼šé‡æŒ¯ç²¾ç¥
+* æ•ˆæœï¼šæ¶ˆè€—æ‰€æœ‰éæ”»å‡»ç‰Œï¼Œæ¯å¼ è·å¾—5ç‚¹æ ¼æŒ¡
 */
 class Second_wind : public Card
 {
 public:
     Second_wind() : Card("Second_wind", "Consume all non attack cards and receive 5 grid blocks per card", 
-        1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO, NO) {}
+        1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO, NO) {
+        addEffect(std::make_shared<SecondWindEffectAdapter>(5));
+    }
     void upgrade() {
         is_upgraded_ = 1;
         name_ += '+';
         description_ = "Consume all non attack cards and receive 7 grid blocks per card";
+        // ç§»é™¤æ—§æ•ˆæœï¼Œæ·»åŠ æ–°æ•ˆæœ
+        effects_.clear();
+        addEffect(std::make_shared<SecondWindEffectAdapter>(7));
     }
     void takeEffect()
     {
-        int temp_block = 5;
-        if (is_upgraded_)
-        {
-            temp_block += 2;
-        }
-        int num = 0;
-        for (size_t i = 0; i < CombatSystem::getInstance()->hand.size(); ++i) 
-        {
-            const auto& card = CombatSystem::getInstance()->hand[i];  // »ñÈ¡µ±Ç°¿¨ÅÆ
-            if (card->getType() != ATTACK) {
-                ++num;
-                CombatSystem::getInstance()->exhaustCard(i, "Second_wind"); //ÏûºÄ·Ç¹¥»÷ÅÆ
-                i--;
-                CCLOG("Card at index %zu isn't an attack card", i);  // Êä³öµ±Ç°¿¨ÅÆµÄË÷Òı
-                CombatSystem::getInstance()->Addblock(Player::getInstance(), temp_block); //Ôö¼Ó»¤¶Ü
-            }
-        }
+        executeAllEffects();
     }
 };
-//½øĞĞ¿¨ÅÆ×¢²á
+// è¿›è¡Œå¡ç‰Œæ³¨å†Œ
 AUTO_REGISTER_CARD(Second_wind)
 
 /*
-* ¿¨ÅÆÃû³Æ£ºBurningContract
-* Ğ§¹û£ºÏûºÄÒ»ÕÅÊÖÅÆ£¬³éÁ½ÕÅÅÆ
+* å¡ç‰Œåç§°ï¼šBurningContract
+* æ•ˆæœï¼šæ¶ˆè€—ä¸€å¼ æ‰‹ç‰Œï¼ŒæŠ½ä¸¤å¼ ç‰Œ
  */
 class BurningContract : public Card
 {
@@ -138,13 +129,13 @@ public:
         }
     }
 };
-//½øĞĞ¿¨ÅÆ×¢²á
+// è¿›è¡Œå¡ç‰Œæ³¨å†Œ
 AUTO_REGISTER_CARD(BurningContract)
 
 
 /*
-* ¿¨ÅÆÃû³Æ£ºÉñ»°
-* Ğ§¹û£ºÁÙÊ±Éı¼¶µ±Ç°Õ½¶·ÖĞµÄËùÓĞÅÆ
+* å¡ç‰Œåç§°ï¼šç¥è¯
+* æ•ˆæœï¼šä¸´æ—¶å‡çº§å½“å‰æˆ˜æ–—ä¸­çš„æ‰€æœ‰ç‰Œ
 */
 class Apotheosis :public Card
 {
@@ -160,21 +151,21 @@ public:
     {
         
         auto combatSystem = CombatSystem::getInstance();
-        // ¶ÔÊÖÅÆ½øĞĞÉı¼¶
+        // å¯¹æ‰‹ç‰Œè¿›è¡Œå‡çº§
         for (auto card:combatSystem->hand)
         {
             combatSystem->upgradeCard(card);
         }
         
-        // ¶ÔÆúÅÆ¶Ñ½øĞĞÉı¼¶
+        // å¯¹å¼ƒç‰Œå †è¿›è¡Œå‡çº§
         for (int i = 0;i < combatSystem->getDiscardPileNumber();i++)
         {
             auto card = combatSystem->discardPile.front();
             combatSystem->upgradeCard(card);
-            combatSystem->discardPile.push(card);// ·ÅÈë¶ÓÁĞÎ²²¿
-            combatSystem->discardPile.pop();// ½«¶ÓÁĞÍ·µ¯³ö£¬²»ĞŞ¸Ä¶ÓÁĞË³Ğò
+            combatSystem->discardPile.push(card);// æ”¾å…¥é˜Ÿåˆ—å°¾éƒ¨
+            combatSystem->discardPile.pop();// å°†é˜Ÿåˆ—å¤´å¼¹å‡ºï¼Œä¸ä¿®æ”¹é˜Ÿåˆ—
         }
-        // ¶Ô³éÅÆ¶Ñ½øĞĞÉı¼¶ 
+        // å¯¹æŠ½ç‰Œå †è¿›è¡Œå‡çº§
         for (int i = 0;i < combatSystem->getDrawPileNumber();i++)
         {
             auto card = combatSystem->drawPile.front();
@@ -188,8 +179,8 @@ AUTO_REGISTER_CARD(Apotheosis)
 
 
 /*
-* ¿¨ÅÆÃû³Æ£ºÑ£ÔÎ
-* Ğ§¹û£º²»ÄÜ±»´ò³ö£¬ĞéÎŞ
+* å¡ç‰Œåç§°ï¼šçœ©æ™•
+* æ•ˆæœï¼šä¸èƒ½è¢«æ‰“å‡ºï¼Œè™šæ— 
 */
 class dazed :public Card
 {
@@ -205,8 +196,8 @@ AUTO_REGISTER_CARD(dazed)
 
 
 /*
-* ¿¨ÅÆÃû³Æ£º×ÆÉÕ
-* Ğ§¹û£º²»ÄÜ±»´ò³ö£¬»ØºÏ½áÊøÔì³ÉÁ½µãÉËº¦
+* å¡ç‰Œåç§°ï¼šç¼çƒ§
+* æ•ˆæœï¼šä¸èƒ½è¢«æ‰“å‡ºï¼Œå›åˆç»“æŸé€ æˆä¸¤ç‚¹ä¼¤å®³
 */
 class burn :public Card
 {
@@ -221,8 +212,8 @@ AUTO_REGISTER_CARD(burn)
 
 
 /*
-* ¿¨ÅÆÃû³Æ£ºÍ´»÷
-* Ğ§¹û£ºÔì³É8µãÉËº¦¡£¸øÓè2²ãÒ×ÉË¡£
+* å¡ç‰Œåç§°ï¼šç—›å‡»
+* æ•ˆæœï¼šé€ æˆ8ç‚¹ä¼¤å®³ã€‚ç»™äºˆ2å±‚æ˜“ä¼¤ã€‚
 */
 class trounce :public Card
 {
