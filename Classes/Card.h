@@ -2,9 +2,11 @@
 #include<vector>
 #include<string>
 #include<memory>
+#include "Player.h"
 using namespace std;
 class Creature;
 class IEffect;
+class Player;
 class Card : public std::enable_shared_from_this<Card>
 {
 public:
@@ -23,16 +25,24 @@ public:
         is_exhaust_(temp_is_exhaust_) ,
         is_upgraded_(temp_is_upgraded_){};
 
-    virtual void takeEffect() {};                    /*打出卡牌时触发效果，不需要选中敌人(对全体敌人造成效果、
-                                                       对于自身造成效果、对于随机目标造成效果)*/
-    virtual void takeEffect(std::shared_ptr<Creature> target) {};    //打出卡牌时触发效果，需要选中敌人
+    virtual void takeEffect() {                                       // 默认：执行所有出牌效果（无目标）
+        executePlayEffects();
+    }
+    virtual void takeEffect(std::shared_ptr<Creature> target) {       // 默认：执行所有出牌效果（有目标）
+        executePlayEffects(target);
+    }
 
-    virtual void takeeffectonturnend(std::shared_ptr<Card> card) {};                           //回合结束后产生效果
+    virtual void takeeffectonturnend(std::shared_ptr<Card> card) {    // 回合结束效果
+        executeTurnEndEffects(card);
+    }
 
-    virtual void takeEffectOnDiscard() {};                           //被弃置时产生效果
+    virtual void takeEffectOnDiscard() {                              // 被弃置时产生效果
+        executeDiscardEffects();
+    }
 
-    virtual void takeEffectOnExhaust() {};                           //被消耗时产生效果
-
+    virtual void takeEffectOnExhaust() {                              // 被消耗时产生效果
+        executeExhaustEffects();
+    }
 
     virtual void upgrade() {};                                       //对卡牌进行升级
     
@@ -76,16 +86,58 @@ public:
     virtual ~Card() {}                                              //析构函数
     int tag = 0;
     
-    // 添加效果相关方法
-    void addEffect(std::shared_ptr<IEffect> effect) {
-        effects_.push_back(effect);
+    // 添加/执行效果：出牌时
+    void addEffect(std::shared_ptr<IEffect> effect) { addPlayEffect(effect); }
+    void addPlayEffect(std::shared_ptr<IEffect> effect) {
+        if (effect) {
+            playEffects_.push_back(effect);
+        }
     }
-    
-    // 执行所有效果
-    void executeAllEffects(std::shared_ptr<Creature> target = nullptr) {
+    void clearPlayEffects() { playEffects_.clear(); }
+    void executeAllEffects(std::shared_ptr<Creature> target = nullptr) { executePlayEffects(target); }
+    void executePlayEffects(std::shared_ptr<Creature> target = nullptr) {
         int numeric_value = 0;
-        for (auto& effect : effects_) {
+        for (auto& effect : playEffects_) {
             effect->execute(Player::getInstance(), target, shared_from_this(), numeric_value);
+        }
+    }
+
+    // 添加/执行效果：回合结束
+    void addTurnEndEffect(std::shared_ptr<IEffect> effect) {
+        if (effect) {
+            turnEndEffects_.push_back(effect);
+        }
+    }
+    void executeTurnEndEffects(std::shared_ptr<Card> card) {
+        int numeric_value = 0;
+        for (auto& effect : turnEndEffects_) {
+            effect->execute(Player::getInstance(), nullptr, card, numeric_value);
+        }
+    }
+
+    // 添加/执行效果：弃置
+    void addDiscardEffect(std::shared_ptr<IEffect> effect) {
+        if (effect) {
+            discardEffects_.push_back(effect);
+        }
+    }
+    void executeDiscardEffects() {
+        int numeric_value = 0;
+        for (auto& effect : discardEffects_) {
+            effect->execute(Player::getInstance(), nullptr, shared_from_this(), numeric_value);
+        }
+    }
+
+    // 添加/执行效果：消耗
+    void addExhaustEffect(std::shared_ptr<IEffect> effect) {
+        if (effect) {
+            exhaustEffects_.push_back(effect);
+        }
+    }
+    void executeExhaustEffects() {
+        int numeric_value = 0;
+        for (auto& effect : exhaustEffects_) {
+            effect->execute(Player::getInstance(), nullptr, shared_from_this(), numeric_value);
         }
     }
     
@@ -100,5 +152,8 @@ protected:
     bool need_target_;                                                //是否需要选中目标才能打出
     bool is_exhaust_;                                                 //是否为消耗牌
     bool is_upgraded_;                                                //是否是升级的卡牌
-    std::vector<std::shared_ptr<IEffect>> effects_;                   // 效果列表
+    std::vector<std::shared_ptr<IEffect>> playEffects_;               // 出牌效果列表
+    std::vector<std::shared_ptr<IEffect>> turnEndEffects_;            // 回合结束效果列表
+    std::vector<std::shared_ptr<IEffect>> discardEffects_;            // 弃置效果列表
+    std::vector<std::shared_ptr<IEffect>> exhaustEffects_;            // 消耗效果列表
 };

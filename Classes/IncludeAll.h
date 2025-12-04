@@ -29,6 +29,11 @@
 #include "AttackEffectAdapter.h"
 #include "BlockEffectAdapter.h"
 #include "SecondWindEffectAdapter.h"
+#include "BurningContractEffectAdapter.h"
+#include "ApotheosisEffectAdapter.h"
+#include "TurnEndExhaustEffectAdapter.h"
+#include "TurnEndDamageEffectAdapter.h"
+#include "TrounceEffectAdapter.h"
 
 using namespace std;
 USING_NS_CC;

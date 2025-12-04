@@ -1,0 +1,51 @@
+@startuml
+title Card Effects - After (Strategy)
+
+interface IEffect {
+  +execute(source, target, card, numeric_value)
+}
+
+class Card {
+  -playEffects_ : List<IEffect>
+  -turnEndEffects_ : List<IEffect>
+  -discardEffects_ : List<IEffect>
+  -exhaustEffects_ : List<IEffect>
+  +addEffect(effect)
+  +addTurnEndEffect(effect)
+  +addDiscardEffect(effect)
+  +addExhaustEffect(effect)
+  +clearPlayEffects()
+  +executePlayEffects(target)
+  +executeTurnEndEffects(card)
+}
+
+class AttackEffectAdapter
+class BlockEffectAdapter
+class SecondWindEffectAdapter
+class BurningContractEffectAdapter
+class ApotheosisEffectAdapter
+class TurnEndExhaustEffectAdapter
+class TurnEndDamageEffectAdapter
+class TrounceEffectAdapter
+
+IEffect <|.. AttackEffectAdapter
+IEffect <|.. BlockEffectAdapter
+IEffect <|.. SecondWindEffectAdapter
+IEffect <|.. BurningContractEffectAdapter
+IEffect <|.. ApotheosisEffectAdapter
+IEffect <|.. TurnEndExhaustEffectAdapter
+IEffect <|.. TurnEndDamageEffectAdapter
+IEffect <|.. TrounceEffectAdapter
+
+Card "1" o-- "*" IEffect : play/turnEnd/\ndiscard/exhaust
+
+Card <|-- Attack
+Card <|-- Defense
+Card <|-- Second_wind
+Card <|-- BurningContract
+Card <|-- Apotheosis
+Card <|-- dazed
+Card <|-- burn
+Card <|-- trounce
+
+@enduml

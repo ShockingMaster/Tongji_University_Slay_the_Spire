@@ -1,0 +1,34 @@
+@startuml
+title Card Effects - Before (Inline Logic)
+
+class Card {
+  +takeEffect()
+  +takeeffectonturnend(card)
+  +takeEffectOnDiscard()
+  +takeEffectOnExhaust()
+}
+
+class Attack
+class Defense
+class Second_wind
+class BurningContract
+class Apotheosis
+class dazed
+class burn
+class trounce
+
+Card <|-- Attack
+Card <|-- Defense
+Card <|-- Second_wind
+Card <|-- BurningContract
+Card <|-- Apotheosis
+Card <|-- dazed
+Card <|-- burn
+Card <|-- trounce
+
+note right of Card
+  Each card overrides lifecycle methods
+  with hard-coded effect logic.
+end note
+
+@enduml

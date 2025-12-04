@@ -3,6 +3,11 @@
 #include "AttackEffectAdapter.h"
 #include "BlockEffectAdapter.h"
 #include "SecondWindEffectAdapter.h"
+#include "BurningContractEffectAdapter.h"
+#include "ApotheosisEffectAdapter.h"
+#include "TurnEndExhaustEffectAdapter.h"
+#include "TurnEndDamageEffectAdapter.h"
+#include "TrounceEffectAdapter.h"
 /* 
  * 初始化：卡牌名称，卡牌描述，卡牌费用，卡牌商店价格，卡牌稀有度，卡牌是否能被打出，卡牌类型，卡牌是否需要目标打出，卡牌是否为消耗牌
  * 
@@ -23,12 +28,12 @@ public:
         name_ += '+';
         description_ = "Deal 9 damage";
         // 移除旧效果，添加新效果
-        effects_.clear();
+        clearPlayEffects();
         addEffect(std::make_shared<AttackEffectAdapter>(9));
     }
     void takeEffect(std::shared_ptr<Creature> target)
     {
-        executeAllEffects(target);
+        executePlayEffects(target);
     }
 };
 //进行卡牌注册
@@ -49,13 +54,13 @@ public:
         name_ += '+';
         description_ = "Gain 8 block";
         // 移除旧效果，添加新效果
-        effects_.clear();
+        clearPlayEffects();
         addEffect(std::make_shared<BlockEffectAdapter>(8));
     }
     void takeEffect()
     {
         CCLOG("Defense played!");
-        executeAllEffects();
+        executePlayEffects();
     }
 };
 //进行卡牌注册
@@ -78,12 +83,12 @@ public:
         name_ += '+';
         description_ = "Consume all non attack cards and receive 7 grid blocks per card";
         // 移除旧效果，添加新效果
-        effects_.clear();
+        clearPlayEffects();
         addEffect(std::make_shared<SecondWindEffectAdapter>(7));
     }
     void takeEffect()
     {
-        executeAllEffects();
+        executePlayEffects();
     }
 };
 // 进行卡牌注册
@@ -97,36 +102,19 @@ class BurningContract : public Card
 {
 public:
     BurningContract() : Card("BurningContract", "Consume one card and draw two cards", 
-        1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO, NO) {}
+        1, 20, UNCOMMON, PLAYABLE, SKILL, NO, NO, NO) {
+        addEffect(std::make_shared<BurningContractEffectAdapter>(2, 1));
+    }
     void upgrade() {
         is_upgraded_ = 1;
         name_ += '+';
         description_ = "Consume one card and draw three cards";
+        clearPlayEffects();
+        addEffect(std::make_shared<BurningContractEffectAdapter>(2, 1));
     }
     void takeEffect()
     {
-        int draw_num = 2;
-        if (is_upgraded_)
-        {
-            draw_num += 1;
-        }
-        if (tag == 0) {
-            HandPileLayer::getInstance()->removeFromParent();
-            Scene* selectScene = SelectScene::create();
-            SelectScene* selectScenePtr = dynamic_cast<SelectScene*>(selectScene);
-            auto scene = dynamic_cast<CombatScene*>(Director::getInstance()->getRunningScene());
-            selectScenePtr->setCombatScene(scene);
-            HandPileLayer::getInstance()->card_num_select_target = 1;
-            cocos2d::Director::getInstance()->pushScene(selectScene);
-            
-            
-        }
-        if (tag == 1) {
-            
-            CombatSystem::getInstance()->drawCard(draw_num); 
-            HandPileLayer::getInstance()->adjustHandPile();
-            tag = 0;
-        }
+        executePlayEffects();
     }
 };
 // 进行卡牌注册
@@ -141,7 +129,9 @@ class Apotheosis :public Card
 {
 public:
     Apotheosis() : Card("Apotheosis", "Upgrade ALL of your cards for the rest of combat.Exhaust.",
-        2, 180, RARE, PLAYABLE, SKILL, NO, YES, NO) {};
+        2, 180, RARE, PLAYABLE, SKILL, NO, YES, NO) {
+        addEffect(std::make_shared<ApotheosisEffectAdapter>());
+    };
     void upgrade() {
         is_upgraded_ = 1;
         name_ += '+';
@@ -149,30 +139,7 @@ public:
     }
     void takeEffect()
     {
-        
-        auto combatSystem = CombatSystem::getInstance();
-        // 对手牌进行升级
-        for (auto card:combatSystem->hand)
-        {
-            combatSystem->upgradeCard(card);
-        }
-        
-        // 对弃牌堆进行升级
-        for (int i = 0;i < combatSystem->getDiscardPileNumber();i++)
-        {
-            auto card = combatSystem->discardPile.front();
-            combatSystem->upgradeCard(card);
-            combatSystem->discardPile.push(card);// 放入队列尾部
-            combatSystem->discardPile.pop();// 将队列头弹出，不修改队列
-        }
-        // 对抽牌堆进行升级
-        for (int i = 0;i < combatSystem->getDrawPileNumber();i++)
-        {
-            auto card = combatSystem->drawPile.front();
-            combatSystem->upgradeCard(card);
-            combatSystem->drawPile.push(card);
-            combatSystem->drawPile.pop();
-        }
+        executePlayEffects();
     }
 };
 AUTO_REGISTER_CARD(Apotheosis)
@@ -186,10 +153,12 @@ class dazed :public Card
 {
 public:
     dazed() : Card("dazed", "Cannot be hit",
-        0, 0, NORMAL, FALSE, STATUS, NO, NO, NO) {};
+        0, 0, NORMAL, FALSE, STATUS, NO, NO, NO) {
+        addTurnEndEffect(std::make_shared<TurnEndExhaustEffectAdapter>());
+    };
     void takeeffectonturnend(std::shared_ptr<Card> card) {
         CCLOG("discard dazed");
-        CombatSystem::getInstance()->exhaustCard(card);
+        executeTurnEndEffects(card);
     }
 };
 AUTO_REGISTER_CARD(dazed)
@@ -203,9 +172,11 @@ class burn :public Card
 {
 public:
     burn() : Card("burn", "Cannot be hit, causing two points of damage at the end of the turn",
-        0, 0, NORMAL, FALSE, STATUS, NO, NO, NO) {};
+        0, 0, NORMAL, FALSE, STATUS, NO, NO, NO) {
+        addTurnEndEffect(std::make_shared<TurnEndDamageEffectAdapter>(2));
+    };
     void takeeffectonturnend(std::shared_ptr<Card> card) {
-        CombatSystem::getInstance()->takeDamage(Player::getInstance(), 2);
+        executeTurnEndEffects(card);
     }
 };
 AUTO_REGISTER_CARD(burn)
@@ -219,24 +190,19 @@ class trounce :public Card
 {
 public:
     trounce() : Card("trounce", "Causing 8 points of damage. Give 2 layers of vulnerability.",
-        2, 40, RARE, PLAYABLE, ATTACK, YES, NO, NO) {};
+        2, 40, RARE, PLAYABLE, ATTACK, YES, NO, NO) {
+        addEffect(std::make_shared<TrounceEffectAdapter>(8, 2, 2, 1));
+    };
     void upgrade() {
         is_upgraded_ = 1;
         name_ += '+';
         description_ = "Causing 10 points of damage. Give 3 layers of vulnerability.";
+        clearPlayEffects();
+        addEffect(std::make_shared<TrounceEffectAdapter>(8, 2, 2, 1));
     }
     void takeEffect(std::shared_ptr<Creature> target)
     {
-        int temp_attack = 8;
-        int numeric_value = 2;
-        if (is_upgraded_)
-        {
-            temp_attack += 2;
-            numeric_value += 1;
-        }
-        CombatSystem::getInstance()->onAttack(Player::getInstance(), target,
-            temp_attack, "Attack");
-        CombatSystem::getInstance()->addBuff(BuffRegistry::createBuff("vulnerability"), numeric_value, target);
+        executePlayEffects(target);
     }
 };
 AUTO_REGISTER_CARD(trounce)
