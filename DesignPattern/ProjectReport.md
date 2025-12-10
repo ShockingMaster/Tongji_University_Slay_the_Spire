@@ -1723,9 +1723,9 @@ Concrete Strategies (family)
 ##### 3.5.3.3. UML Class Diagram
 
 - **Before Refactoring**: 
-![alt text](assets/before.png)
+![alt text](./StrategyPattern/assets/before.png)
 - **After Refactoring**: 
-![alt text](assets/after.png)
+![alt text](./StrategyPattern/assets/after.png)
 
 ##### 3.5.3.4. Strategy Application Example (BurningContract)
 
