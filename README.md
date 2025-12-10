@@ -60,7 +60,7 @@
 - **使用智能指针的注意事项**\
     当然，智能指针也不是万能的，使用shared_ptr存在的隐患就是循环引用，如果两个共享指针相互引用，会导致引用计数一定不会为0，无法释放内存。而对于这一点，我们使用资源管理外部化，也就是通过CombatSystem和EventSystem来进行资源管理，保证了对象之间不会建立相互持有的共享指针。
 
-- [x] **工厂模式注册**
+<!-- - [x] **工厂模式注册**
 
 - 因为该项目希望支持数量庞大的卡牌，遗物，buff等，而大量卡牌的创建显然用switch-case是不现实的，所以我们使用工厂模式进行注册。例如对于卡牌而言，我们定义了一个CardRegistry类，用于管理卡牌的注册和创建。
 - 首先使用using声明CardFactory别名，同时利用C++11特性，使用functional库中的function存储工厂方法，灵活性强。
@@ -129,7 +129,7 @@ static std::shared_ptr<Card> createCard(const std::string& name)
 
 ```c++
 AUTO_REGISTER_CARD(Defense)
-```
+``` -->
 
 - [x] **事件驱动机制**
 
